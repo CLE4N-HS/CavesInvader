@@ -10,6 +10,7 @@
 #include "options.h"
 #include "viewManager.h"
 #include "particlesSystemManager.h"
+#include "quit.h"
 
 
 void stateInit(Window* _window)
@@ -27,8 +28,8 @@ void stateInit(Window* _window)
 		sfSprite_setPosition(spLoading, vector2f(mainView->PosView.x, mainView->PosView.y));
 		sfSprite_setTextureRect(spLoading, AnimRect);
 
-		SFXVolume = 50.0f;
-		musicVolume = 50.0f;
+		SFXVolume = 0.0f; // change to 50.f
+		musicVolume = 0.0f; // change to 50.f
 		timeScale = 1.f;
 		w.state = sfTrue;
 		fontScore = sfFont_createFromFile("../Ressources/Fonts/full_Pack_2025.ttf");
@@ -52,6 +53,8 @@ void stateInit(Window* _window)
 		{
 			initMenu(_window);
 			initOptions(_window);
+			initQuit(_window);
+			// add deinit quit
 		}
 		if (state == GAME)
 		{
@@ -107,6 +110,8 @@ void stateUpdate(Window* _window)
 			{
 				if (isOption)
 					updateOptions(_window);
+				else if (isQuit)
+					updateQuit(_window);
 				else
 					updateMenu(_window);
 			}
@@ -171,6 +176,10 @@ void stateDisplay(Window* _window)
 			if (isOption)
 			{
 				displayOptions(_window);
+			}
+			if (isQuit)
+			{
+				displayQuit(_window);
 			}
 			if (isDialogBox)
 			{
@@ -256,4 +265,9 @@ void togglePause()
 void toggleOptions()
 {
 	isOption = !isOption;
+}
+
+void toggleQuit()
+{
+	isQuit = !isQuit;
 }

@@ -1,0 +1,69 @@
+{
+CHOIX_NOM_1010x727 : x = 455 ; y = 176
+	CASE_JOUER_319x78 : x = 346 ; y = 562
+	FLECHES_31x230 : x = 214 ; y = 262 / x = 490 ; y = 262 / x = 766 ; y = 262
+	LETTRES : 1 = x = 182 ; y = 342
+		  2 = x = 345 ; y = 342
+		  3 = x = 731 ; y = 342 	POLICE 90
+}
+
+{
+COMMANDES_1498x900 : x = 211 ; y = 90
+	CASE_RETOUR_197x44 : x = 651 ; y = 779
+}
+
+{
+CREDITS_1498x900 : x = 211 ; y = 90
+	CASE_RETOUR_197x44 : x = 650 ; y = 776
+}
+
+{
+OPTIONS_957x900 : x = 481 ; y = 90
+	BOUTON_LATERAL_21x33 : Xmin = 303 / Xmax = 568 ; y = 306 / y = 552	origine : : x = 10 ; y = 16
+	CASE_PLEIN_ECRAN_157x154 : x = 714 ; y = 354
+	CASE_RETOUR_260x57 : x = 344 ; y = 739
+	CASE_SON_MUSIQUE_356x57 : x = 262 ; y = 524 / x = 262 ; y = 277
+}
+
+{
+PAUSE_IN_GAME_929x900 : x = 491 ; y = 90
+	BOUTON_LATERAL_21x33 : Xmin = 297 / Xmax = 558 ; y = 332 / y = 574	origine : : x = 10 ; y = 16
+	CASE_PLEIN_ECRAN_157x154 : x = 700 ; y = 378
+	CASE_QUITTER_REPRENDRE_441x57 : x = 249 ; y = 110 / x = 249 ; y = 718
+	CASE_SON_MUSIQUE_356x57 : x = 256 ; y = 304 / x = 256 ; y = 546
+}
+
+{
+QUITTER_1150x727 : x = 176 ; y = 385
+	CASE_OUI_NON_359x141 : x = 104 ; y = 386 / x = 696 ; y = 386
+}
+
+{
+SCORE_879x900 : x = 521 ; y = 90
+	CASE_RETOUR_238x52 : x = 320 ; y = 762
+	SCORE : 1 = x = 372 ; y = 342  JOUEUR : 1 = x = 672 ; y = 342
+		2 = x = 372 ; y = 477	        2 = x = 672 ; y = 477
+		3 = x = 372 ; y = 612           3 = x = 672 ; y = 612 		POLICE 55
+}
+
+{
+MAIN_MENU_1605x997 : x = 158 ; y = 0
+CASE_319x92 : x = 797 ; y = 666 / x = 549 ; y = 779 / x = 1068 ; y = 779 / x = 797 ; y = 894 / x = 80 ; y = 944 / x = 1523 ; y = 944
+CASE_SURVOL_342x99 : x = 785 ; y = 663 / x = 537 ; y = 776 / x = 1056 ; y = 776 / x = 785 ; y = 891 / x = 68 ; y = 941 / x = 1511 ; y = 941
+}
+
+{
+LOGO_START_SCREEN_1920x1080 : x = 0 ; y = 0
+CLIQUEZ_POUR_JOUER_1407x91 : x = 257 ; y = 925
+}
+
+{
+GAME OVER_1920x1080 : x = 0 ; y = 0
+CASE_363x59 : x = 130 ; y = 1008 / x = 1447 ; y = 1008 
+CASE_SURVOL_370x63 : x = 126 ; y = 1006 / x = 1444 ; y = 1006
+SCORE : x = 953 ; y = 966					POLICE 60
+}
+		
+		
+
+

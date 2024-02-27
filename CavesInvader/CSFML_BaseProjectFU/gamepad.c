@@ -14,11 +14,11 @@ void GamepadDetection()
 		if (sfJoystick_isConnected(i))
 		{
 			sfJoystickIdentification joyid = sfJoystick_getIdentification(i);
-			if (joyid.productId == 654 || joyid.productId == 767 && joyid.vendorId == 1118) // || joyid.productId == 767 for my controller
-			{
+			//if (joyid.productId == 654 || joyid.productId == 767 && joyid.vendorId == 1118) // || joyid.productId == 767 for XBOX ONE
+			//{
 				//player[playernber].idGamepad = i;
 				playernber++;
-			}
+			//}
 		}
 		else
 		{
@@ -274,7 +274,7 @@ sfBool isKeyboardOrControllerButtonMoved(sfKeyCode _key, gamepadXBox _stick, sfB
 				// Only for left stick
 
 				if (_stick == STICKLX_XBOX) {
-					if (Gamepad_isJoystickMoved(i, CROSSX_XBOX) > 0) // Left Cross
+					if (Gamepad_isJoystickMoved(i, CROSSX_XBOX) < 0) // Left Cross
 						return sfTrue;
 				}
 				else if (_stick == STICKLY_XBOX) {
@@ -290,7 +290,7 @@ sfBool isKeyboardOrControllerButtonMoved(sfKeyCode _key, gamepadXBox _stick, sfB
 				// Only for left stick
 
 				if (_stick == STICKLX_XBOX) {
-					if (Gamepad_isJoystickMoved(i, CROSSX_XBOX) < 0) // Right Cross
+					if (Gamepad_isJoystickMoved(i, CROSSX_XBOX) > 0) // Right Cross
 						return sfTrue;
 				}
 				else if (_stick == STICKLY_XBOX) {
@@ -316,3 +316,4 @@ void forceReleasedButton(gamepadXBox _button)
 		Gamepad[i].Bouton[_button] = sfFalse;
 	}
 }
+

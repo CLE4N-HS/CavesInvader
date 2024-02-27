@@ -3,6 +3,17 @@
 #include "stateManager.h"
 #include "windowManager.h"
 
+typedef enum MenuChoice {
+	NOCHOICE_MENU = -1,
+	PLAY_MENU,
+	LEADERBOARD_MENU,
+	COMMANDS_MENU,
+	CREDITS_MENU,
+	OPTIONS_MENU,
+	QUIT_MENU
+}MenuChoice;
+
+
 sfFont* fontScore;
 
 /// <summary>

@@ -170,6 +170,7 @@
     <ClCompile Include="options.c" />
     <ClCompile Include="particlesSystemManager.c" />
     <ClCompile Include="pause.c" />
+    <ClCompile Include="quit.c" />
     <ClCompile Include="ressourcesManager.c" />
     <ClCompile Include="soundManager.c" />
     <ClCompile Include="stateManager.c" />
@@ -190,6 +191,7 @@
     <ClInclude Include="options.h" />
     <ClInclude Include="particlesSystemManager.h" />
     <ClInclude Include="pause.h" />
+    <ClInclude Include="quit.h" />
     <ClInclude Include="ressourcesManager.h" />
     <ClInclude Include="soundManager.h" />
     <ClInclude Include="stateManager.h" />

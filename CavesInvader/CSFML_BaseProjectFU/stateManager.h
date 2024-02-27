@@ -28,6 +28,7 @@ static State state = MENU;
 static sfBool onePass = sfFalse;
 static sfBool isPaused = sfFalse;
 static sfBool isOption = sfFalse;
+static sfBool isQuit = sfFalse;
 
 sfThread* loadingThread;
 sfSprite* spLoading;
@@ -81,3 +82,5 @@ void togglePause();
 /// Activates the options, or deactivates them if they were already present
 /// </summary>
 void toggleOptions();
+
+void toggleQuit();
