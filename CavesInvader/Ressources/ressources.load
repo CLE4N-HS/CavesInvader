@@ -1,12 +1,14 @@
 [all]
 animation loadingAnim ../Ressources/Textures/loading.anim
 music test ../Ressources/Musics/Evergreen.ogg
+single menuBg ../Ressources/Textures/Menu/menuBg.png
+single quit ../Ressources/Textures/Menu/QUIT/quit.png
+single quitBox ../Ressources/Textures/Menu/QUIT/quitBox.png
 [end]
 [menu]
-single menuBg ../Ressources/Textures/Menu/menuBg.png
-single menuMain ../Ressources/Textures/Menu/Main/menuMain.png
-single menuBox ../Ressources/Textures/Menu/Main/menuBox.png
-single menuHoverBox ../Ressources/Textures/Menu/Main/menuHoverBox.png
+single menuMain ../Ressources/Textures/Menu/MAIN/menuMain.png
+single menuBox ../Ressources/Textures/Menu/MAIN/menuBox.png
+single menuHoverBox ../Ressources/Textures/Menu/MAIN/menuHoverBox.png
 [end]
 [game]
 single BG2 ../Ressources/Textures/BG2.png

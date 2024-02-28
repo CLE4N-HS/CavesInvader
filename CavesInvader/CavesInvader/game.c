@@ -9,7 +9,7 @@
 
 #include <Windows.h>
 
-//sfSprite* sprite;
+//sfSprite* menuSprite;
 sfSprite* spBG1;
 sfSprite* spBG2;
 

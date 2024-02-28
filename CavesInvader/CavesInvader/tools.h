@@ -14,6 +14,8 @@
 #define MAP_PATH "..\\Ressources\\Maps\\"
 #define TILESET_PATH "..\\Ressources\\Tilesets\\"
 
+#define VECTOR2F_NULL vector2f(0.f, 0.f)
+
 typedef struct vector4f vector4f;
 struct vector4f
 {
@@ -118,7 +120,7 @@ sfVector2f getfMousePos(sfRenderWindow* _window);
 
 //-----------------------------------------------------------
 //	Fonction CreateSprite(char* _path)
-//	Crée un sprite à partir d'une texture
+//	Crée un menuSprite à partir d'une texture
 //	_path le chemin vers la texture 
 // 
 //	renvoi un sfSprite*
@@ -153,14 +155,14 @@ void screenshot(sfRenderWindow* _window);
 /// Gets the frame in X of a Sprite (linked with Animator())
 /// </summary>
 /// <param name="_rect">The rect of the Sprite</param>
-/// <returns>The current number of frames in X of the sprite (starting at 1) </returns>
+/// <returns>The current number of frames in X of the menuSprite (starting at 1) </returns>
 int getFrameX(sfIntRect _rect);
 
 /// <summary>
 /// Gets the frame in Y of a Sprite (linked with Animator())
 /// </summary>
 /// <param name="_rect">The rect of the Sprite</param>
-/// <returns>The current number of frames in Y of the sprite (starting at 1) </returns>
+/// <returns>The current number of frames in Y of the menuSprite (starting at 1) </returns>
 int getFrameY(sfIntRect _rect);
 
 

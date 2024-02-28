@@ -8,8 +8,6 @@
 #define MAX(a,b) a >= b ? a : b
 #define MIN(a,b) a <= b ? a : b
 
-#define VECTOR2F_NULL vector2f(0.f, 0.f)
-
 #define GRAVITATIONAL_FORCE 1.6e-8f
 
 
