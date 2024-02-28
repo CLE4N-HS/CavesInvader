@@ -90,6 +90,9 @@
     <ClCompile Include="quit.c">
       <Filter>Fichiers sources\MENUS</Filter>
     </ClCompile>
+    <ClCompile Include="player.c">
+      <Filter>Fichiers sources\GAME</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dirent.h">
@@ -148,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="quit.h">
       <Filter>Fichiers d%27en-tête\MENUS</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Fichiers d%27en-tête\GAME</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

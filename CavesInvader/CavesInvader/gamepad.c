@@ -67,6 +67,7 @@ void GamepadManager(int _joystickId, sfEvent event)
 	if (event.type == sfEvtJoystickDisconnected)
 	{
 		printf("Gamepad is Disconnected id %d\n", event.joystickConnect.joystickId);
+		GamepadDetection();
 		// TODO : Mettre en pause pour indiquer qu'un (ou plusieurs) Gamepad est déconnecté
 		if (!isPaused && getState() == GAME) {
 			togglePause();

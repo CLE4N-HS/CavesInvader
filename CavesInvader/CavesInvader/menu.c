@@ -350,11 +350,11 @@ void resetMenu()
 {
 	timer = 0.f;
 	choiceTimer = 0.f;
+
 }
 
 void deinitMenu()
 {
 	sfSprite_destroy(menuSprite);
 
-	RemoveAllTextureButALL();
 }

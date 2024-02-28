@@ -230,7 +230,7 @@ void stateDeinit(Window* _window)
 {
 	RemoveAllTextureButALL();
 	RemoveAllSoundsButALL();
-	RemoveAllSoundsButALL();
+	//fonts but all
 	if (state == INTRO)
 	{
 

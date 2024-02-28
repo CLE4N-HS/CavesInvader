@@ -29,6 +29,8 @@ void initQuit(Window* _window)
 	menuBgTexture = GetTexture("menuBg");
 	quitTexture = GetTexture("quit");
 	quitBoxTexture = GetTexture("quitBox");
+
+
 	choiceQuit = NO_QUIT;
 }
 
