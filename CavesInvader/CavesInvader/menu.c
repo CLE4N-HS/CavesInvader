@@ -157,13 +157,13 @@ void updateMenu(Window* _window)
 	}
 
 	// Menu Choice
-	if (isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX) && choiceTimer > 0.2f) {
+	if (isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
 		switch (choiceMenu)
 		{
 		case NOCHOICE_MENU:
-			choiceMenu = changeChoiceMenu(sfKeyEnter);
 			timer = 0.f;
-			choiceTimer = -0.1f;
+			choiceMenu = changeChoiceMenu(sfKeyEnter);
+			forceReleasedButton(A_XBOX);
 			break;
 		case PLAY_MENU:
 			timer = 0.f;

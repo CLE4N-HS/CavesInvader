@@ -54,7 +54,7 @@ void stateInit(Window* _window)
 			initMenu(_window);
 			initOptions(_window);
 			initQuit(_window);
-			// add deinit quit
+			// TODO ADD deinit quit
 		}
 		if (state == GAME)
 		{
