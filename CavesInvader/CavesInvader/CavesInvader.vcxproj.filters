@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\GAME">
+      <UniqueIdentifier>{e33e5e8e-7108-4a47-8bcc-26c3c2757cd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\MENUS">
+      <UniqueIdentifier>{328ab923-9c2c-4e6a-8c3e-fc30be9d86b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\ENGINE">
+      <UniqueIdentifier>{aa40738f-cdf7-4232-9b16-0811df0d4531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\GAME">
+      <UniqueIdentifier>{c917f2da-1815-4ec5-b6e5-7fad70ac76c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\MENUS">
+      <UniqueIdentifier>{21b15e54-759d-4e7d-a65f-c59042e1963b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\ENGINE">
+      <UniqueIdentifier>{49795af5-47dd-4411-b0a6-b04aea46089a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="customMath.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="dialogBox.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="fontManager.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="gamepad.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="gamepadx.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="particlesSystemManager.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="ressourcesManager.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="soundManager.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="stateManager.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="textureManager.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="tools.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="viewManager.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="windowManager.c">
+      <Filter>Fichiers sources\ENGINE</Filter>
+    </ClCompile>
+    <ClCompile Include="game.c">
+      <Filter>Fichiers sources\GAME</Filter>
+    </ClCompile>
+    <ClCompile Include="pause.c">
+      <Filter>Fichiers sources\GAME</Filter>
+    </ClCompile>
+    <ClCompile Include="menu.c">
+      <Filter>Fichiers sources\MENUS</Filter>
+    </ClCompile>
+    <ClCompile Include="options.c">
+      <Filter>Fichiers sources\MENUS</Filter>
+    </ClCompile>
+    <ClCompile Include="quit.c">
+      <Filter>Fichiers sources\MENUS</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dirent.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomMath.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="dialogBox.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="fontManager.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="gamepad.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="gamepadx.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="particlesSystemManager.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="ressourcesManager.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="soundManager.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="stateManager.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="textureManager.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="tools.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="viewManager.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="windowManager.h">
+      <Filter>Fichiers d%27en-tête\ENGINE</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Fichiers d%27en-tête\GAME</Filter>
+    </ClInclude>
+    <ClInclude Include="options.h">
+      <Filter>Fichiers d%27en-tête\GAME</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.h">
+      <Filter>Fichiers d%27en-tête\MENUS</Filter>
+    </ClInclude>
+    <ClInclude Include="pause.h">
+      <Filter>Fichiers d%27en-tête\MENUS</Filter>
+    </ClInclude>
+    <ClInclude Include="quit.h">
+      <Filter>Fichiers d%27en-tête\MENUS</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
