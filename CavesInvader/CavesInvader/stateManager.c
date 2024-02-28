@@ -32,11 +32,12 @@ void stateInit(Window* _window)
 		musicVolume = 0.0f; // change to 50.f
 		timeScale = 1.f;
 		w.state = sfTrue;
-		fontScore = sfFont_createFromFile("../Ressources/Fonts/full_Pack_2025.ttf");
 
 		PlayASound("test", sfTrue);
 		nbPlayer = NbConnectedControllers();
 		initParticlesSystem();
+		initQuit(_window);
+
 
 		firstload = sfTrue;
 	}
@@ -53,8 +54,8 @@ void stateInit(Window* _window)
 		{
 			initMenu(_window);
 			initOptions(_window);
-			initQuit(_window);
-			// add deinit quit
+			//initQuit(_window);
+			// TODO ADD deinit quit
 		}
 		if (state == GAME)
 		{
@@ -121,6 +122,8 @@ void stateUpdate(Window* _window)
 				{
 					if (isOption)
 						updateOptions(_window);
+					else if (isQuit)
+						updateQuit(_window);
 					else
 					updatePause(_window);	
 				}	
@@ -191,11 +194,16 @@ void stateDisplay(Window* _window)
 			displayGame(_window);
 			if (isPaused)
 			{
-				displayPause(_window);
+				//displayPause(_window);
 				if (isOption)
 				{
 					displayOptions(_window);
 				}
+				else if (isQuit)
+				{
+					displayQuit(_window);
+				}
+				else displayPause(_window);
 			}
 			if (isDialogBox)
 			{
@@ -222,7 +230,7 @@ void stateDeinit(Window* _window)
 {
 	RemoveAllTextureButALL();
 	RemoveAllSoundsButALL();
-	RemoveAllSoundsButALL();
+	//fonts but all
 	if (state == INTRO)
 	{
 

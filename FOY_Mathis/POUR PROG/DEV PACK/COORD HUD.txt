@@ -1,0 +1,39 @@
+{	J1
+FOND_750x183 : x = 0 ; y = 897
+	GAZ_1_106x152 : x = 8 ; y = 20
+	GAZ_2_106x152 : x = 8 ; y = 20
+	CONTEUR GAZ : x = 48 ; y = 99 			POLICE 11
+	LASER_1_53x85 : x = 155 ; y = 89
+	LASER_2_58x91 : x = 152 ; y = 83
+	COOLDOWN LASER : x = 208 ; y = 124 		POLICE 24
+	CONTEUR BOMBE : x = 350 ; y = 124 		POLICE 24
+	VIE_1_55x33 : x = 521 ; y = 135
+	VIE_2_113x33 : x = 521 ; y = 135
+	VIE_3_170x33 : x = 521 ; y = 135
+	VIE_BOUCLIER_173x35 : x = 520 ; y = 134
+	CONTEUR RESPAWN : : x = 612 ; y = 102 		POLICE 24
+}
+
+{	J2
+FOND_758x181 : x = 1172 ; y = 899
+	GAZ_1_106x152 : x = 633 ; y = 18
+	GAZ_2_106x152 : x = 633 ; y = 18
+	CONTEUR GAZ : x = 673 ; y = 97 			POLICE 11
+	LASER_1_53x85 : x = 495 ; y = 85
+	LASER_2_58x91 : x = 493 ; y = 82
+	COOLDOWN LASER : x = 548 ; y = 124 		POLICE 24
+	CONTEUR BOMBE : x = 328 ; y = 123 		POLICE 24
+	VIE_1_55x33 : x = 60 ; y = 133
+	VIE_2_113x33 : x = 60 ; y = 133
+	VIE_3_170x33 : x = 60 ; y = 133
+	VIE_BOUCLIER_173x35 : x = 59 ; y = 132
+	CONTEUR RESPAWN : : x = 170 ; y = 100 		POLICE 24
+}
+
+{	score
+CLIQUEZ_POUR_REJOINDRE_574x56 : x = 1304 ; y = 1003
+DECOMPTE REJOINDRE : x = 1261 ; y = 1014		POLICE 36
+ZONE_MULTIPLI_SCORE_105x92 : x = 908 ; y = 917
+	MULTIPLICATEUR SCORE : x = 9 ; y = 16		POLICE 60
+SCORE : x = 880 ; y = 1029				POLICE 36
+}

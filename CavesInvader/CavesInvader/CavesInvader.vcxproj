@@ -144,6 +144,7 @@
     <ClCompile Include="options.c" />
     <ClCompile Include="particlesSystemManager.c" />
     <ClCompile Include="pause.c" />
+    <ClCompile Include="player.c" />
     <ClCompile Include="quit.c" />
     <ClCompile Include="ressourcesManager.c" />
     <ClCompile Include="soundManager.c" />
@@ -165,6 +166,7 @@
     <ClInclude Include="options.h" />
     <ClInclude Include="particlesSystemManager.h" />
     <ClInclude Include="pause.h" />
+    <ClInclude Include="player.h" />
     <ClInclude Include="quit.h" />
     <ClInclude Include="ressourcesManager.h" />
     <ClInclude Include="soundManager.h" />

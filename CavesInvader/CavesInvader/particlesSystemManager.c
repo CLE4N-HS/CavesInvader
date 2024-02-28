@@ -33,7 +33,7 @@ void AddParticles(sfVector2f _pos, sfVector2f _startScale, sfVector2f _endScale,
 	tmp.circle.startRadius = tmp.circle.radius;
 	tmp.circle.endRadius = 1.f;
 	//tmp.origin = vector2f(tmp.circle.radius, tmp.circle.radius);
-	tmp.sprite.rect;
+	tmp.menuSprite.rect;
 	tmp.angle = _angle;
 	tmp.startAngle = tmp.angle;
 	tmp.angleRotation = tmp.angle;
@@ -114,7 +114,7 @@ void updateParticlesSystem(Window* _window)
 		{
 			if (GP->psTimeToDie > 0)
 			{
-				AddParticles(GP->startPos, GP->startScale, GP->endScale, GP->origin, GP->angle, GP->rotationSpeed, GP->angularDrag, GP->force, GP->endDrag, GP->circle.startColor, GP->circle.endColor, GP->timeToDie, GP->type, GP->name, GP->sprite.rect, GP->renderState, 0.f, GP->psTimeToDie);
+				AddParticles(GP->startPos, GP->startScale, GP->endScale, GP->origin, GP->angle, GP->rotationSpeed, GP->angularDrag, GP->force, GP->endDrag, GP->circle.startColor, GP->circle.endColor, GP->timeToDie, GP->type, GP->name, GP->menuSprite.rect, GP->renderState, 0.f, GP->psTimeToDie);
 			}
 
 			list->erase(&list, i);

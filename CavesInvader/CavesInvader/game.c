@@ -6,18 +6,20 @@
 #include "stateManager.h"
 #include "Gamepad.h"
 #include "pause.h"
-
+#include "player.h"
 #include <Windows.h>
 
-//sfSprite* sprite;
-sfSprite* spBG1;
-sfSprite* spBG2;
+#define NB_BG 8
 
 
+sfSprite* gameSprite;
 
-sfBool gamepadChangePos;
-sfVector2f BG1Pos;
-sfVector2f BG2Pos;
+typedef struct Backgrounds {
+	sfTexture* texture;
+	sfVector2f pos;
+	float speed;
+}Backgrounds;
+Backgrounds bg[NB_BG];
 
 
 
@@ -42,27 +44,67 @@ void initGame(Window* _window)
 	Sound_Onload(GAME);
 	Font_Onload(GAME);
 
-	spBG1 = sfSprite_create();
-	spBG2 = sfSprite_create();
+	gameSprite = sfSprite_create();
+
+	for (int i = 0; i < NB_BG; i++)
+	{
+		switch (i)
+		{
+		case 0:
+			bg[i].texture = GetTexture("gameBg1");
+			bg[i].pos = VECTOR2F_NULL;
+			bg[i].speed = 50.f;
+			break;
+		case 1:
+			bg[i].texture = GetTexture("gameBg2");
+			bg[i].pos = vector2f(2880.f, 0.f);
+			bg[i].speed = 50.f;
+			break;
+		case 2:
+			bg[i].texture = GetTexture("gameCrystals1");
+			bg[i].pos = VECTOR2F_NULL;
+			bg[i].speed = 150.f;
+			break;
+		case 3:
+			bg[i].texture = GetTexture("gameCrystals2");
+			bg[i].pos = vector2f(2880.f, 0.f);
+			bg[i].speed = 150.f;
+			break;
+		case 4:
+			bg[i].texture = GetTexture("gameLightFg1");
+			bg[i].pos = VECTOR2F_NULL;
+			bg[i].speed = 300.f;
+			break;
+		case 5:
+			bg[i].texture = GetTexture("gameLightFg2");
+			bg[i].pos = vector2f(2880.f, 0.f);
+			bg[i].speed = 300.f;
+			break;
+		case 6:
+			bg[i].texture = GetTexture("gameDarkFg1");
+			bg[i].pos = VECTOR2F_NULL;
+			bg[i].speed = 650.f;
+			break;
+		case 7:
+			bg[i].texture = GetTexture("gameDarkFg2");
+			bg[i].pos = vector2f(2880.f, 0.f);
+			bg[i].speed = 650.f;
+			break;
+		default:
+			break;
+		}
+	}
+
 	
-	sfSprite_setTexture(spBG1, GetTexture("BG1"), sfTrue);
-	sfSprite_setTexture(spBG2, GetTexture("BG2"), sfTrue);
 
-	sfSprite_setPosition(spBG2, vector2f(0.0f, -1080.0f));
-	
-
-
-	sfVector3f ambientLight = { 0.1f, 0.1f, 0.3f };
-	
-	BG1Pos = vector2f(0.0f, 0.0f);
-	BG2Pos = vector2f(0.0f, -1080.0f);
-
-	SetViewPosition(mainView, vector2f(960.f, 540.f));
+	SetViewPosition(mainView, vector2f(mainView->defaultVideoMode.x / 2.0f, mainView->defaultVideoMode.y / 2.0f));
 	
 	
 	GamepadDetection();
 
-	//Sleep(2000); // A enlever juste pour le test Thread
+	//Sleep(2000); // to remove A enlever juste pour le test Thread
+
+	initPlayer(_window);
 
 	w.state = sfTrue;
 
@@ -70,61 +112,48 @@ void initGame(Window* _window)
 
 void updateGame(Window* _window)
 {
-		timer += getDeltaTime();
-		
-		for (int i = 0; i < /*8*/nbPlayer; i++)
-		{
-			if (Gamepad_isButtonPressed(i, OPTION) && timer > 0.2f)
-			{
-				togglePause();
-				timer = 0.0f;
-			}
+	float dt = getDeltaTime();
+	timer += dt;
+
+
+	if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) && timer > 0.4f) {
+		timer = 0.f;
+		togglePause();
+	}
+
+
+
+	for (int i = 0; i < NB_BG; i++)
+	{
+		bg[i].pos.x -= bg[i].speed * dt;
+
+		if (bg[i].pos.x <= -2880.f) {
+			bg[i].pos.x += 5760.f;
 		}
+	}
 
-		if (isKeyboardOrControllerButtonPressed(sfKeyEscape, SELECT_XBOX) && timer > 0.2f)
-		{
-			togglePause();
-			timer = 0.0f;
-		}
-
-		if (sfKeyboard_isKeyPressed(sfKeyA)) {
-			PlayASound("tmpMusic", sfTrue);
-		}
-		if (sfKeyboard_isKeyPressed(sfKeyZ)) {
-			PlayASound("tmpSound", sfFalse);
-		}
-		if (sfKeyboard_isKeyPressed(sfKeyE)) {
-			PlayASound("tmpSound2", sfTrue);
-		}
-
-
-		gamepadChangePos = sfFalse;
-
-
-		BG1Pos.y = BG1Pos.y + 100.f * getDeltaTime();
-		BG2Pos.y = BG2Pos.y + 100.f * getDeltaTime();
-		if (BG1Pos.y >= 1080.0f)
-			BG1Pos.y = BG2Pos.y - 1080.0f;
-		if (BG2Pos.y >= 1080.0f)
-			BG2Pos.y = BG1Pos.y - 1080.0f;
-
-		sfSprite_setPosition(spBG1, BG1Pos);
-		sfSprite_setPosition(spBG2, BG2Pos);
 	
+	updatePlayer(_window);
 }
 
 void displayGame(Window* _window)
 {
-	sfRenderTexture_drawSprite(_window->renderTexture, spBG1, NULL);
-	
-	sfRenderTexture_drawSprite(_window->renderTexture, spBG2, NULL);
+	for (int i = 0; i < NB_BG; i++)
+	{
+		sfSprite_setTexture(gameSprite, bg[i].texture, sfTrue);
+		sfSprite_setPosition(gameSprite, bg[i].pos);
+		sfRenderTexture_drawSprite(_window->renderTexture, gameSprite, NULL);
+	}
+
+
+	displayPlayer(_window);
 
 }
 
 void deinitGame()
 {
 	deinitPause();
-	sfSprite_destroy(spBG1);
-	sfSprite_destroy(spBG2);
-	RemoveAllTextureButALL();
+	deinitPlayer();
+	sfSprite_destroy(gameSprite);
+	//RemoveAllTextureButALL();
 }

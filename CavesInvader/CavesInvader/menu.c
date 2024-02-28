@@ -5,18 +5,29 @@
 #include "dialogBox.h"
 #include "particlesSystemManager.h"
 
-sfFont* venture3D;
 
-sfText* Play;
-sfText* Editor;
-sfText* Options;
-sfText* Quit;
-
-sfTexture* texture;
-sfSprite* sprite;
-
-int menuSelection;
+typedef enum MenuChoice {
+	NOCHOICE_MENU = -1,
+	PLAY_MENU,
+	LEADERBOARD_MENU,
+	COMMANDS_MENU,
+	CREDITS_MENU,
+	OPTIONS_MENU,
+	QUIT_MENU
+}MenuChoice;
 MenuChoice choiceMenu;
+
+
+sfSprite* menuSprite;
+
+sfTexture* menuBgTexture;
+sfTexture* menuBoxTexture;
+sfTexture* menuHoverBoxTexture;
+sfTexture* menuMainTexture;
+
+float timer;
+float choiceTimer;
+
 
 MenuChoice changeChoiceMenu(sfKeyCode _key)
 {
@@ -26,7 +37,7 @@ MenuChoice changeChoiceMenu(sfKeyCode _key)
 		case NOCHOICE_MENU: return PLAY_MENU;
 		case LEADERBOARD_MENU: return PLAY_MENU;
 		case COMMANDS_MENU: return PLAY_MENU;
-		case OPTIONS_MENU: return LEADERBOARD_MENU;
+		case OPTIONS_MENU: return PLAY_MENU;
 		case CREDITS_MENU: return LEADERBOARD_MENU;
 		case QUIT_MENU: return COMMANDS_MENU;
 		default: break;
@@ -36,7 +47,7 @@ MenuChoice changeChoiceMenu(sfKeyCode _key)
 		switch (choiceMenu)
 		{
 		case NOCHOICE_MENU: return PLAY_MENU;
-		case PLAY_MENU: return LEADERBOARD_MENU;
+		case PLAY_MENU: return OPTIONS_MENU;
 		case LEADERBOARD_MENU: return OPTIONS_MENU;
 		case COMMANDS_MENU: return OPTIONS_MENU;
 		case OPTIONS_MENU: return CREDITS_MENU;
@@ -73,47 +84,30 @@ MenuChoice changeChoiceMenu(sfKeyCode _key)
 	return choiceMenu;
 }
 
-
 void initMenu(Window* _window)
 {
 	Texture_Onload(MENU);
 
-	venture3D = sfFont_createFromFile("../Ressources/Fonts/3Dventure.ttf");
-	sprite = sfSprite_create();
+	menuSprite = sfSprite_create();
+
+	menuBgTexture = GetTexture("menuBg");
+	menuBoxTexture = GetTexture("menuBox");
+	menuHoverBoxTexture = GetTexture("menuHoverBox");
+	menuMainTexture = GetTexture("menuMain");
+
 
 	SetViewPosition(mainView, vector2f(mainView->defaultVideoMode.x / 2.0f, mainView->defaultVideoMode.y / 2.0f));
 
-	Play = sfText_create();
-	Editor = sfText_create();
-	Options = sfText_create();
-	Quit = sfText_create();
-	sfText_setFont(Play, venture3D);
-	sfText_setFont(Editor, venture3D);
-	sfText_setFont(Options, venture3D);
-	sfText_setFont(Quit, venture3D);
-	sfText_setString(Play, "Play");
-	sfText_setString(Editor, "Editor");
-	sfText_setString(Options, "Options");
-	sfText_setString(Quit, "Quit");
-	sfText_setCharacterSize(Play, 72);
-	sfText_setCharacterSize(Editor, 72);
-	sfText_setCharacterSize(Options, 72);
-	sfText_setCharacterSize(Quit, 72);
-	sfText_setPosition(Play, vector2f(mainView->PosView.x + 100.0f ,mainView->PosView.y - 100.0f));
-	sfText_setPosition(Editor, vector2f(mainView->PosView.x + 200.0f, mainView->PosView.y - 0.0f));
-	sfText_setPosition(Options, vector2f(mainView->PosView.x + 300.0f, mainView->PosView.y + 100.0f));
-	sfText_setPosition(Quit, vector2f(mainView->PosView.x + 200.0f, mainView->PosView.y + 200.0f));
-
 	GamepadDetection();
-	menuSelection = 0;
+
 	choiceMenu = NOCHOICE_MENU;
+
+	resetMenu();
 }
 
 void updateMenu(Window* _window)
 {
-	static float timer = 0.0f;
 	timer += getUnscaledDeltaTime();
-	static float choiceTimer = 0.f;
 	choiceTimer += getUnscaledDeltaTime();
 
 	//// to remove
@@ -126,7 +120,6 @@ void updateMenu(Window* _window)
 	//	CreateParticles(mousePos, vector2f(1.f, 1.f), vector2f(0.0f, 0.0f), vector2f(400.f, 300.f), -45.f, 45.f, 1000.f, 5.f, 100.f, 1000.f, 20.0f, color(0, 255, 255, 255), color(255, 0, 255, 0), 5.f, 10.f, 1, "bg", IntRect(100.f, 100.f, 400.f, 300.f), NULL, 0.f, 1.f, 2.f);
 	//	timer = -0.3f;
 	//}
-	if (middleClick(_window->renderWindow)) _window->isDone = sfTrue;
 	////
 
 	// buttons movement
@@ -148,8 +141,10 @@ void updateMenu(Window* _window)
 			choiceMenu = changeChoiceMenu(sfKeyRight);
 			timer = 0.f;
 		}
-		else if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX)) {
+		else if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)) {
 			timer = 0.f;
+			forceReleasedButton(START_XBOX);
+			forceReleasedButton(B_XBOX);
 			toggleQuit();
 		}
 		// TODO ADD ECHAP = QUIT
@@ -161,16 +156,16 @@ void updateMenu(Window* _window)
 		switch (choiceMenu)
 		{
 		case NOCHOICE_MENU:
+			choiceTimer = 0.f;
 			choiceMenu = changeChoiceMenu(sfKeyEnter);
-			timer = 0.f;
-			choiceTimer = -0.1f;
+			forceReleasedButton(A_XBOX);
 			break;
 		case PLAY_MENU:
-			timer = 0.f;
+			choiceTimer = 0.f;
 			changeState(_window, GAME);
 			break;
 		case QUIT_MENU:
-			timer = 0.f;
+			choiceTimer = 0.f;
 			toggleQuit();
 			break;
 		default:
@@ -274,95 +269,92 @@ void updateMenu(Window* _window)
 void displayMenu(Window* _window)
 {
 	// bg
-	sfSprite_setTexture(sprite, GetTexture("menuBg"), sfTrue);
-	sfSprite_setPosition(sprite, VECTOR2F_NULL);
-	sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+	sfSprite_setTexture(menuSprite, menuBgTexture, sfTrue);
+	sfSprite_setPosition(menuSprite, VECTOR2F_NULL);
+	sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 
 	// Boxes
-	sfTexture* boxTexture = GetTexture("menuBox");
-	sfTexture* hoverBoxTexture = GetTexture("menuHoverBox");
 	for (int i = 0; i < 6; i++)
 	{
 		if (choiceMenu != PLAY_MENU) {
-			sfSprite_setTexture(sprite, boxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(797.f, 666.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(797.f, 666.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		else {
-			sfSprite_setTexture(sprite, hoverBoxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(785.f, 663.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuHoverBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(785.f, 663.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		if (choiceMenu != LEADERBOARD_MENU) {
-			sfSprite_setTexture(sprite, boxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(549.f, 779.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(549.f, 779.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		else {
-			sfSprite_setTexture(sprite, hoverBoxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(537.f, 776.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuHoverBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(537.f, 776.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		if (choiceMenu != COMMANDS_MENU) {
-			sfSprite_setTexture(sprite, boxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(1068.f, 779.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(1068.f, 779.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		else {
-			sfSprite_setTexture(sprite, hoverBoxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(1056.f, 776.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuHoverBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(1056.f, 776.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		if (choiceMenu != OPTIONS_MENU) {
-			sfSprite_setTexture(sprite, boxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(797.f, 894.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(797.f, 894.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		else {
-			sfSprite_setTexture(sprite, hoverBoxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(785.f, 891.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuHoverBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(785.f, 891.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		if (choiceMenu != CREDITS_MENU) {
-			sfSprite_setTexture(sprite, boxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(80.f, 944.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(80.f, 944.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		else {
-			sfSprite_setTexture(sprite, hoverBoxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(68.f, 941.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuHoverBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(68.f, 941.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		if (choiceMenu != QUIT_MENU) {
-			sfSprite_setTexture(sprite, boxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(1523.f, 944.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(1523.f, 944.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 		else {
-			sfSprite_setTexture(sprite, hoverBoxTexture, sfTrue);
-			sfSprite_setPosition(sprite, vector2f(1511.f, 941.f));
-			sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+			sfSprite_setTexture(menuSprite, menuHoverBoxTexture, sfTrue);
+			sfSprite_setPosition(menuSprite, vector2f(1511.f, 941.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 		}
 	}
 
 	// main
-	sfSprite_setTexture(sprite, GetTexture("menuMain"), sfTrue);
-	sfSprite_setPosition(sprite, vector2f(158.f, 0.f));
-	sfRenderTexture_drawSprite(_window->renderTexture, sprite, NULL);
+	sfSprite_setTexture(menuSprite, menuMainTexture, sfTrue);
+	sfSprite_setPosition(menuSprite, vector2f(158.f, 0.f));
+	sfRenderTexture_drawSprite(_window->renderTexture, menuSprite, NULL);
 
-	//sfRenderTexture_drawText(_window->renderTexture, Play, NULL);
-	//sfRenderTexture_drawText(_window->renderTexture, Editor, NULL);
-	//sfRenderTexture_drawText(_window->renderTexture, Options, NULL);
-	//sfRenderTexture_drawText(_window->renderTexture, Quit, NULL);
+
+}
+
+void resetMenu()
+{
+	timer = 0.f;
+	choiceTimer = 0.f;
+
 }
 
 void deinitMenu()
 {
-	
-	sfFont_destroy(venture3D);
-	RemoveAllTextureButALL();
-	sfText_destroy(Play);
-	sfText_destroy(Editor);
-	sfText_destroy(Options);
-	sfText_destroy(Quit);
+	sfSprite_destroy(menuSprite);
+
 }

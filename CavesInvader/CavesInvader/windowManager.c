@@ -96,6 +96,10 @@ void windowUpdate(Window* This)
 		first = sfTrue;
 	}
 
+
+	// TO REMOVE
+	if (middleClick(This->renderWindow)) This->isDone = sfTrue;
+
 	restartClock();
 	while (sfRenderWindow_pollEvent(This->renderWindow, &This->event))
 	{

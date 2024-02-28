@@ -1,14 +1,25 @@
 [all]
 animation loadingAnim ../Ressources/Textures/loading.anim
 music test ../Ressources/Musics/Evergreen.ogg
+single menuBg ../Ressources/Textures/Menu/menuBg.png
+single quit ../Ressources/Textures/Menu/QUIT/quit.png
+single quitBox ../Ressources/Textures/Menu/QUIT/quitBox.png
 [end]
 [menu]
-single menuBg ../Ressources/Textures/Menu/menuBg.png
-single menuMain ../Ressources/Textures/Menu/Main/menuMain.png
-single menuBox ../Ressources/Textures/Menu/Main/menuBox.png
-single menuHoverBox ../Ressources/Textures/Menu/Main/menuHoverBox.png
+single menuMain ../Ressources/Textures/Menu/MAIN/menuMain.png
+single menuBox ../Ressources/Textures/Menu/MAIN/menuBox.png
+single menuHoverBox ../Ressources/Textures/Menu/MAIN/menuHoverBox.png
 [end]
 [game]
-single BG2 ../Ressources/Textures/BG2.png
-single BG1 ../Ressources/Textures/BG1.png
+single gameBg1 ../Ressources/Textures/Game/ENVIRO/gameBg1.png
+single gameBg2 ../Ressources/Textures/Game/ENVIRO/gameBg2.png
+single gameCrystals1 ../Ressources/Textures/Game/ENVIRO/gameCrystals1.png
+single gameCrystals2 ../Ressources/Textures/Game/ENVIRO/gameCrystals2.png
+single gameDarkFg1 ../Ressources/Textures/Game/ENVIRO/gameDarkFg1.png
+single gameDarkFg2 ../Ressources/Textures/Game/ENVIRO/gameDarkFg2.png
+single gameLightFg1 ../Ressources/Textures/Game/ENVIRO/gameLightFg1.png
+single gameLightFg2 ../Ressources/Textures/Game/ENVIRO/gameLightFg2.png
+single player1 ../Ressources/Textures/Game/PLAYER/player1.png
+single player2 ../Ressources/Textures/Game/PLAYER/player2.png
+single playerHit ../Ressources/Textures/Game/PLAYER/playerHit.png
 [end]

@@ -8,3 +8,7 @@ void initQuit(Window* _window);
 void updateQuit(Window* _window);
 
 void displayQuit(Window* _window);
+
+void resetQuit();
+
+void deinitQuit();

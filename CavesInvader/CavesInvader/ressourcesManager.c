@@ -8,7 +8,7 @@ void OnLoad(char* _path)
 	FILE* file;
 	char tmpligne[200];
 	char tmp[50];
-	char tmpname[20], tmppath[50];
+	char tmpname[20], tmppath[70];
 	State state = RTNULL;
 	ResBegin = 0;
 	soundBegin = 0;

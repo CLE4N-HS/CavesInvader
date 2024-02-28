@@ -1,0 +1,22 @@
+logo jeux (avec titre)
+logo studio
+note derniere MAJ
+illustration
+
+
+GAME OVERWIEW
+
+NOM
+TYPE
+VUE
+CAMERA
+NB JOUEUR
+PUBLIQUE
+PEGI
+LANGUE
+PLATEFORME
+CONTROLE
+DEVELOPPEMET : C + CSFML
+pitch
+unique ceilling point
+	

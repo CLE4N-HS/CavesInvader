@@ -5,6 +5,7 @@
 #include "viewManager.h"
 #include "gamepad.h"
 #include "dialogBox.h"
+#include "quit.h"
 
 sfRectangleShape* rshape;
 
@@ -86,7 +87,9 @@ void updatePause(Window* _window)
 			}
 			else if (pauseSelect == 2)
 			{
-				CreateDialogBox(ALERT, "Voulez vous retourner au menu?\n", 1);
+				//CreateDialogBox(ALERT, "Voulez vous retourner au menu?\n", 1);
+				toggleQuit();
+				resetQuit();
 			}
 
 			timer = 0.0f;

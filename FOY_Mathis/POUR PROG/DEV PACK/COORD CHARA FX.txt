@@ -1,0 +1,38 @@
+{	(par rapport au joueur)
+	JOUEUR_TOUCHER_240x133 : x = 35 ; y = 2
+	BOMBE_J1_77x76 : x = 132 ; y = 23
+	BOMBE_J2_75x75 : x = 132 ; y = 23
+	TIR_PRINCIPAL_CHARGER_56x31 : x = 185 ; y = 54
+		IMPACT_TIR_JOUEUR_69x59 : x = 51 ; y = 16		ORIGINE : x = 38 ; y = 29
+	TIR_PRINCIPAL_23x13 : x = 240 ; y = 64
+		IMPACT_TIR_JOUEUR_69x59 : x = 18 ; y = 6		ORIGINE : x = 38 ; y = 29
+	LASER_3_437x28 : x = 221 ; y = 55
+		LASER_2_437x28 : x = 417 ; y = 0
+			LASER_1_437x28 : x = 417 ; y = 0
+	PARTICULES LANCE-FLAMME : x = 235 ; y = 61
+	PARTICULES TRAINEE JOUEUR : x = 31 ; y = 42
+	PARTICULE_TIRS_JOUEURS_7x6 : x = 265 ; y = 69
+}
+
+{	(par rapport aux items)
+	ITEM_153x159 : x = 40 ; y = 39			ORIGINE : x = 75 ; y = 78
+}
+
+{ 	(par rapport a son mob respectif)
+	MORT_MOB_1_166x114 : x = 0 ; y = 0
+
+	MORT_MOB_1.2_255x175 : x = 0 ; y = 0
+	PARTICULE EXPLOSION MOB 1.2 : x = 78 ; y = 58
+
+	MORT_MOB_2_188x256 : x = 0 ; y = 0
+	TIR_MOB_2_33x23 : x = 1 ; y = 112
+	PARTICULE TIR MOB 2.2 : x = 5 ; y = 120
+
+	MORT_MOB_2.2_271x367 : x = 0 ; y = 0
+	TIR_MOB_2.2_52x36 : x = 3 ; y = 161
+	PARTICULE TIR MOB 2.2 : x = 7 ; y = 176
+}
+
+{
+EXPLOSION_898x798 : x = -413 ; y = -363
+}
