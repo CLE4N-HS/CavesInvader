@@ -1,0 +1,59 @@
+﻿  customMath.c
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\customMath.c(158,84): warning C4244: 'fonction' : conversion de 'double' en 'float', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\customMath.c(220,13): warning C4101: 'contactPoint' : variable locale non référencée
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\customMath.c(263,8): warning C4305: 'initialisation' : troncation de 'long' à 'float'
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\customMath.c(300,8): warning C4305: 'initialisation' : troncation de 'long' à 'float'
+  dialogBox.c
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(185,77): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(185,84): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(185,91): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(185,98): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(187,52): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(187,59): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(187,66): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(187,73): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(201,78): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(201,85): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(201,92): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(201,99): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(203,53): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(203,60): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(203,67): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\dialogBox.c(203,74): warning C4244: 'fonction' : conversion de 'double' en 'sfUint8', perte possible de données
+  fontManager.c
+  game.c
+  gamepad.c
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\gamepad.c(16,29): warning C4101: 'joyid' : variable locale non référencée
+  gamepadx.c
+  main.c
+  menu.c
+  options.c
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\options.c(123,31): warning C4018: '<' : incompatibilité signed/unsigned
+  particlesSystemManager.c
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\particlesSystemManager.c(69,17): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\particlesSystemManager.c(70,17): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\particlesSystemManager.c(71,21): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\particlesSystemManager.c(72,23): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\particlesSystemManager.c(100,92): warning C4244: 'fonction' : conversion de 'double' en 'float', perte possible de données
+  pause.c
+  player.c
+  quit.c
+  ressourcesManager.c
+  soundManager.c
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\soundManager.c(164,29): warning C4133: 'fonction' : types incompatibles - de 'sfMusic *' à 'sfSound *'
+  stateManager.c
+  textureManager.c
+  tools.c
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\tools.c(11,8): warning C4244: 'fonction' : conversion de 'time_t' en 'unsigned int', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\tools.c(93,25): warning C4244: '=' : conversion de 'float' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\tools.c(94,25): warning C4244: '=' : conversion de 'float' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\tools.c(95,25): warning C4244: '=' : conversion de 'float' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\tools.c(96,25): warning C4244: '=' : conversion de 'float' en 'sfUint8', perte possible de données
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\tools.c(125,71): warning C4013: 'getView' non défini(e) ; extern retournant int pris par défaut
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\tools.c(125,71): warning C4047: 'fonction' : les niveaux d'indirection de 'const sfView *' et de 'int' sont différents
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\tools.c(125,71): warning C4024: 'sfRenderWindow_mapPixelToCoords' : types différents pour le paramètre formel et réel 3
+  viewManager.c
+  windowManager.c
+C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\CavesInvader\windowManager.c(136,63): warning C4090: '=' : qualificateurs 'const' différents
+  Génération de code en cours...
+  CavesInvader.vcxproj -> C:\Users\Noé\Documents\GitHub\CavesInvader\CavesInvader\Debug\CavesInvader.exe
