@@ -7,7 +7,13 @@
 typedef struct Players {
 	sfTexture* texture;
 	sfVector2f pos;
-	float speed;
+	sfVector2f speed;
+	sfVector2f velocity;
+	sfVector2f forward;
+	sfVector2f previousForward;
+	float drag;
+	sfBool isMoving;
+	float timeMoving;
 }Players;
 Players player[MAX_PLAYER];
 
