@@ -4,22 +4,7 @@
 #include "gamepad.h"
 #include "textureManager.h"
 
-typedef struct Players {
-	sfTexture* texture;
-	sfVector2f pos;
-	sfVector2f speed;
-	sfVector2f velocity;
-	sfVector2f forward;
-	sfVector2f previousForward;
-	float drag;
-	float bulletTimer;
-	sfBool isMoving;
-	float timeMoving;
-	float anothertimer;
-	sfBool wasalreadymovingtbh;
-	sfBool wasnt;
-}Players;
-Players player[MAX_PLAYER];
+
 
 
 
@@ -30,3 +15,11 @@ void updatePlayer(Window* _window);
 void displayPlayer(Window* _window);
 
 void deinitPlayer();
+
+/// <summary>
+/// Gets the closest player position from a world position
+/// </summary>
+/// <param name="_pos">The world position away from players</param>
+/// <returns>The world position of the closest player</returns>
+sfVector2f getClosestPlayerPos(sfVector2f _pos);
+

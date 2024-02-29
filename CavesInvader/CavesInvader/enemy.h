@@ -4,25 +4,19 @@
 #include "stateManager.h"
 
 typedef enum enemyType {
-	MOSQUITO,
-	ENRAGED_MOSQUITO,
+	VENGELFY,
+	ENRAGED_VENGEFLY,
+	HOPPER,
+	ENRAGED_HOPPER,
+	TAMER
+}enemyType;
 
 
-};
-
-
-typedef struct Enemies {
-	sfIntRect rect;
-	sfVector2f pos;
-	sfVector2f velocity;
-	float speed;
-	int life;
-}Enemies;
 
 
 void initEnemy(Window* _window);
 
-void createEnemy();
+void createEnemy(enemyType _type);
 
 void updateEnemy(Window* _window);
 

@@ -41,16 +41,17 @@ void createPlayerBullets(bulletType _type, bulletId _id, sfVector2f _pos)
 	sfIntRect rect = IntRect(0,0,0,0);
 	sfVector2f velocity = VECTOR2F_NULL;
 	bulletId id = PLAYER_ID_BULLET;
+	//vector2f(156.f, 48.f) playerOrigin 
 	switch (_type)
 	{
 	case PLAYER_BASIC_BULLET:
-		pos = AddVectors(_pos, vector2f(240.f, 64.f));
+		pos = AddVectors(_pos, vector2f(184.f, 16.f)); // vector2f(240.f, 64.f)
 		rect = IntRect(0, 2452, 23, 13);
 		velocity = vector2f(800.f, 0.f);
 		id = PLAYER_ID_BULLET;
 		break;
 	case PLAYER_CHARGED_BULLET:
-		pos = AddVectors(_pos, vector2f(185.f, 54.f));
+		pos = AddVectors(_pos, vector2f(29.f, 6.f)); // vector2f(185.f, 54.f)
 		rect = IntRect(0, 2407, 56, 31);
 		velocity = vector2f(1200.f, 0.f);
 		id = PLAYER_ID_BULLET;

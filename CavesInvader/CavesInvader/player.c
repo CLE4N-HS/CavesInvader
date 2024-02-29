@@ -3,6 +3,24 @@
 #include "gamepadx.h"
 #include "bullets.h"
 
+typedef struct Players {
+	sfTexture* texture;
+	sfVector2f pos;
+	sfVector2f origin;
+	sfVector2f speed;
+	sfVector2f velocity;
+	sfVector2f forward;
+	sfVector2f previousForward;
+	float drag;
+	float bulletTimer;
+	sfBool isMoving;
+	float timeMoving;
+	float anothertimer;
+	sfBool wasalreadymovingtbh;
+	sfBool wasnt;
+}Players;
+Players player[MAX_PLAYER];
+
 sfSprite* playerSprite;
 
 sfTexture* playerHitTexture;
@@ -37,10 +55,13 @@ void initPlayer(Window* _window)
 		player[i].anothertimer = 0.f;
 		player[i].wasalreadymovingtbh = sfFalse;
 		player[i].bulletTimer = 0.f;
+		player[i].origin = vector2f(156.f, 48.f);
 
 		//if (i >= nbPlayer)
 		//	break;
 	}
+
+	sfSprite_setOrigin(playerSprite, player[0].origin);
 }
 
 void updatePlayer(Window* _window)
@@ -246,12 +267,15 @@ void updatePlayer(Window* _window)
 
 		if (isKeyboardOrControllerButtonPressed(sfKeySpace, LB_XBOX) && player[i].bulletTimer > 0.2f) {
 
-			if (player[i].bulletTimer > 2.f)
+			if (player[i].bulletTimer > 2.f) {
 				createPlayerBullets(PLAYER_CHARGED_BULLET, PLAYER_ID_BULLET, player[i].pos);
-			else
+				player[i].bulletTimer = -0.1f;
+			}
+			else {
 				createPlayerBullets(PLAYER_BASIC_BULLET, PLAYER_ID_BULLET, player[i].pos);
+				player[i].bulletTimer = 0.0f;
+			}
 
-			player[i].bulletTimer = 0.f;
 		}
 
 
@@ -443,3 +467,30 @@ void deinitPlayer()
 {
 	sfSprite_destroy(playerSprite);
 }
+
+sfVector2f getClosestPlayerPos(sfVector2f _pos)
+{
+	sfVector2f pos = player[0].pos;
+	if (nbPlayer <= 1)
+		return pos;
+
+	sfVector2f between = CreateVector(pos, _pos);
+	float mag = GetSqrMagnitude(between);
+
+
+	sfVector2f closestPos = pos;
+
+	for (int i = 1; i < nbPlayer; i++)
+	{
+		sfVector2f otherPos = player[i].pos;
+
+		sfVector2f otherBetween = CreateVector(otherPos, _pos);
+		float otherMag = GetSqrMagnitude(otherBetween);
+
+		if (otherMag < mag)
+			closestPos = otherPos;
+	}
+
+	return closestPos;
+}
+
