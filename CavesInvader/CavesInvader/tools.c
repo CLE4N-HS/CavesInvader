@@ -61,10 +61,13 @@ void Animator(sfIntRect* _rect, float* _timer, int _maxFrameX, int _maxFrameY, f
 		_rect->left += _rect->width;
 		if (_rect->left >= _rect->width * _maxFrameX) {
 			_rect->left = 0;
-			_rect->top += _rect->height;
-			if (_rect->height >= _rect->top * _maxFrameY) {
-				_rect->top = 0;
+			if (_maxFrameY > 0) {
+				_rect->top += _rect->height;
+				if (_rect->height >= _rect->top * _maxFrameY) {
+					_rect->top = 0;
+				}
 			}
+
 		}
 		*_timer = _resetTimer;
 	}

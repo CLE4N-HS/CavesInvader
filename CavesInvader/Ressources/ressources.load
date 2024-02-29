@@ -19,7 +19,10 @@ single gameDarkFg1 ../Ressources/Textures/Game/ENVIRO/gameDarkFg1.png
 single gameDarkFg2 ../Ressources/Textures/Game/ENVIRO/gameDarkFg2.png
 single gameLightFg1 ../Ressources/Textures/Game/ENVIRO/gameLightFg1.png
 single gameLightFg2 ../Ressources/Textures/Game/ENVIRO/gameLightFg2.png
-single player1 ../Ressources/Textures/Game/PLAYER/player1.png
-single player2 ../Ressources/Textures/Game/PLAYER/player2.png
-single playerHit ../Ressources/Textures/Game/PLAYER/playerHit.png
+single player1 ../Ressources/Textures/Game/PLAYERS/player1.png
+single player2 ../Ressources/Textures/Game/PLAYERS/player2.png
+single playerHit ../Ressources/Textures/Game/PLAYERS/playerHit.png
+single enemies ../Ressources/Textures/Game/ENEMIES/enemies.png
+single bullets ../Ressources/Textures/Game/BULLETS/bullets.png
+animation vengeflyAnim ../Ressources/Textures/Game/ENEMIES/vengefly.anim
 [end]
