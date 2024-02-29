@@ -23,4 +23,5 @@ single player1 ../Ressources/Textures/Game/PLAYER/player1.png
 single player2 ../Ressources/Textures/Game/PLAYER/player2.png
 single playerHit ../Ressources/Textures/Game/PLAYER/playerHit.png
 single enemies ../Ressources/Textures/Game/ENEMY/enemies.png
+single bullets ../Ressources/Textures/Game/BULLETS/bullets.png
 [end]

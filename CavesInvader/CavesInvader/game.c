@@ -8,6 +8,7 @@
 #include "pause.h"
 #include "player.h"
 #include "enemy.h"
+#include "bullets.h"
 #include <Windows.h>
 
 #define NB_BG 8
@@ -107,6 +108,7 @@ void initGame(Window* _window)
 
 	initPlayer(_window);
 	initEnemy(_window);
+	initBullets(_window);
 	
 
 	w.state = sfTrue;
@@ -135,7 +137,7 @@ void updateGame(Window* _window)
 		}
 	}
 
-	
+	updateBullets(_window);
 	updatePlayer(_window);
 	updateEnemy(_window);
 }
@@ -151,6 +153,7 @@ void displayGame(Window* _window)
 
 
 	displayEnemy(_window);
+	displayBullets(_window);
 	displayPlayer(_window);
 
 }
@@ -160,6 +163,7 @@ void deinitGame()
 	deinitPause();
 	deinitPlayer();
 	deinitEnemy();
+	deinitBullets();
 	sfSprite_destroy(gameSprite);
 	//RemoveAllTextureButALL();
 }

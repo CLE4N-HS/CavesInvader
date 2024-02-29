@@ -96,6 +96,9 @@
     <ClCompile Include="enemy.c">
       <Filter>Fichiers sources\GAME</Filter>
     </ClCompile>
+    <ClCompile Include="bullets.c">
+      <Filter>Fichiers sources\GAME</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dirent.h">
@@ -159,6 +162,9 @@
       <Filter>Fichiers d%27en-tête\GAME</Filter>
     </ClInclude>
     <ClInclude Include="enemy.h">
+      <Filter>Fichiers d%27en-tête\GAME</Filter>
+    </ClInclude>
+    <ClInclude Include="bullets.h">
       <Filter>Fichiers d%27en-tête\GAME</Filter>
     </ClInclude>
   </ItemGroup>

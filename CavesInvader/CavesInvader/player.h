@@ -12,11 +12,15 @@ typedef struct Players {
 	sfVector2f forward;
 	sfVector2f previousForward;
 	float drag;
+	float bulletTimer;
 	sfBool isMoving;
 	float timeMoving;
 	float anothertimer;
+	sfBool wasalreadymovingtbh;
+	sfBool wasnt;
 }Players;
 Players player[MAX_PLAYER];
+
 
 
 void initPlayer(Window* _window);

@@ -246,7 +246,7 @@ sfBool isKeyboardOrControllerButtonPressed(sfKeyCode _key, gamepadXBox _button)
 
 	for (int i = 0; i < nbPlayer; i++)
 	{
-		if (_button == LB_XBOX || _button == RB_XBOX || _button >= STICKLX_XBOX) {
+		if (/*_button == LB_XBOX || _button == RB_XBOX || */_button >= STICKLX_XBOX) {
 			printf("isKeyboardOrControllerButtonPressed() cannot support sticks or triggers\n");
 			return sfFalse;
 		}

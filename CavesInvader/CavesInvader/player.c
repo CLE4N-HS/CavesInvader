@@ -1,6 +1,7 @@
 #include "player.h"
 #include "customMath.h"
 #include "gamepadx.h"
+#include "bullets.h"
 
 sfSprite* playerSprite;
 
@@ -34,6 +35,8 @@ void initPlayer(Window* _window)
 		player[i].isMoving = sfFalse;
 		player[i].timeMoving = 0.f;
 		player[i].anothertimer = 0.f;
+		player[i].wasalreadymovingtbh = sfFalse;
+		player[i].bulletTimer = 0.f;
 
 		//if (i >= nbPlayer)
 		//	break;
@@ -53,24 +56,26 @@ void updatePlayer(Window* _window)
 
 		player[i].isMoving = sfFalse;
 
+		player[i].forward = VECTOR2F_NULL;
+		player[i].bulletTimer += dt;
+
 		//player[i].velocity = VECTOR2F_NULL;
-		if (gamepadUp < -10.f) {
+		if (gamepadUp < -30.f) {
 			player[i].forward.y -= dt * -gamepadUp;
 			player[i].isMoving = sfTrue;
 		}
-		if (gamepadDown > 10.f) {
+		if (gamepadDown > 30.f) {
 			player[i].forward.y += dt * gamepadDown;
 			player[i].isMoving = sfTrue;
 		}
-		if (gamepadLeft < -10.f) {
+		if (gamepadLeft < -30.f) {
 			player[i].forward.x -= dt * -gamepadLeft;
 			player[i].isMoving = sfTrue;
 		}
-		if (gamepadRight > 10.f) {
+		if (gamepadRight > 30.f) {
 			player[i].forward.x += dt * gamepadLeft;
 			player[i].isMoving = sfTrue;
 		}
-
 
 		//if (player[i].isMoving) {
 		//	player[i].timerMove += dt;
@@ -98,22 +103,22 @@ void updatePlayer(Window* _window)
 
 		if (i == 0)
 		{
-			if (sfKeyboard_isKeyPressed(sfKeyZ)) {
+			if (sfKeyboard_isKeyPressed(sfKeyZ) || Gamepad_isJoystickMoved(0, CROSSY_XBOX) > 30.f) {
 				gamepadUp = -100.f;
 				player[i].forward.y += dt * gamepadUp;
 				player[i].isMoving = sfTrue;
 			}
-			if (sfKeyboard_isKeyPressed(sfKeyS)) {
+			if (sfKeyboard_isKeyPressed(sfKeyS) || Gamepad_isJoystickMoved(0, CROSSY_XBOX) < -30.f) {
 				gamepadDown = 100.f;
 				player[i].forward.y += dt * gamepadDown;
 				player[i].isMoving = sfTrue;
 			}
-			if (sfKeyboard_isKeyPressed(sfKeyQ)) {
+			if (sfKeyboard_isKeyPressed(sfKeyQ) || Gamepad_isJoystickMoved(0, CROSSX_XBOX) < -30.f) {
 				gamepadLeft = -100.f;
 				player[i].forward.x += dt * gamepadLeft;
 				player[i].isMoving = sfTrue;
 			}
-			if (sfKeyboard_isKeyPressed(sfKeyD)) {
+			if (sfKeyboard_isKeyPressed(sfKeyD) || Gamepad_isJoystickMoved(0, CROSSX_XBOX) > 30.f) {
 				gamepadRight = 100.f;
 				player[i].forward.x += dt * gamepadRight;
 				player[i].isMoving = sfTrue;
@@ -146,18 +151,37 @@ void updatePlayer(Window* _window)
 
 
 
-
 		player[i].forward = Normalize(player[i].forward);
+		//printf("%f, %f\n", player[i].forward.x, player[i].forward.y);
 		if (player[i].isMoving) {
 			//player[i].timeMoving += 1.f;
 			player[i].timeMoving += dt;
 			player[i].timeMoving = MIN(player[i].timeMoving, 1.f);
 			player[i].anothertimer += dt;
 			player[i].anothertimer = MIN(player[i].anothertimer, 1.f);
+			player[i].anothertimer = player[i].timeMoving;
 			//
+			if (player[i].wasalreadymovingtbh) {
+				player[i].velocity = VECTOR2F_NULL;
+				//player[i].timeMoving = 0.f;
+				player[i].wasalreadymovingtbh = sfFalse;
+				//player[i].forward = VECTOR2F_NULL;
+			}
+
+
+			player[i].wasnt = sfTrue;
+
 			player[i].previousForward = player[i].forward;
 		}
 		else {
+
+			if (player[i].wasnt) {
+				player[i].wasnt = sfFalse;
+				//player[i].timeMoving = 0.f;
+			}
+
+
+			player[i].wasalreadymovingtbh = sfTrue;
 			player[i].timeMoving -= getDeltaTime();
 			player[i].velocity = LerpVector(VECTOR2F_NULL, player[i].velocity, player[i].timeMoving);
 			
@@ -168,14 +192,14 @@ void updatePlayer(Window* _window)
 		player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 
 		//player[i].velocity = MultiplyVector(player[i].forward, dt * player[i].speed.x * player[i].timeMoving)
-		player[i].velocity = MultiplyVector(player[i].forward, player[i].speed.x * dt * player[i].timeMoving);
+		player[i].velocity = MultiplyVector(player[i].forward, player[i].speed.x * dt * player[i].anothertimer);
 
 		//player[i].velocity.x += gamepadRight * dt * 5.f;
 		//player[i].velocity.y += gamepadDown * dt * 5.f;
 
 		//player[i].velocity = MultiplyVector(player[i].velocity, 1.f / (1.f +  (dt * player[i].drag * 10000.f)
 		//player[i].velocity = AddVectors(player[i].velocity, force);
-		player[i].velocity = MultiplyVector(player[i].velocity, 1.f - dt);
+		//player[i].velocity = MultiplyVector(player[i].velocity, 1.f - dt);
 		// drag is useless now
 		if (player[i].velocity.x < 0.001f && player[i].velocity.x > -0.001f && !player[i].isMoving) {
 			player[i].velocity.x = 0.f;
@@ -211,6 +235,26 @@ void updatePlayer(Window* _window)
 
 		//player[i].pos = vector2f(MAX(player[i].pos.x, 0.f), MAX(player[i].pos.y, 0.f));
 		//player[i].pos = vector2f(MIN(player[i].pos.x, 1920.f - 278.f), MIN(player[i].pos.y, 1080.f - 139.f));
+
+
+
+
+
+
+
+
+
+		if (isKeyboardOrControllerButtonPressed(sfKeySpace, LB_XBOX) && player[i].bulletTimer > 0.2f) {
+
+			if (player[i].bulletTimer > 2.f)
+				createPlayerBullets(PLAYER_CHARGED_BULLET, PLAYER_ID_BULLET, player[i].pos);
+			else
+				createPlayerBullets(PLAYER_BASIC_BULLET, PLAYER_ID_BULLET, player[i].pos);
+
+			player[i].bulletTimer = 0.f;
+		}
+
+
 
 
 		if (nbPlayer <= 1)
