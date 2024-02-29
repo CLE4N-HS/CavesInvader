@@ -1,4 +1,4 @@
-#include "CustomMath.h"
+#include "customMath.h"
 
 sfVector2i vector2i(int _x, int _y)
 {

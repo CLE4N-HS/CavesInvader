@@ -14,6 +14,7 @@ typedef struct Players {
 	float drag;
 	sfBool isMoving;
 	float timeMoving;
+	float anothertimer;
 }Players;
 Players player[MAX_PLAYER];
 

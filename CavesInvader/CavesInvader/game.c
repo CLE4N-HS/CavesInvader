@@ -7,6 +7,7 @@
 #include "Gamepad.h"
 #include "pause.h"
 #include "player.h"
+#include "enemy.h"
 #include <Windows.h>
 
 #define NB_BG 8
@@ -105,6 +106,8 @@ void initGame(Window* _window)
 	//Sleep(2000); // to remove A enlever juste pour le test Thread
 
 	initPlayer(_window);
+	initEnemy(_window);
+	
 
 	w.state = sfTrue;
 
@@ -134,6 +137,7 @@ void updateGame(Window* _window)
 
 	
 	updatePlayer(_window);
+	updateEnemy(_window);
 }
 
 void displayGame(Window* _window)
@@ -146,6 +150,7 @@ void displayGame(Window* _window)
 	}
 
 
+	displayEnemy(_window);
 	displayPlayer(_window);
 
 }
@@ -154,6 +159,7 @@ void deinitGame()
 {
 	deinitPause();
 	deinitPlayer();
+	deinitEnemy();
 	sfSprite_destroy(gameSprite);
 	//RemoveAllTextureButALL();
 }

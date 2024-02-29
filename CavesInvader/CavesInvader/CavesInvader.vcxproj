@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="customMath.c" />
     <ClCompile Include="dialogBox.c" />
+    <ClCompile Include="enemy.c" />
     <ClCompile Include="fontManager.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="gamepad.c" />
@@ -155,9 +156,10 @@
     <ClCompile Include="windowManager.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CustomMath.h" />
+    <ClInclude Include="customMath.h" />
     <ClInclude Include="dialogBox.h" />
     <ClInclude Include="dirent.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="fontManager.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gamepad.h" />
