@@ -17,8 +17,11 @@ typedef struct playerBullets {
 	bulletType type;
 	bulletId id;
 	sfIntRect rect;
+	sfFloatRect bounds;
 	sfVector2f pos;
+	sfVector2f origin;
 	sfVector2f velocity;
+	int damage;
 }playerBullets;
 
 

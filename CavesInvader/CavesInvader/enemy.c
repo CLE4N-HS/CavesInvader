@@ -1,49 +1,7 @@
 #include "enemy.h"
 #include "textureManager.h"
 #include "player.h"
-#include "List.h"
 
-#define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
-
-typedef enum enemyState {
-	NO_STATE = -1,
-	FLYING,
-	FOCUSING,
-	ATTACKING,
-	DEATH
-}enemyState;
-
-typedef struct vengeflyParameters {
-	float startFocusingPos;
-	float startAttackingMoment;
-	float startAttackingTimer;
-}vengeflyParameters;
-
-
-typedef struct Enemies {
-	enemyType type;
-	enemyState state;
-	enemyState lastState;
-	sfIntRect rect;
-	sfVector2f origin;
-	float animTimer;
-	float timeBetweenFrames;
-	sfVector2f pos;
-	sfVector2f velocity;
-	sfVector2f forward;
-	float speed;
-	int life;
-	int damage;
-
-	union parameters
-	{
-		vengeflyParameters vengefly;
-		int tni;
-	};
-}Enemies;
-
-
-stdList* enemiesList;
 
 sfSprite* enemySprite;
 
@@ -84,6 +42,7 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 	tmp.vengefly.startFocusingPos = _startFocusingPos;
 	tmp.vengefly.startAttackingMoment = _startAttackingMoment;
 	tmp.vengefly.startAttackingTimer = _startAttackingTimer;
+	tmp.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 
 	STD_LIST_PUSHBACK(enemiesList, tmp);
 }
@@ -113,14 +72,26 @@ void createEnemy(enemyType _type)
 	case VENGELFY:
 		//rect = IntRect(0, 411, 167, 124);
 		//origin = vector2f(31.f, 75.f);
-		pos = vector2f(1922.f, rand_float(31.f, 1031.f));
-		forward = Normalize(CreateVector(pos, getClosestPlayerPos(pos)));
+		pos = vector2f(1951.f, rand_float(31.f, 1031.f));
+		//forward = Normalize(CreateVector(pos, getClosestPlayerPos(pos)));
 		//speed = 100.f;
 		//timeBetweenFrames = 0.1f;
-		life = 10;
+		life = 2;
 		damage = 1;
 		startFocusingPos = rand_float(1400.f, 1780.f);
 		startAttackingMoment = rand_float(1.f, 3.f);
+		break;
+	case ENRAGED_VENGEFLY:
+		//*_rect = IntRect(0, 747, 259, 206);
+		//*_origin = vector2f(48.f, 132.f);
+		pos = vector2f(1968.f, rand_float(48.f, 1006.f));
+		//forward = Normalize(CreateVector(pos, getClosestPlayerPos(pos)));
+		//speed = 100.f;
+		//timeBetweenFrames = 0.1f;
+		life = 2;
+		damage = 2;
+		startFocusingPos = rand_float(1400.f, 1780.f);
+		startAttackingMoment = rand_float(0.5f, 1.5f);
 		break;
 	default:
 		break;
@@ -131,8 +102,6 @@ void createEnemy(enemyType _type)
 
 void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f* _origin, float* _animTimer, float *_timeBetweenFrames, sfVector2f* _forward, sfVector2f _pos, float* _speed)
 {
-	*_animTimer = 0.f;
-	*_timeBetweenFrames = 0.1f;
 
 	switch (_type)
 	{
@@ -143,18 +112,25 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 		case FLYING:
 			*_rect = IntRect(0, 411, 167, 124);
 			*_origin = vector2f(31.f, 75.f);
+			*_animTimer = 0.f;
 			*_timeBetweenFrames = 0.1f;
 			*_forward = vector2f(-1.f, 0.f);
 			*_speed = 100.f;
 			break;
 		case FOCUSING:
-			*_rect = IntRect(0, 535, 166, 114);
-			*_origin = vector2f(31.f, 68.f);
+			//*_rect = IntRect(0, 411, 167, 124);
+			//*_origin = vector2f(31.f, 75.f);
+			//*_rect = IntRect(0, 535, 166, 114);
+			//*_origin = vector2f(31.f, 68.f);
+			*_timeBetweenFrames = 0.1f;
 			// no movement
 			break;
 		case ATTACKING:
-			*_rect = IntRect(0, 649, 166, 98);
-			*_origin = vector2f(31.f, 52.f);
+			*_rect = IntRect(0, 535, 166, 114);
+			*_origin = vector2f(31.f, 68.f);
+			//*_rect = IntRect(0, 649, 166, 98);
+			//*_origin = vector2f(31.f, 52.f);
+			*_animTimer = 0.f;
 			*_timeBetweenFrames = 0.1f;
 			*_speed = 700.f;
 			*_forward = Normalize(CreateVector(_pos, getClosestPlayerPos(_pos)));
@@ -162,7 +138,41 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 		default:
 			break;
 		}
+		break;
 
+	case ENRAGED_VENGEFLY:
+
+		switch (_state)
+		{
+		case FLYING:
+			*_rect = IntRect(0, 747, 259, 206);
+			*_origin = vector2f(48.f, 132.f);
+			*_animTimer = 0.f;
+			*_timeBetweenFrames = 0.1f;
+			*_forward = vector2f(-1.f, 0.f);
+			*_speed = 200.f;
+			break;
+		case FOCUSING:
+			//*_rect = IntRect(0, 411, 167, 124);
+			//*_origin = vector2f(31.f, 75.f);
+			//*_rect = IntRect(0, 535, 166, 114);
+			//*_origin = vector2f(31.f, 68.f);
+			*_timeBetweenFrames = 0.1f;
+			// no movement
+			break;
+		case ATTACKING:
+			*_rect = IntRect(0, 953, 257, 177);
+			*_origin = vector2f(48.f, 100.f); //,82.f
+			//*_rect = IntRect(0, 649, 166, 98);
+			//*_origin = vector2f(31.f, 52.f);
+			*_animTimer = 0.f;
+			*_timeBetweenFrames = 0.1f;
+			*_speed = 900.f;
+			*_forward = Normalize(CreateVector(_pos, getClosestPlayerPos(_pos)));
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;
@@ -185,6 +195,10 @@ void updateEnemy(Window* _window)
 		createEnemy(VENGELFY);
 		timer = 0.f;
 	}
+	if (sfKeyboard_isKeyPressed(sfKeyE) && timer > 0.2f) {
+		createEnemy(ENRAGED_VENGEFLY);
+		timer = 0.f;
+	}
 
 
 	for (int i = 0; i < enemiesList->size(enemiesList); i++)
@@ -197,38 +211,39 @@ void updateEnemy(Window* _window)
 
 		sfVector2f tmpVelocity = VECTOR2F_NULL;
 
+		if (GETDATA_ENEMIES->pos.x < (-GETDATA_ENEMIES->rect.width + GETDATA_ENEMIES->origin.y)) {
+			enemiesList->erase(&enemiesList, i);
+			continue;
+		}
+
+		if (GETDATA_ENEMIES->life <= 0) {
+			// death state
+			enemiesList->erase(&enemiesList, i);
+			continue;
+		}
+
 
 		if (tmp.state != tmp.lastState) {
 			setupEnemy(GETDATA_ENEMIES->type, GETDATA_ENEMIES->state, &GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->origin, &GETDATA_ENEMIES->animTimer, &GETDATA_ENEMIES->timeBetweenFrames, &GETDATA_ENEMIES->forward, GETDATA_ENEMIES->pos, &GETDATA_ENEMIES->speed);
 			GETDATA_ENEMIES->lastState = tmp.state;
 		}
 
-		switch (tmp.type)
+		if (tmp.type == VENGELFY || tmp.type == ENRAGED_VENGEFLY)
 		{
-		case VENGELFY:
-
-
-
 			switch (tmp.state)
 			{
 			case FLYING:
 				tmp.pos = GETDATA_ENEMIES->pos;
-				//GETDATA_ENEMIES->forward = vector2f(-1.f, 0.f);
 				tmpVelocity = MultiplyVector(GETDATA_ENEMIES->forward, dt * GETDATA_ENEMIES->speed);
 
-				GETDATA_ENEMIES->pos = AddVectors(GETDATA_ENEMIES->pos, tmpVelocity);
+				GETDATA_ENEMIES->pos = AddVectors(tmp.pos, tmpVelocity);
 
-
-				if (tmp.pos.x < GETDATA_ENEMIES->vengefly.startFocusingPos) {
+				if (tmp.pos.x < GETDATA_ENEMIES->vengefly.startFocusingPos)
 					GETDATA_ENEMIES->state = FOCUSING;
-				}
-
-
 
 				GETDATA_ENEMIES->animTimer += dt;
 
 				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
-
 				// correct origin problems but it was a feature :0
 				// 
 				//int tmpFrameX = GETDATA_ENEMIES->rect.left;
@@ -239,42 +254,48 @@ void updateEnemy(Window* _window)
 				//	GETDATA_ENEMIES->origin = vector2f(31.f, 79.f);
 				//else
 				//	GETDATA_ENEMIES->origin = vector2f(31.f, 74.f);
-
 				break;
-			case FOCUSING:
 
+			case FOCUSING:
 				GETDATA_ENEMIES->vengefly.startAttackingTimer += dt;
-				
-				if (GETDATA_ENEMIES->vengefly.startAttackingTimer > GETDATA_ENEMIES->vengefly.startAttackingMoment) {
+
+				if (GETDATA_ENEMIES->vengefly.startAttackingTimer > GETDATA_ENEMIES->vengefly.startAttackingMoment)
 					GETDATA_ENEMIES->state = ATTACKING;
-				}
+
 
 				GETDATA_ENEMIES->animTimer += dt;
 
-				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 2, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
+				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
+
+				//Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 2, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
 				break;
+
 			case ATTACKING:
 				tmp.pos = GETDATA_ENEMIES->pos;
-				//GETDATA_ENEMIES->forward = Normalize(CreateVector(tmp.pos, getClosestPlayerPos(tmp.pos)));
 				tmpVelocity = MultiplyVector(GETDATA_ENEMIES->forward, dt * GETDATA_ENEMIES->speed);
 
 				GETDATA_ENEMIES->pos = AddVectors(GETDATA_ENEMIES->pos, tmpVelocity);
 
+				if (GETDATA_ENEMIES->rect.left < 50.f) {
+					GETDATA_ENEMIES->animTimer += dt;
 
-				//GETDATA_ENEMIES->animTimer += dt;
+					if (GETDATA_ENEMIES->animTimer > GETDATA_ENEMIES->timeBetweenFrames) {
+						GETDATA_ENEMIES->rect.left += GETDATA_ENEMIES->rect.width;
+					}
+				}
 
-				//Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 1, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
+				//Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 2, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
 				break;
 			default:
 				break;
 			}
-
-
-
-			break;
-		default:
-			break;
 		}
+
+
+			
+
+
+
 
 	}
 }
@@ -287,6 +308,8 @@ void displayEnemy(Window* _window)
 		sfSprite_setTextureRect(enemySprite, GETDATA_ENEMIES->rect);
 		sfSprite_setPosition(enemySprite, GETDATA_ENEMIES->pos);
 		sfRenderTexture_drawSprite(_window->renderTexture, enemySprite, NULL);
+
+		GETDATA_ENEMIES->bounds = sfSprite_getGlobalBounds(enemySprite);
 	}
 }
 

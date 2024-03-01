@@ -9,6 +9,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "bullets.h"
+#include "particlesSystemManager.h"
 #include <Windows.h>
 
 #define NB_BG 8
@@ -106,6 +107,7 @@ void initGame(Window* _window)
 
 	//Sleep(2000); // to remove A enlever juste pour le test Thread
 
+	initParticlesSystem();
 	initPlayer(_window);
 	initEnemy(_window);
 	initBullets(_window);
@@ -134,12 +136,20 @@ void updateGame(Window* _window)
 
 		if (bg[i].pos.x <= -2880.f) {
 			bg[i].pos.x += 5760.f;
+					
+			//if ((i % 2) == 0) {
+			//	bg[i].pos.x = bg[i + 1].pos.x + 2880.f -  bg[i + 1].speed * dt;
+			//}
+			//else {
+			//	bg[i].pos.x = bg[i - 1].pos.x + 2880.f;
+			//}
 		}
 	}
 
 	updateBullets(_window);
 	updatePlayer(_window);
 	updateEnemy(_window);
+	updateParticlesSystem(_window);
 }
 
 void displayGame(Window* _window)
@@ -152,6 +162,7 @@ void displayGame(Window* _window)
 	}
 
 
+	displayParticlesSystem(_window); // the particles will be behind the 2nd player
 	displayEnemy(_window);
 	displayBullets(_window);
 	displayPlayer(_window);

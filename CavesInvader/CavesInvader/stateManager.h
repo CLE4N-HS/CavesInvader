@@ -23,7 +23,7 @@ typedef struct
 
 watcher w;
 
-static State state = GAME;
+static State state = MENU;
 
 static sfBool onePass = sfFalse;
 static sfBool isPaused = sfFalse;

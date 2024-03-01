@@ -39,7 +39,7 @@ struct Particles {
 	union Type
 	{
 		CircleParticles circle;
-		SpriteParticles menuSprite;
+		SpriteParticles sprite;
 	};
 
 	sfVector2f pos;

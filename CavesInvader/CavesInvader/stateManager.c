@@ -35,7 +35,6 @@ void stateInit(Window* _window)
 
 		PlayASound("test", sfTrue);
 		nbPlayer = NbConnectedControllers();
-		initParticlesSystem();
 		initQuit(_window);
 
 
@@ -139,7 +138,6 @@ void stateUpdate(Window* _window)
 		{
 			dialogBoxUpdate(_window);
 		}
-		updateParticlesSystem(_window);
 	}
 	else if (!w.state)
 	{
@@ -214,7 +212,6 @@ void stateDisplay(Window* _window)
 		{
 
 		}
-		displayParticlesSystem(_window);
 	}
 	else if (!w.state)
 	{
