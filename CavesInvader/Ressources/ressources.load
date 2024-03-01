@@ -21,8 +21,10 @@ single gameLightFg1 ../Ressources/Textures/Game/ENVIRO/gameLightFg1.png
 single gameLightFg2 ../Ressources/Textures/Game/ENVIRO/gameLightFg2.png
 single player1 ../Ressources/Textures/Game/PLAYERS/player1.png
 single player2 ../Ressources/Textures/Game/PLAYERS/player2.png
+single flame1 ../Ressources/Textures/Game/PLAYERS/flame1.png
+single flame2 ../Ressources/Textures/Game/PLAYERS/flame2.png
 single playerHit ../Ressources/Textures/Game/PLAYERS/playerHit.png
 single enemies ../Ressources/Textures/Game/ENEMIES/enemies.png
 single bullets ../Ressources/Textures/Game/BULLETS/bullets.png
-animation vengeflyAnim ../Ressources/Textures/Game/ENEMIES/vengefly.anim
+single particles ../Ressources/Textures/Game/PARTICLES/particles.png
 [end]

@@ -2,11 +2,20 @@
 #include "customMath.h"
 #include "gamepadx.h"
 #include "bullets.h"
+#include "particlesSystemManager.h"
+
+typedef struct Flames {
+	sfTexture* texture;
+	sfVector2f pos;
+	sfVector2f origin;
+	sfVector2f scale;
+}Flames;
 
 typedef struct Players {
 	sfTexture* texture;
 	sfVector2f pos;
 	sfVector2f origin;
+	Flames flame;
 	sfVector2f speed;
 	sfVector2f velocity;
 	sfVector2f forward;
@@ -15,11 +24,15 @@ typedef struct Players {
 	float bulletTimer;
 	sfBool isMoving;
 	float timeMoving;
+	float particlesTimer;
+
+	// useless but i guess we never know
 	float anothertimer;
 	sfBool wasalreadymovingtbh;
 	sfBool wasnt;
 }Players;
 Players player[MAX_PLAYER];
+
 
 sfSprite* playerSprite;
 
@@ -38,10 +51,12 @@ void initPlayer(Window* _window)
 		case 0:
 			player[i].texture = GetTexture("player1");
 			player[i].pos = vector2f(300.f, 300.f);
+			player[i].flame.texture = GetTexture("flame1");
 			break;
 		case 1:
 			player[i].texture = GetTexture("player2");
 			player[i].pos = vector2f(300.f, 600.f);
+			player[i].flame.texture = GetTexture("flame2");
 			break;
 		default:
 			break;
@@ -56,6 +71,12 @@ void initPlayer(Window* _window)
 		player[i].wasalreadymovingtbh = sfFalse;
 		player[i].bulletTimer = 0.f;
 		player[i].origin = vector2f(156.f, 48.f);
+		player[i].particlesTimer = 0.f;
+		
+		player[i].flame.pos = VECTOR2F_NULL;
+		player[i].flame.origin = vector2f(72.f, 21.f);
+		player[i].flame.scale = vector2f(1.f, 1.f);
+
 
 		//if (i >= nbPlayer)
 		//	break;
@@ -79,6 +100,7 @@ void updatePlayer(Window* _window)
 
 		player[i].forward = VECTOR2F_NULL;
 		player[i].bulletTimer += dt;
+		player[i].particlesTimer += dt;
 
 		//player[i].velocity = VECTOR2F_NULL;
 		if (gamepadUp < -30.f) {
@@ -212,6 +234,9 @@ void updatePlayer(Window* _window)
 		player[i].timeMoving = MIN(player[i].timeMoving, 1.f);
 		player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 
+		// TODO CLE4N that and don't stop the player but mb add a drag that is more consequent if you don't move
+
+
 		//player[i].velocity = MultiplyVector(player[i].forward, dt * player[i].speed.x * player[i].timeMoving)
 		player[i].velocity = MultiplyVector(player[i].forward, player[i].speed.x * dt * player[i].anothertimer);
 
@@ -230,28 +255,29 @@ void updatePlayer(Window* _window)
 		}
 		player[i].pos = AddVectors(player[i].pos, player[i].velocity);
 
-		if (player[i].pos.x < 0.f) {
-			player[i].pos.x = 0.f;
+
+
+		if (player[i].pos.x < 156.f) {
+			player[i].pos.x = 156.f;
+			player[i].timeMoving -= dt * 2.f;
+		}
+		if (player[i].pos.x > 1829.f) {
+			player[i].pos.x = 1829.f;
 			player[i].timeMoving -= dt * 2.f;
 			player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 		}
-		if (player[i].pos.x > 1642.f) {
-			player[i].pos.x = 1642.f;
+		if (player[i].pos.y < 48.f) {
+			player[i].pos.y = 48.f;
 			player[i].timeMoving -= dt * 2.f;
 			player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 		}
-		if (player[i].pos.y < 0.f) {
-			player[i].pos.y = 0.f;
-			player[i].timeMoving -= dt * 2.f;
-			player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
-		}
-		if (player[i].pos.y > 941.f) {
-			player[i].pos.y = 941.f;
+		if (player[i].pos.y > 990.f) {
+			player[i].pos.y = 990.f;
 			player[i].timeMoving -= dt * 2.f;
 			player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 		}
 
-		printf("%f\n", player[0].timeMoving);
+		//printf("%f\n", player[0].timeMoving);
 		//printf("%f, %f\n", player[0].velocity.x, player[0].velocity.y);
 
 		//player[i].pos = vector2f(MAX(player[i].pos.x, 0.f), MAX(player[i].pos.y, 0.f));
@@ -264,7 +290,7 @@ void updatePlayer(Window* _window)
 
 
 
-
+		// Shots
 		if (isKeyboardOrControllerButtonPressed(sfKeySpace, LB_XBOX) && player[i].bulletTimer > 0.2f) {
 
 			if (player[i].bulletTimer > 2.f) {
@@ -278,8 +304,22 @@ void updatePlayer(Window* _window)
 
 		}
 
+		// Particles
+		if (player[i].particlesTimer > 0.1f) {
+			int random = iRand(0, 1);
+			int randomDirection = iRand(0, 1);
+			float direction;
+			if (randomDirection)
+				direction = 500.f;
+			else
+				direction = -500.f;
+			CreateParticles(SubstractVectors(player[i].pos, vector2f(116.f, 2.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), 160.f, 200.f, direction, 10.f, 100.f, 300.f, 1.f, color(255, 255, 255, 255), color(0, 0, 0, 0), 0.5f, 1.f, 1, "particles", IntRect(0, 17 * random + (34 * i), 19, 17), NULL, 0.f, 0.f, 0.5f);
+			player[i].particlesTimer = 0.f;
+		}
 
-
+		// Flame
+		player[i].flame.pos = AddVectors(player[i].pos, vector2f(-113.f, 1.f));
+		player[i].flame.scale = LerpVector(vector2f(1.0f, 1.0f), vector2f(0.5f, 0.5f), 1.f - player[i].timeMoving);
 
 		if (nbPlayer <= 1)
 			break;
@@ -291,9 +331,9 @@ void updatePlayer(Window* _window)
 	//	float gamepadDown = Gamepad_isJoystickMoved(i, STICKLY);
 	//	float gamepadLeft = Gamepad_isJoystickMoved(i, STICKLX);
 	//	float gamepadRight = Gamepad_isJoystickMoved(i, STICKLX);
-
+	
 	//	player[i].isMoving = sfFalse;
-
+	
 	//	//player[i].velocity = VECTOR2F_NULL;
 	//	if (gamepadUp < -10.f) {
 	//		player[i].velocity.y -= player[i].speed.y * -gamepadUp ;
@@ -454,8 +494,16 @@ void displayPlayer(Window* _window)
 {
 	for (int i = 0; i < MAX_PLAYER; i++)
 	{
+		sfSprite_setTexture(playerSprite, player[i].flame.texture, sfTrue);
+		sfSprite_setPosition(playerSprite, player[i].flame.pos);
+		sfSprite_setOrigin(playerSprite, player[i].flame.origin);
+		sfSprite_setScale(playerSprite, player[i].flame.scale);
+		sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
+
 		sfSprite_setTexture(playerSprite, player[i].texture, sfTrue);
 		sfSprite_setPosition(playerSprite, player[i].pos);
+		sfSprite_setOrigin(playerSprite, player[i].origin);
+		sfSprite_setScale(playerSprite, vector2f(1.f, 1.f));
 		sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
 
 		if (nbPlayer <= 1)

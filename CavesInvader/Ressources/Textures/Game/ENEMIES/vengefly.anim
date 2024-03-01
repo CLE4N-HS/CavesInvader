@@ -1,7 +1,0 @@
-[path]
-../Ressources/Textures/Game/ENEMIES/enemies.png
-[end]
-// Sprite Name | left | top | width | height | Frame | TimeAnim | row
-[config]
-vengelfly	0	0	128	128	3	0.1		0
-[end]
