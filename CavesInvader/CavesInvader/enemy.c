@@ -7,7 +7,7 @@ sfSprite* enemySprite;
 
 sfTexture* enemyTexture;
 
-//sfVector2f tmpPos;
+sfTexture* deadEnemyTexture;
 
 
 void initEnemy(Window* _window)
@@ -17,10 +17,9 @@ void initEnemy(Window* _window)
 	enemySprite = sfSprite_create();
 
 	enemyTexture = GetTexture("enemies");
+	deadEnemyTexture = GetTexture("deadEnemies");
 
 	sfSprite_setTexture(enemySprite, enemyTexture, sfTrue);
-
-	//tmpPos = vector2f(2000.f, rand_float(0.f, 800.f));
 }
 
 void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRect _rect, sfVector2f _origin, float _animTimer, float _timeBetweenFrames, sfVector2f _pos, sfVector2f _velocity, sfVector2f _forward, float _speed, int _life, int _damage, float _startFocusingPos, float _startAttackingMoment, float _startAttackingTimer)
@@ -135,6 +134,13 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 			*_speed = 700.f;
 			*_forward = Normalize(CreateVector(_pos, getClosestPlayerPos(_pos)));
 			break;
+		case DEAD:
+			*_rect = IntRect(0, 0, 166, 114);
+			//*_origin = we'll see;
+			*_animTimer = 0.f;
+			*_timeBetweenFrames = 0.1f;
+			// no movement
+			break;
 		default:
 			break;
 		}
@@ -153,6 +159,7 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 			*_speed = 200.f;
 			break;
 		case FOCUSING:
+			// same as flying
 			//*_rect = IntRect(0, 411, 167, 124);
 			//*_origin = vector2f(31.f, 75.f);
 			//*_rect = IntRect(0, 535, 166, 114);
@@ -169,6 +176,13 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 			*_timeBetweenFrames = 0.1f;
 			*_speed = 900.f;
 			*_forward = Normalize(CreateVector(_pos, getClosestPlayerPos(_pos)));
+			break;
+		case DEAD:
+			*_rect = IntRect(0, 114, 255, 175);
+			//*_origin = we'll see;
+			*_animTimer = 0.f;
+			*_timeBetweenFrames = 0.1f;
+			// no movement
 			break;
 		default:
 			break;
@@ -191,11 +205,11 @@ void updateEnemy(Window* _window)
 	//	tmpPos = vector2f(2000.f, rand_float(0.f, 800.f));
 	//}
 
-	if (sfKeyboard_isKeyPressed(sfKeyA) && timer > 0.2f) {
+	if (isKeyboardOrControllerButtonPressed(sfKeyA, A_XBOX) && timer > 0.2f) {
 		createEnemy(VENGELFY);
 		timer = 0.f;
 	}
-	if (sfKeyboard_isKeyPressed(sfKeyE) && timer > 0.2f) {
+	if (isKeyboardOrControllerButtonPressed(sfKeyE, B_XBOX) && timer > 0.2f) {
 		createEnemy(ENRAGED_VENGEFLY);
 		timer = 0.f;
 	}
@@ -205,9 +219,7 @@ void updateEnemy(Window* _window)
 	{
 		Enemies tmp;
 
-		tmp.type = GETDATA_ENEMIES->type;
-		tmp.state = GETDATA_ENEMIES->state;
-		tmp.lastState = GETDATA_ENEMIES->lastState;
+
 
 		sfVector2f tmpVelocity = VECTOR2F_NULL;
 
@@ -218,10 +230,16 @@ void updateEnemy(Window* _window)
 
 		if (GETDATA_ENEMIES->life <= 0) {
 			// death state
-			enemiesList->erase(&enemiesList, i);
-			continue;
+			//enemiesList->erase(&enemiesList, i);
+			GETDATA_ENEMIES->state = DEAD;
+			//continue;
 		}
 
+
+
+		tmp.type = GETDATA_ENEMIES->type;
+		tmp.state = GETDATA_ENEMIES->state;
+		tmp.lastState = GETDATA_ENEMIES->lastState;
 
 		if (tmp.state != tmp.lastState) {
 			setupEnemy(GETDATA_ENEMIES->type, GETDATA_ENEMIES->state, &GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->origin, &GETDATA_ENEMIES->animTimer, &GETDATA_ENEMIES->timeBetweenFrames, &GETDATA_ENEMIES->forward, GETDATA_ENEMIES->pos, &GETDATA_ENEMIES->speed);
@@ -243,7 +261,7 @@ void updateEnemy(Window* _window)
 
 				GETDATA_ENEMIES->animTimer += dt;
 
-				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
+				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 1, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
 				// correct origin problems but it was a feature :0
 				// 
 				//int tmpFrameX = GETDATA_ENEMIES->rect.left;
@@ -265,13 +283,12 @@ void updateEnemy(Window* _window)
 
 				GETDATA_ENEMIES->animTimer += dt;
 
-				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
+				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 1, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
 
 				//Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 2, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
 				break;
 
 			case ATTACKING:
-				tmp.pos = GETDATA_ENEMIES->pos;
 				tmpVelocity = MultiplyVector(GETDATA_ENEMIES->forward, dt * GETDATA_ENEMIES->speed);
 
 				GETDATA_ENEMIES->pos = AddVectors(GETDATA_ENEMIES->pos, tmpVelocity);
@@ -285,6 +302,25 @@ void updateEnemy(Window* _window)
 				}
 
 				//Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 2, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
+				break;
+			case DEAD:
+				GETDATA_ENEMIES->animTimer += dt;
+
+				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 4, 0, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
+
+				if (tmp.type == VENGELFY) {
+					if (GETDATA_ENEMIES->rect.left > 340) {
+						enemiesList->erase(&enemiesList, i);
+						continue;
+					}
+				}
+				else {
+					if (GETDATA_ENEMIES->rect.left > 520) {
+						enemiesList->erase(&enemiesList, i);
+						continue;
+					}
+				}
+
 				break;
 			default:
 				break;
@@ -304,6 +340,11 @@ void displayEnemy(Window* _window)
 {
 	for (int i = 0; i < enemiesList->size(enemiesList); i++)
 	{
+		if (GETDATA_ENEMIES->life > 0)
+			sfSprite_setTexture(enemySprite, enemyTexture, sfFalse);
+		else
+			sfSprite_setTexture(enemySprite, deadEnemyTexture, sfFalse);
+
 		sfSprite_setOrigin(enemySprite, GETDATA_ENEMIES->origin);
 		sfSprite_setTextureRect(enemySprite, GETDATA_ENEMIES->rect);
 		sfSprite_setPosition(enemySprite, GETDATA_ENEMIES->pos);

@@ -23,3 +23,4 @@ void deinitPlayer();
 /// <returns>The world position of the closest player</returns>
 sfVector2f getClosestPlayerPos(sfVector2f _pos);
 
+sfVector2f getPlayerPos(int _playerId);

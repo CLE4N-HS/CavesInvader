@@ -291,28 +291,46 @@ void updatePlayer(Window* _window)
 
 
 		// Shots
+		// TODO : priority order between shots
 		if (isKeyboardOrControllerButtonPressed(sfKeySpace, LB_XBOX) && player[i].bulletTimer > 0.2f) {
 
 			if (player[i].bulletTimer > 2.f) {
-				createPlayerBullets(PLAYER_CHARGED_BULLET, PLAYER_ID_BULLET, player[i].pos);
+				createPlayerBullets(PLAYER_CHARGED_BULLET, PLAYER_ID_BULLET, i, player[i].pos);
 				player[i].bulletTimer = -0.1f;
 			}
 			else {
-				createPlayerBullets(PLAYER_BASIC_BULLET, PLAYER_ID_BULLET, player[i].pos);
+				createPlayerBullets(PLAYER_BASIC_BULLET, PLAYER_ID_BULLET, i, player[i].pos);
 				player[i].bulletTimer = 0.0f;
 			}
 
 		}
+		// buttons to change
+		else if (isKeyboardOrControllerButtonMoved(sfKeyL, TRIGGER_L2_XBOX, sfFalse, 10.f) && player[i].bulletTimer > 0.2f) { // no timer but 15 seconds condition
+			createPlayerBullets(PLAYER_LASER, PLAYER_ID_BULLET, i, player[i].pos);
+			player[i].bulletTimer = 0.f;
+		}
+		else if (isKeyboardOrControllerButtonPressed(sfKeyM, RB_XBOX) && player[i].bulletTimer > 0.8f) { // no timer but 15 kills condition
+			createPlayerBullets(PLAYER_MINES, PLAYER_ID_BULLET, i, player[i].pos);
+			player[i].bulletTimer = 0.f;
+		}
+		else if (isKeyboardOrControllerButtonMoved(sfKeyF, TRIGGER_R2_XBOX, sfFalse, 10.f) && player[i].bulletTimer > 0.02f) { // and the gauge is not empty
+			int random = iRand(0, 1);
+			int randomDirection = iRand(0, 1);
+			float direction = 300.f;
+			if (randomDirection)
+				direction *= -1;
+			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 2.f, 2.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
+			player[i].bulletTimer = 0.f;
+		}
+
 
 		// Particles
 		if (player[i].particlesTimer > 0.1f) {
 			int random = iRand(0, 1);
 			int randomDirection = iRand(0, 1);
-			float direction;
+			float direction = 500.f;
 			if (randomDirection)
-				direction = 500.f;
-			else
-				direction = -500.f;
+				direction *= -1;
 			CreateParticles(SubstractVectors(player[i].pos, vector2f(116.f, 2.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), 160.f, 200.f, direction, 10.f, 100.f, 300.f, 1.f, color(255, 255, 255, 255), color(0, 0, 0, 0), 0.5f, 1.f, 1, "particles", IntRect(0, 17 * random + (34 * i), 19, 17), NULL, 0.f, 0.f, 0.5f);
 			player[i].particlesTimer = 0.f;
 		}
@@ -542,3 +560,7 @@ sfVector2f getClosestPlayerPos(sfVector2f _pos)
 	return closestPos;
 }
 
+sfVector2f getPlayerPos(int _playerId)
+{
+	return player[_playerId].pos;
+}
