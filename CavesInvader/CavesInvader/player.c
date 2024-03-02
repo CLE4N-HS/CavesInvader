@@ -4,6 +4,8 @@
 #include "bullets.h"
 #include "particlesSystemManager.h"
 
+#define PLAYER_SPEED 500.f
+
 typedef struct Flames {
 	sfTexture* texture;
 	sfVector2f pos;
@@ -16,7 +18,7 @@ typedef struct Players {
 	sfVector2f pos;
 	sfVector2f origin;
 	Flames flame;
-	sfVector2f speed;
+	float speed;
 	sfVector2f velocity;
 	sfVector2f forward;
 	sfVector2f previousForward;
@@ -61,7 +63,7 @@ void initPlayer(Window* _window)
 		default:
 			break;
 		}
-		player[i].speed = vector2f(600.f, 600.f);
+		player[i].speed = PLAYER_SPEED;
 		player[i].velocity = VECTOR2F_NULL;
 		player[i].forward = VECTOR2F_NULL;
 		player[i].drag = 1.f;
@@ -103,19 +105,19 @@ void updatePlayer(Window* _window)
 		player[i].particlesTimer += dt;
 
 		//player[i].velocity = VECTOR2F_NULL;
-		if (gamepadUp < -30.f) {
+		if (gamepadUp < -15.f) {
 			player[i].forward.y -= dt * -gamepadUp;
 			player[i].isMoving = sfTrue;
 		}
-		if (gamepadDown > 30.f) {
+		if (gamepadDown > 15.f) {
 			player[i].forward.y += dt * gamepadDown;
 			player[i].isMoving = sfTrue;
 		}
-		if (gamepadLeft < -30.f) {
+		if (gamepadLeft < -15.f) {
 			player[i].forward.x -= dt * -gamepadLeft;
 			player[i].isMoving = sfTrue;
 		}
-		if (gamepadRight > 30.f) {
+		if (gamepadRight > 15.f) {
 			player[i].forward.x += dt * gamepadLeft;
 			player[i].isMoving = sfTrue;
 		}
@@ -170,23 +172,23 @@ void updatePlayer(Window* _window)
 		else if (i == 1)
 		{
 			if (sfKeyboard_isKeyPressed(sfKeyUp)) {
-				player[i].velocity.y -= player[i].speed.y * dt;
+				player[i].velocity.y -= player[i].speed * dt;
 				//player[i].velocity = AddVectors(player[i].velocity, MultiplyVector(Normalize(player[i].speed)
 				player[i].isMoving = sfTrue;
 				gamepadDown = -100.f;
 			}
 			if (sfKeyboard_isKeyPressed(sfKeyDown)) {
-				player[i].velocity.y += player[i].speed.y * dt;
+				player[i].velocity.y += player[i].speed * dt;
 				player[i].isMoving = sfTrue;
 				gamepadDown = 100.f;
 			}
 			if (sfKeyboard_isKeyPressed(sfKeyLeft)) {
-				player[i].velocity.x -= player[i].speed.x * dt;
+				player[i].velocity.x -= player[i].speed * dt;
 				player[i].isMoving = sfTrue;
 				gamepadRight = -100.f;
 			}
 			if (sfKeyboard_isKeyPressed(sfKeyRight)) {
-				player[i].velocity.x += player[i].speed.x * dt;
+				player[i].velocity.x += player[i].speed * dt;
 				player[i].isMoving = sfTrue;
 				gamepadRight = 100.f;
 			}
@@ -238,7 +240,7 @@ void updatePlayer(Window* _window)
 
 
 		//player[i].velocity = MultiplyVector(player[i].forward, dt * player[i].speed.x * player[i].timeMoving)
-		player[i].velocity = MultiplyVector(player[i].forward, player[i].speed.x * dt * player[i].anothertimer);
+		player[i].velocity = MultiplyVector(player[i].forward, player[i].speed * player[i].anothertimer);
 
 		//player[i].velocity.x += gamepadRight * dt * 5.f;
 		//player[i].velocity.y += gamepadDown * dt * 5.f;
@@ -253,7 +255,7 @@ void updatePlayer(Window* _window)
 		if (player[i].velocity.y < 0.001f && player[i].velocity.y > -0.001f && !player[i].isMoving) {
 			player[i].velocity.y = 0.f;
 		}
-		player[i].pos = AddVectors(player[i].pos, player[i].velocity);
+		player[i].pos = AddVectors(player[i].pos, MultiplyVector(player[i].velocity, dt));
 
 
 
@@ -319,7 +321,9 @@ void updatePlayer(Window* _window)
 			float direction = 300.f;
 			if (randomDirection)
 				direction *= -1;
-			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 2.f, 2.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
+			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 2.f, 2.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
+			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 1.f, 1.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
+			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 15.f), 25.f + (player[i].velocity.y / 15.f), direction, 10.f, 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 25.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
 			player[i].bulletTimer = 0.f;
 		}
 
