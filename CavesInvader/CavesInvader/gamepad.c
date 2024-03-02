@@ -2,7 +2,7 @@
 #include "stateManager.h"
 #include "dialogBox.h"
 
-#define IS_BUTTON (_stick == LB_XBOX || _stick == RB_XBOX) || _stick >= STICKLX_XBOX && _stick < TRIGGER_R2_XBOX
+#define IS_BUTTON (_stick == LB_XBOX || _stick == RB_XBOX) || _stick >= STICKLX_XBOX
 
 void GamepadDetection()
 {
@@ -246,7 +246,7 @@ sfBool isKeyboardOrControllerButtonPressed(sfKeyCode _key, gamepadXBox _button)
 
 	for (int i = 0; i < nbPlayer; i++)
 	{
-		if (/*_button == LB_XBOX || _button == RB_XBOX || */_button >= STICKLX_XBOX) {
+		if (_button >= STICKLX_XBOX && _button != TRIGGER_L2_XBOX && _button != TRIGGER_R2_XBOX) {
 			printf("isKeyboardOrControllerButtonPressed() cannot support sticks or triggers\n");
 			return sfFalse;
 		}

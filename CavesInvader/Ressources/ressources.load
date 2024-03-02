@@ -25,6 +25,7 @@ single flame1 ../Ressources/Textures/Game/PLAYERS/flame1.png
 single flame2 ../Ressources/Textures/Game/PLAYERS/flame2.png
 single playerHit ../Ressources/Textures/Game/PLAYERS/playerHit.png
 single enemies ../Ressources/Textures/Game/ENEMIES/enemies.png
+single deadEnemies ../Ressources/Textures/Game/ENEMIES/deadEnemies.png
 single bullets ../Ressources/Textures/Game/BULLETS/bullets.png
 single particles ../Ressources/Textures/Game/PARTICLES/particles.png
 [end]

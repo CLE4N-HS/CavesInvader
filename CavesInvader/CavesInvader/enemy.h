@@ -20,7 +20,7 @@ typedef enum enemyState {
 	FLYING,
 	FOCUSING,
 	ATTACKING,
-	DEATH
+	DEAD
 }enemyState;
 
 typedef struct vengeflyParameters {
