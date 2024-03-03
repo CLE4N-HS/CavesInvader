@@ -29,6 +29,7 @@ typedef struct playerBullets {
 	float fDamagePerSecond;
 	float angle;
 	float rotationSpeed;
+	float animTimer;
 }playerBullets;
 
 

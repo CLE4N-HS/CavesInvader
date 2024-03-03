@@ -200,11 +200,6 @@ void updateEnemy(Window* _window)
 	static float timer = 0.f;
 	timer += dt;
 
-	//tmpPos.x -= dt * 1000.f;
-	//if (tmpPos.x < -500.f) {
-	//	tmpPos = vector2f(2000.f, rand_float(0.f, 800.f));
-	//}
-
 	if (isKeyboardOrControllerButtonPressed(sfKeyA, A_XBOX) && timer > 0.2f) {
 		createEnemy(VENGELFY);
 		timer = 0.f;
@@ -228,19 +223,19 @@ void updateEnemy(Window* _window)
 			continue;
 		}
 
-		if (GETDATA_ENEMIES->life <= 0) {
-			GETDATA_ENEMIES->state = DEAD;
-		}
-
 		// players collisions
 		if (GETDATA_ENEMIES->state != DEAD) {
 			for (int j = 0; j < nbPlayer; j++)
 			{
 				if (sfFloatRect_intersects(&GETDATA_ENEMIES->bounds, &player[j].bounds, NULL)) {
 					player[j].life -= GETDATA_ENEMIES->damage;
-					GETDATA_ENEMIES->state = DEAD;
+					GETDATA_ENEMIES->life = 0;
 				}
 			}
+		}
+
+		if (GETDATA_ENEMIES->life <= 0) {
+			GETDATA_ENEMIES->state = DEAD;
 		}
 
 		tmp.type = GETDATA_ENEMIES->type;

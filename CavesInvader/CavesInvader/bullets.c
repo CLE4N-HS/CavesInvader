@@ -29,7 +29,7 @@ void initBullets(Window* _window)
 
 }
 
-void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _velocity, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed)
+void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _velocity, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer)
 {
 	playerBullets tmp;
 	tmp.type = _type;
@@ -43,6 +43,7 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	tmp.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 	tmp.angle = _angle;
 	tmp.rotationSpeed = _rotationSpeed;
+	tmp.animTimer = _animTimer;
 	playerBulletsList->push_back(&playerBulletsList, &tmp);
 }
 
@@ -56,6 +57,7 @@ void createPlayerBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2
 	float fDamagePerSecond = 0.f;
 	float angle = 0.f;
 	float rotationSpeed = 0.f;
+	float animTimer = 0.f;
 	//vector2f(156.f, 48.f) playerOrigin 
 	switch (_type)
 	{
@@ -63,7 +65,7 @@ void createPlayerBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2
 		origin = vector2f(0.f, 6.f);
 		pos = AddVectors(_pos, vector2f(50.f, 23.f));
 		rect = IntRect(0, 2452, 23, 13);
-		velocity = vector2f(800.f, 0.f);
+		velocity = vector2f(800.f, 0.f);  // TODO : check the nbBullet the player can shot to adjust the velocity
 		damage = 1;
 		break;
 	case PLAYER_CHARGED_BULLET:
@@ -89,7 +91,7 @@ void createPlayerBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2
 			origin = vector2f(39.f, 41.f);
 			rect = IntRect(0, 2257, 77, 75); // IntRect(0, 2256, 77, 76)
 		}
-		velocity = vector2f(500.f, 0.f); // TODO : check the nbBullet the player can shot to adjust the velocity
+		velocity = vector2f(500.f, 0.f);
 		damage = 5;
 		rotationSpeed = 100.f;
 		break;
@@ -100,7 +102,7 @@ void createPlayerBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2
 	default:
 		break;
 	}
-	addBullets(_type, _id, _ownerId, pos, origin, rect, velocity, damage, fDamagePerSecond, angle, rotationSpeed);
+	addBullets(_type, _id, _ownerId, pos, origin, rect, velocity, damage, fDamagePerSecond, angle, rotationSpeed, animTimer);
 
 }
 
@@ -134,9 +136,32 @@ void updateBullets(Window* _window)
 		}
 		else if (tmp.type == PLAYER_MINES)
 		{
-			GETDATA_PLAYERBULLETS->pos = AddVectors(GETDATA_PLAYERBULLETS->pos, MultiplyVector(GETDATA_PLAYERBULLETS->velocity, dt));
+			if (GETDATA_PLAYERBULLETS->rect.top < 2460) {
+				GETDATA_PLAYERBULLETS->pos = AddVectors(GETDATA_PLAYERBULLETS->pos, MultiplyVector(GETDATA_PLAYERBULLETS->velocity, dt));
+				GETDATA_PLAYERBULLETS->angle += GETDATA_PLAYERBULLETS->rotationSpeed * dt;
+			}
+			else {
+				GETDATA_PLAYERBULLETS->angle = 0.f;
+				GETDATA_PLAYERBULLETS->animTimer += dt;
+
+				if (GETDATA_PLAYERBULLETS->animTimer > 0.1f) {
+
+					GETDATA_PLAYERBULLETS->animTimer = 0.f;
+
+					GETDATA_PLAYERBULLETS->rect.left += GETDATA_PLAYERBULLETS->rect.width;
+
+					if (GETDATA_PLAYERBULLETS->rect.left > 6300) {
+						if (GETDATA_PLAYERBULLETS->rect.top < 3600) {
+							GETDATA_PLAYERBULLETS->rect.top += GETDATA_PLAYERBULLETS->rect.height;
+						}
+						else {
+							playerBulletsList->erase(&playerBulletsList, i);
+							continue;
+						}
+					}
+				}
+			}
 			
-			GETDATA_PLAYERBULLETS->angle += GETDATA_PLAYERBULLETS->rotationSpeed * dt;
 		}
 		else if (tmp.type == PLAYER_FLAMETHROWER)
 		{
@@ -157,6 +182,14 @@ void updateBullets(Window* _window)
 					if (tmpType == PLAYER_BASIC_BULLET || tmpType == PLAYER_CHARGED_BULLET) {
 						playerBulletsList->erase(&playerBulletsList, i);
 						break;
+					}
+					else if (tmpType == PLAYER_MINES) {
+						if (GETDATA_PLAYERBULLETS->rect.top < 2460) {
+							GETDATA_PLAYERBULLETS->rect = IntRect(898, 2465, 898, 798);
+						}
+						//else if {
+						//	// TODO checks with radius
+						//}
 					}
 		
 				}
