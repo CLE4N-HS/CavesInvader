@@ -111,6 +111,7 @@ void initGame(Window* _window)
 	initPlayer(_window);
 	initEnemy(_window);
 	initBullets(_window);
+	initPause(_window);
 	
 
 	w.state = sfTrue;

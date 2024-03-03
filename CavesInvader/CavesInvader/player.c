@@ -4,37 +4,6 @@
 #include "bullets.h"
 #include "particlesSystemManager.h"
 
-#define PLAYER_SPEED 500.f
-
-typedef struct Flames {
-	sfTexture* texture;
-	sfVector2f pos;
-	sfVector2f origin;
-	sfVector2f scale;
-}Flames;
-
-typedef struct Players {
-	sfTexture* texture;
-	sfVector2f pos;
-	sfVector2f origin;
-	Flames flame;
-	float speed;
-	sfVector2f velocity;
-	sfVector2f forward;
-	sfVector2f previousForward;
-	float drag;
-	float bulletTimer;
-	sfBool isMoving;
-	float timeMoving;
-	float particlesTimer;
-
-	// useless but i guess we never know
-	float anothertimer;
-	sfBool wasalreadymovingtbh;
-	sfBool wasnt;
-}Players;
-Players player[MAX_PLAYER];
-
 
 sfSprite* playerSprite;
 
@@ -63,6 +32,7 @@ void initPlayer(Window* _window)
 		default:
 			break;
 		}
+		player[i].life = 3;
 		player[i].speed = PLAYER_SPEED;
 		player[i].velocity = VECTOR2F_NULL;
 		player[i].forward = VECTOR2F_NULL;
@@ -78,6 +48,7 @@ void initPlayer(Window* _window)
 		player[i].flame.pos = VECTOR2F_NULL;
 		player[i].flame.origin = vector2f(72.f, 21.f);
 		player[i].flame.scale = vector2f(1.f, 1.f);
+		player[i].bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 
 
 		//if (i >= nbPlayer)
@@ -527,6 +498,8 @@ void displayPlayer(Window* _window)
 		sfSprite_setOrigin(playerSprite, player[i].origin);
 		sfSprite_setScale(playerSprite, vector2f(1.f, 1.f));
 		sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
+
+		player[i].bounds = sfSprite_getGlobalBounds(playerSprite);
 
 		if (nbPlayer <= 1)
 			break;

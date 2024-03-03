@@ -29,8 +29,8 @@ single deadEnemies ../Ressources/Textures/Game/ENEMIES/deadEnemies.png
 single bullets ../Ressources/Textures/Game/BULLETS/bullets.png
 single particles ../Ressources/Textures/Game/PARTICLES/particles.png
 single pause ../Ressources/Textures/Game/PAUSE/pause.png
-single resumeBox ../Ressources/Textures/Game/PAUSE/resumeBox.png
 single fullscreenBox ../Ressources/Textures/Game/PAUSE/fullscreenBox.png
 single quitPauseBox ../Ressources/Textures/Game/PAUSE/quitPauseBox.png
 single slider ../Ressources/Textures/Game/PAUSE/slider.png
+single sliderBox ../Ressources/Textures/Game/PAUSE/sliderBox.png
 [end]

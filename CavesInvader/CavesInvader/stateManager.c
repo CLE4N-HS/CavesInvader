@@ -62,7 +62,7 @@ void stateInit(Window* _window)
 			w.state = sfFalse;
 			loadingThread = sfThread_create(&initGame, _window);
 			sfThread_launch(loadingThread);
-			initPause(_window);
+			//initPause(_window);
 			initOptions(_window);
 		}
 		if (state == END)
@@ -117,15 +117,12 @@ void stateUpdate(Window* _window)
 			}
 			else if (state == GAME)
 			{
+				//if (isOption)
+				//	updateOptions(_window);
 				if (isPaused)
-				{
-					if (isOption)
-						updateOptions(_window);
-					else if (isQuit)
-						updateQuit(_window);
-					else
-					updatePause(_window);	
-				}	
+					updatePause(_window);
+				else if (isQuit)
+					updateQuit(_window);
 				else
 					updateGame(_window);
 			}
@@ -191,18 +188,10 @@ void stateDisplay(Window* _window)
 		{
 			displayGame(_window);
 			if (isPaused)
-			{
-				//displayPause(_window);
-				if (isOption)
-				{
-					displayOptions(_window);
-				}
-				else if (isQuit)
-				{
-					displayQuit(_window);
-				}
-				else displayPause(_window);
-			}
+				displayPause(_window);
+			else if (isQuit)
+				displayQuit(_window);
+			
 			if (isDialogBox)
 			{
 				dialogBoxDisplay(_window);

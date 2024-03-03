@@ -4,7 +4,38 @@
 #include "gamepad.h"
 #include "textureManager.h"
 
+#define PLAYER_SPEED 500.f
 
+typedef struct Flames {
+	sfTexture* texture;
+	sfVector2f pos;
+	sfVector2f origin;
+	sfVector2f scale;
+}Flames;
+
+typedef struct Players {
+	sfTexture* texture;
+	int life;
+	sfVector2f pos;
+	sfVector2f origin;
+	sfFloatRect bounds;
+	Flames flame;
+	float speed;
+	sfVector2f velocity;
+	sfVector2f forward;
+	sfVector2f previousForward;
+	float drag;
+	float bulletTimer;
+	sfBool isMoving;
+	float timeMoving;
+	float particlesTimer;
+
+	// useless but i guess we never know
+	float anothertimer;
+	sfBool wasalreadymovingtbh;
+	sfBool wasnt;
+}Players;
+Players player[MAX_PLAYER];
 
 
 

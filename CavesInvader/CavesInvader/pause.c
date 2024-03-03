@@ -6,6 +6,7 @@
 #include "gamepad.h"
 #include "dialogBox.h"
 #include "quit.h"
+#include "CustomMath.h"
 
 //sfRectangleShape* rshape;
 //
@@ -19,19 +20,107 @@
 //
 //int pauseSelect;
 
+sfRectangleShape* opaqueRectangle;
+
 sfSprite* pauseSprite;
 
 sfTexture* pauseTexture;
-sfTexture* resumeBoxTexture;
-sfTexture* fullscreenBoxTexture;
 sfTexture* quitPauseBoxTexture;
+sfTexture* fullscreenBoxTexture;
 sfTexture* sliderTexture;
+sfTexture* sliderBoxTexture;
+
+float sliderSFXPosX;
+float sliderMusicPosX;
+sfBool allowedToSlide;
+
+
+typedef enum PauseChoice {
+	NOCHOICE_PAUSE,
+	RESUME_PAUSE,
+	SLIDERSFX_PAUSE,
+	FULLSCREEN_PAUSE,
+	SLIDERMUSIC_PAUSE,
+	QUIT_PAUSE
+}PauseChoice;
+
+PauseChoice choicePause;
+
+float escapePauseTimer;
+float choicePauseTimer;
+float sliderTimer;
+
+PauseChoice changePauseChoice(sfKeyCode _key)
+{
+	if (_key == sfKeyUp) {
+		switch (choicePause) {
+		case RESUME_PAUSE: return QUIT_PAUSE;
+		case SLIDERSFX_PAUSE: return RESUME_PAUSE;
+		case FULLSCREEN_PAUSE: return RESUME_PAUSE;
+		case SLIDERMUSIC_PAUSE: return SLIDERSFX_PAUSE;
+		case QUIT_PAUSE: return FULLSCREEN_PAUSE;
+		default: break;
+		}
+	}
+	else if (_key == sfKeyDown) {
+		switch (choicePause) {
+		case RESUME_PAUSE: return FULLSCREEN_PAUSE;
+		case SLIDERSFX_PAUSE: return SLIDERMUSIC_PAUSE;
+		case FULLSCREEN_PAUSE: return QUIT_PAUSE;
+		case SLIDERMUSIC_PAUSE: return QUIT_PAUSE;
+		case QUIT_PAUSE: return RESUME_PAUSE;
+		default: break;
+		}
+	}
+	else if (_key == sfKeyLeft) {
+		switch (choicePause) {
+		case RESUME_PAUSE: return SLIDERSFX_PAUSE;
+		case FULLSCREEN_PAUSE: return SLIDERSFX_PAUSE;
+		case QUIT_PAUSE: return SLIDERMUSIC_PAUSE;
+		default: break;
+		}
+	}
+	else if (_key == sfKeyRight) {
+		switch (choicePause) {
+		case RESUME_PAUSE: return FULLSCREEN_PAUSE;
+		case FULLSCREEN_PAUSE: return QUIT_PAUSE;
+		case QUIT_PAUSE: return FULLSCREEN_PAUSE;
+		default: break;
+		}
+	}
+
+	return choicePause;
+}
+
+void resetPause()
+{
+	choicePause = RESUME_PAUSE;
+	escapePauseTimer = 0.f;
+	choicePauseTimer = 0.f;
+	sliderTimer = 0.f;
+	allowedToSlide = sfFalse;
+}
 
 void initPause(Window* _window)
 {
+	opaqueRectangle = sfRectangleShape_create();
+	sfRectangleShape_setPosition(opaqueRectangle, VECTOR2F_NULL);
+	sfRectangleShape_setOrigin(opaqueRectangle, VECTOR2F_NULL);
+	sfRectangleShape_setFillColor(opaqueRectangle, color(0, 0, 0, 127));
+	sfRectangleShape_setSize(opaqueRectangle, vector2f(1920.f, 1080.f));
+
 	pauseSprite = sfSprite_create();
 
-	// TODO
+	pauseTexture = GetTexture("pause");
+	quitPauseBoxTexture = GetTexture("quitPauseBox");
+	fullscreenBoxTexture = GetTexture("fullscreenBox");
+	sliderTexture = GetTexture("slider");
+	sliderBoxTexture = GetTexture("sliderBox");
+
+	sliderSFXPosX = 788.f;
+	sliderMusicPosX = 788.f;
+
+	resetPause();
 
 	//rshape = sfRectangleShape_create();
 	//sfRectangleShape_setSize(rshape, (sfVector2f) { (float)mainView->defaultVideoMode.x, (float)mainView->defaultVideoMode.y});
@@ -65,8 +154,102 @@ void initPause(Window* _window)
 void updatePause(Window* _window)
 {
 	float dt = getDeltaTime();
+	escapePauseTimer += dt;
+	choicePauseTimer += dt;
+	sliderTimer += dt;
 
+	// escape
+	if (escapePauseTimer > 0.2f && (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX))) {
+		togglePause();
+		resetPause();
+	}
+	
+	// movement
+	if (choicePauseTimer > 0.3f)
+	{
+		if (isKeyboardOrControllerButtonMoved(sfKeyUp, STICKLY_XBOX, sfTrue, 50.f)) {
+			choicePauseTimer = 0.f;
+			allowedToSlide = sfFalse;
+			choicePause = changePauseChoice(sfKeyUp);
+		}
+		else if (isKeyboardOrControllerButtonMoved(sfKeyDown, STICKLY_XBOX, sfFalse, 50.f)) {
+			choicePauseTimer = 0.f;
+			allowedToSlide = sfFalse;
+			choicePause = changePauseChoice(sfKeyDown);
+		}
+		else if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
+			choicePauseTimer = 0.f;
+			choicePause = changePauseChoice(sfKeyLeft);
+		}
+		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
+			choicePauseTimer = 0.f;
+			choicePause = changePauseChoice(sfKeyRight);
+		}
+	}
 
+	// interactions
+	switch (choicePause)
+	{
+	case RESUME_PAUSE:
+		if (escapePauseTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+			togglePause();
+			resetPause();
+		}
+		break;
+	case SLIDERSFX_PAUSE:
+		if (!allowedToSlide && !isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)) {
+			allowedToSlide = sfTrue;
+		}
+		if (!allowedToSlide)
+			break;
+
+		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
+			sliderSFXPosX -= dt * 100.f;
+			sliderSFXPosX = MAX(sliderSFXPosX, 782.f);
+			// TODO change volume
+		}
+		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
+			sliderSFXPosX += dt * 100.f;
+			sliderSFXPosX = MIN(sliderSFXPosX, 1049.f);
+			// TODO change volume	
+		}
+		break;
+	case FULLSCREEN_PAUSE:
+		if (escapePauseTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+			escapePauseTimer = 0.f;
+			forceReleasedButton(A_XBOX);
+			ToggleFullscreen(_window);
+		}
+		break;
+	case SLIDERMUSIC_PAUSE:
+		if (!allowedToSlide && !isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)) {
+			allowedToSlide = sfTrue;
+		}
+		if (!allowedToSlide)
+			break;
+
+		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
+			sliderMusicPosX -= dt * 100.f;
+			sliderMusicPosX = MAX(sliderMusicPosX, 788.f);
+			// TODO change volume
+		}
+		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
+			sliderMusicPosX += dt * 100.f;
+			sliderMusicPosX = MIN(sliderMusicPosX, 1055.f);
+			// TODO change volume	
+		}
+		break;
+	case QUIT_PAUSE:
+		if (escapePauseTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+			togglePause();
+			resetPause();
+			forceReleasedButton(A_XBOX);
+			toggleQuit();
+		}
+		break;
+	default:
+		break;
+	}
 
 
 	//static float timer = 0.0f;
@@ -188,6 +371,63 @@ void updatePause(Window* _window)
 
 void displayPause(Window* _window)
 {
+	// opacity
+	sfRenderTexture_drawRectangleShape(_window->renderTexture, opaqueRectangle, NULL);
+
+	// main
+	sfSprite_setTexture(pauseSprite, pauseTexture, sfTrue);
+	sfSprite_setPosition(pauseSprite, vector2f(491.f, 90.f));
+	sfSprite_setOrigin(pauseSprite, VECTOR2F_NULL);
+	sfRenderTexture_drawSprite(_window->renderTexture, pauseSprite, NULL);
+
+	// sliders
+	sfSprite_setTexture(pauseSprite, sliderTexture, sfTrue);
+	sfSprite_setOrigin(pauseSprite, vector2f(10.f, 16.f));
+	for (int i = 0; i < 2; i++)
+	{
+		switch (i) {
+		case 0:
+			sfSprite_setPosition(pauseSprite, vector2f(sliderSFXPosX, 422.f));
+			break;
+		case 1:
+			sfSprite_setPosition(pauseSprite, vector2f(sliderMusicPosX, 664.f));
+			break;
+		default:
+			break;
+		}
+
+		sfRenderTexture_drawSprite(_window->renderTexture, pauseSprite, NULL);
+	}
+
+	// boxes
+	sfSprite_setOrigin(pauseSprite, VECTOR2F_NULL);
+	switch (choicePause)
+	{
+	case RESUME_PAUSE:
+		sfSprite_setTexture(pauseSprite, quitPauseBoxTexture, sfTrue);
+		sfSprite_setPosition(pauseSprite, vector2f(740.f, 200.f));
+		break;
+	case SLIDERSFX_PAUSE:
+		sfSprite_setTexture(pauseSprite, sliderBoxTexture, sfTrue);
+		sfSprite_setPosition(pauseSprite, vector2f(747.f, 394.f));
+		break;
+	case FULLSCREEN_PAUSE:
+		sfSprite_setTexture(pauseSprite, fullscreenBoxTexture, sfTrue);
+		sfSprite_setPosition(pauseSprite, vector2f(1191.f, 468.f));
+		break;
+	case SLIDERMUSIC_PAUSE:
+		sfSprite_setTexture(pauseSprite, sliderBoxTexture, sfTrue);
+		sfSprite_setPosition(pauseSprite, vector2f(747.f, 636.f));
+		break;
+	case QUIT_PAUSE:
+		sfSprite_setTexture(pauseSprite, quitPauseBoxTexture, sfTrue);
+		sfSprite_setPosition(pauseSprite, vector2f(740.f, 808.f));
+		break;
+	default:
+		break;
+	}
+	sfRenderTexture_drawSprite(_window->renderTexture, pauseSprite, NULL);
+
 	//sfRenderTexture_setView(_window->renderTexture, mainView->view);
 	//sfRenderTexture_drawRectangleShape(_window->renderTexture, rshape, NULL);
 	//
@@ -201,6 +441,8 @@ void displayPause(Window* _window)
 
 void deinitPause()
 {
+	sfSprite_destroy(pauseSprite);
+
 	//sfRectangleShape_destroy(rshape);
 	//sfText_destroy(txtPause);
 	//sfText_destroy(txtReturnGame);

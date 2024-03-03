@@ -229,13 +229,19 @@ void updateEnemy(Window* _window)
 		}
 
 		if (GETDATA_ENEMIES->life <= 0) {
-			// death state
-			//enemiesList->erase(&enemiesList, i);
 			GETDATA_ENEMIES->state = DEAD;
-			//continue;
 		}
 
-
+		// players collisions
+		if (GETDATA_ENEMIES->state != DEAD) {
+			for (int j = 0; j < nbPlayer; j++)
+			{
+				if (sfFloatRect_intersects(&GETDATA_ENEMIES->bounds, &player[j].bounds, NULL)) {
+					player[j].life -= GETDATA_ENEMIES->damage;
+					GETDATA_ENEMIES->state = DEAD;
+				}
+			}
+		}
 
 		tmp.type = GETDATA_ENEMIES->type;
 		tmp.state = GETDATA_ENEMIES->state;
