@@ -4,6 +4,7 @@
 #include "gamepad.h"
 #include "textureManager.h"
 
+
 #define PLAYER_SPEED 500.f
 
 typedef struct Flames {

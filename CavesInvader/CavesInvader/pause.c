@@ -58,13 +58,13 @@ PauseChoice changePauseChoice(sfKeyCode _key)
 		case SLIDERSFX_PAUSE: return RESUME_PAUSE;
 		case FULLSCREEN_PAUSE: return RESUME_PAUSE;
 		case SLIDERMUSIC_PAUSE: return SLIDERSFX_PAUSE;
-		case QUIT_PAUSE: return FULLSCREEN_PAUSE;
+		case QUIT_PAUSE: return SLIDERMUSIC_PAUSE;
 		default: break;
 		}
 	}
 	else if (_key == sfKeyDown) {
 		switch (choicePause) {
-		case RESUME_PAUSE: return FULLSCREEN_PAUSE;
+		case RESUME_PAUSE: return SLIDERSFX_PAUSE;
 		case SLIDERSFX_PAUSE: return SLIDERMUSIC_PAUSE;
 		case FULLSCREEN_PAUSE: return QUIT_PAUSE;
 		case SLIDERMUSIC_PAUSE: return QUIT_PAUSE;

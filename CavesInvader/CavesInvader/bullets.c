@@ -44,6 +44,12 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	tmp.angle = _angle;
 	tmp.rotationSpeed = _rotationSpeed;
 	tmp.animTimer = _animTimer;
+
+	// unique parameters
+	if (_type == PLAYER_MINES) {
+		tmp.mine.radius = 35.f;
+	}
+
 	playerBulletsList->push_back(&playerBulletsList, &tmp);
 }
 
@@ -141,7 +147,6 @@ void updateBullets(Window* _window)
 				GETDATA_PLAYERBULLETS->angle += GETDATA_PLAYERBULLETS->rotationSpeed * dt;
 			}
 			else {
-				GETDATA_PLAYERBULLETS->angle = 0.f;
 				GETDATA_PLAYERBULLETS->animTimer += dt;
 
 				if (GETDATA_PLAYERBULLETS->animTimer > 0.1f) {
@@ -150,14 +155,28 @@ void updateBullets(Window* _window)
 
 					GETDATA_PLAYERBULLETS->rect.left += GETDATA_PLAYERBULLETS->rect.width;
 
-					if (GETDATA_PLAYERBULLETS->rect.left > 6300) {
-						if (GETDATA_PLAYERBULLETS->rect.top < 3600) {
+					sfIntRect tmpRect = GETDATA_PLAYERBULLETS->rect;
+
+					// mine radius for collisions
+					if (tmpRect.top < 3000) {
+						if (tmpRect.left > 4000) GETDATA_PLAYERBULLETS->mine.radius = 180.f;
+						else if (tmpRect.left > 5000) GETDATA_PLAYERBULLETS->mine.radius = 260.f;
+					}
+					else {
+						if (tmpRect.left < 10) GETDATA_PLAYERBULLETS->mine.radius = 310.f;
+						else if (tmpRect.left < 2000) GETDATA_PLAYERBULLETS->mine.radius = 410.f;
+						else GETDATA_PLAYERBULLETS->mine.radius = -1.f;
+					}
+
+					if (tmpRect.left > 6200) {
+						if (tmpRect.top < 3000) {
 							GETDATA_PLAYERBULLETS->rect.top += GETDATA_PLAYERBULLETS->rect.height;
 						}
 						else {
 							playerBulletsList->erase(&playerBulletsList, i);
 							continue;
 						}
+						GETDATA_PLAYERBULLETS->rect.left = 0;
 					}
 				}
 			}
@@ -173,26 +192,45 @@ void updateBullets(Window* _window)
 		if (GETDATA_PLAYERBULLETS->id == PLAYER_ID_BULLET) {
 			for (int j = 0; j < enemiesList->size(enemiesList); j++)
 			{
-				if (sfFloatRect_intersects(&GETDATA_PLAYERBULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
-		
-					GD_ENEMIES->life -= GETDATA_PLAYERBULLETS->damage;
-		
-					bulletType tmpType = GETDATA_PLAYERBULLETS->type;
-		
-					if (tmpType == PLAYER_BASIC_BULLET || tmpType == PLAYER_CHARGED_BULLET) {
+				if (GD_ENEMIES->state == DEAD || GD_ENEMIES->life <= 0)
+					continue;
+
+				if (tmp.type == PLAYER_BASIC_BULLET || tmp.type == PLAYER_CHARGED_BULLET)
+				{
+					if (sfFloatRect_intersects(&GETDATA_PLAYERBULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
+
+						GD_ENEMIES->life -= GETDATA_PLAYERBULLETS->damage;
+
 						playerBulletsList->erase(&playerBulletsList, i);
 						break;
+
 					}
-					else if (tmpType == PLAYER_MINES) {
-						if (GETDATA_PLAYERBULLETS->rect.top < 2460) {
-							GETDATA_PLAYERBULLETS->rect = IntRect(898, 2465, 898, 798);
-						}
-						//else if {
-						//	// TODO checks with radius
-						//}
-					}
-		
 				}
+
+				else if (tmp.type == PLAYER_MINES)
+				{
+					// basic mine
+					if (GETDATA_PLAYERBULLETS->rect.top < 2460) {
+
+						if (sfFloatRect_intersects(&GETDATA_PLAYERBULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
+
+							GD_ENEMIES->life -= GETDATA_PLAYERBULLETS->damage;
+
+							GETDATA_PLAYERBULLETS->rect = IntRect(898, 2465, 898, 798);
+							GETDATA_PLAYERBULLETS->angle = 0.f;
+							GETDATA_PLAYERBULLETS->origin = vector2f(449.f, 399.f);
+
+							GETDATA_PLAYERBULLETS->mine.radius = 35.f;
+						}
+					}
+					// exploded mine
+					else if (GETDATA_PLAYERBULLETS->mine.radius > 0.f) {
+						if (GetSqrMagnitude(CreateVector(GETDATA_PLAYERBULLETS->pos, AddVectors(GD_ENEMIES->pos, GD_ENEMIES->originToCenter)))  <= GETDATA_PLAYERBULLETS->mine.radius * GETDATA_PLAYERBULLETS->mine.radius + GD_ENEMIES->radius * GD_ENEMIES->radius)
+							GD_ENEMIES->life -= GETDATA_PLAYERBULLETS->damage;
+					}
+				}
+
+				
 			}
 		}
 		
