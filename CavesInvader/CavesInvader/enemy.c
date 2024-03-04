@@ -22,7 +22,7 @@ void initEnemy(Window* _window)
 	sfSprite_setTexture(enemySprite, enemyTexture, sfTrue);
 }
 
-void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRect _rect, sfVector2f _origin, float _animTimer, float _timeBetweenFrames, sfVector2f _pos, sfVector2f _velocity, sfVector2f _forward, float _speed, int _life, int _damage, float _startFocusingPos, float _startAttackingMoment, float _startAttackingTimer)
+void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRect _rect, sfVector2f _origin, sfVector2f _originToCenter, float _radius, float _animTimer, float _timeBetweenFrames, sfVector2f _pos, sfVector2f _velocity, sfVector2f _forward, float _speed, int _life, int _damage, float _startFocusingPos, float _startAttackingMoment, float _startAttackingTimer)
 {
 	Enemies tmp;
 	tmp.type = _type;
@@ -30,6 +30,8 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 	tmp.lastState = _lastState;
 	tmp.rect = _rect;
 	tmp.origin = _origin;
+	tmp.originToCenter = _originToCenter;
+	tmp.radius = _radius;
 	tmp.animTimer = _animTimer;
 	tmp.timeBetweenFrames = _timeBetweenFrames;
 	tmp.pos = _pos;
@@ -52,6 +54,8 @@ void createEnemy(enemyType _type)
 	enemyState lastState = NO_STATE;
 	sfIntRect rect = IntRect(0, 0, 0, 0);
 	sfVector2f origin = VECTOR2F_NULL;
+	sfVector2f originToCenter = VECTOR2F_NULL;
+	float radius = 0.f;
 	sfVector2f pos = VECTOR2F_NULL;
 	sfVector2f velocity = VECTOR2F_NULL;
 	float speed = 0.f;
@@ -71,6 +75,8 @@ void createEnemy(enemyType _type)
 	case VENGELFY:
 		//rect = IntRect(0, 411, 167, 124);
 		//origin = vector2f(31.f, 75.f);
+		originToCenter = vector2f(36.f, -12.f);
+		radius = 80.f;
 		pos = vector2f(1951.f, rand_float(31.f, 1031.f));
 		//forward = Normalize(CreateVector(pos, getClosestPlayerPos(pos)));
 		//speed = 100.f;
@@ -83,6 +89,8 @@ void createEnemy(enemyType _type)
 	case ENRAGED_VENGEFLY:
 		//*_rect = IntRect(0, 747, 259, 206);
 		//*_origin = vector2f(48.f, 132.f);
+		originToCenter = vector2f(48.f, -18.f);
+		radius = 120.f;
 		pos = vector2f(1968.f, rand_float(48.f, 1006.f));
 		//forward = Normalize(CreateVector(pos, getClosestPlayerPos(pos)));
 		//speed = 100.f;
@@ -96,7 +104,7 @@ void createEnemy(enemyType _type)
 		break;
 	}
 
-	addEnemy(_type, state, lastState, rect, origin, animTimer, timeBetweenFrames, pos, velocity, forward, speed, life, damage, startFocusingPos, startAttackingMoment, startAttackingTimer);
+	addEnemy(_type, state, lastState, rect, origin, originToCenter, radius, animTimer, timeBetweenFrames, pos, velocity, forward, speed, life, damage, startFocusingPos, startAttackingMoment, startAttackingTimer);
 }
 
 void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f* _origin, float* _animTimer, float *_timeBetweenFrames, sfVector2f* _forward, sfVector2f _pos, float* _speed)
@@ -200,11 +208,6 @@ void updateEnemy(Window* _window)
 	static float timer = 0.f;
 	timer += dt;
 
-	//tmpPos.x -= dt * 1000.f;
-	//if (tmpPos.x < -500.f) {
-	//	tmpPos = vector2f(2000.f, rand_float(0.f, 800.f));
-	//}
-
 	if (isKeyboardOrControllerButtonPressed(sfKeyA, A_XBOX) && timer > 0.2f) {
 		createEnemy(VENGELFY);
 		timer = 0.f;
@@ -228,14 +231,20 @@ void updateEnemy(Window* _window)
 			continue;
 		}
 
-		if (GETDATA_ENEMIES->life <= 0) {
-			// death state
-			//enemiesList->erase(&enemiesList, i);
-			GETDATA_ENEMIES->state = DEAD;
-			//continue;
+		// players collisions
+		if (GETDATA_ENEMIES->state != DEAD) {
+			for (int j = 0; j < nbPlayer; j++)
+			{
+				if (sfFloatRect_intersects(&GETDATA_ENEMIES->bounds, &player[j].bounds, NULL)) {
+					player[j].life -= GETDATA_ENEMIES->damage;
+					GETDATA_ENEMIES->life = 0;
+				}
+			}
 		}
 
-
+		if (GETDATA_ENEMIES->life <= 0) {
+			GETDATA_ENEMIES->state = DEAD;
+		}
 
 		tmp.type = GETDATA_ENEMIES->type;
 		tmp.state = GETDATA_ENEMIES->state;

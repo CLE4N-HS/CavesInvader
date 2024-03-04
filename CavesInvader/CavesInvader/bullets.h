@@ -16,6 +16,15 @@ typedef enum bulletType {
 	PLAYER_FLAMETHROWER
 }bulletType;
 
+typedef struct minesParameters {
+	float radius;
+	sfBool allowedToDealDamages; // need another trick for the boss
+}minesParameters;
+
+typedef struct flamethrowerParameters {
+	sfFloatRect bounds;
+}flamethrowerParameters;
+
 typedef struct playerBullets {
 	bulletType type;
 	bulletId id;
@@ -29,6 +38,14 @@ typedef struct playerBullets {
 	float fDamagePerSecond;
 	float angle;
 	float rotationSpeed;
+	float animTimer;
+
+	union bulletsParameters
+	{
+		minesParameters mine;
+		flamethrowerParameters flamethrower;
+	};
+
 }playerBullets;
 
 

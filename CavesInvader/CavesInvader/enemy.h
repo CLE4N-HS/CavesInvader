@@ -37,6 +37,8 @@ typedef struct Enemies {
 	sfIntRect rect;
 	sfFloatRect bounds;
 	sfVector2f origin;
+	sfVector2f originToCenter;
+	float radius;
 	float animTimer;
 	float timeBetweenFrames;
 	sfVector2f pos;

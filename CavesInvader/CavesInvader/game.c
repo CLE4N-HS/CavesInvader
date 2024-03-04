@@ -10,6 +10,7 @@
 #include "enemy.h"
 #include "bullets.h"
 #include "particlesSystemManager.h"
+#include "hud.h"
 #include <Windows.h>
 
 #define NB_BG 8
@@ -111,6 +112,9 @@ void initGame(Window* _window)
 	initPlayer(_window);
 	initEnemy(_window);
 	initBullets(_window);
+	initPause(_window);
+	initHud(_window);
+		
 	
 
 	w.state = sfTrue;
@@ -150,6 +154,7 @@ void updateGame(Window* _window)
 	updatePlayer(_window);
 	updateEnemy(_window);
 	updateParticlesSystem(_window);
+	updateHud(_window);
 }
 
 void displayGame(Window* _window)
@@ -166,6 +171,7 @@ void displayGame(Window* _window)
 	displayEnemy(_window);
 	displayBullets(_window);
 	displayPlayer(_window);
+	displayHud(_window);
 
 }
 
