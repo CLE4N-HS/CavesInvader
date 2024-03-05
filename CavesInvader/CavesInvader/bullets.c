@@ -16,6 +16,8 @@ sfSprite* bulletsSprite;
 
 sfTexture* bulletsTexture;
 
+sfRectangleShape* tmpRectangle;
+
 
 void initBullets(Window* _window)
 {
@@ -27,9 +29,11 @@ void initBullets(Window* _window)
 
 	playerBulletsList = STD_LIST_CREATE(playerBullets, 0);
 
+	tmpRectangle = sfRectangleShape_create();
+
 }
 
-void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _velocity, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer)
+void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _velocity, sfVector2f _scale, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer)
 {
 	playerBullets tmp;
 	tmp.type = _type;
@@ -37,9 +41,11 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	tmp.ownerId = _ownerId;
 	tmp.pos = _pos;
 	tmp.origin = _origin;
+	tmp.scale = _scale;
 	tmp.rect = _rect;
 	tmp.velocity = _velocity;
 	tmp.damage = _damage;
+	tmp.fDamagePerSecond = _fDamagePerSecond;
 	tmp.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 	tmp.angle = _angle;
 	tmp.rotationSpeed = _rotationSpeed;
@@ -49,16 +55,29 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	if (_type == PLAYER_MINES) {
 		tmp.mine.radius = 35.f;
 	}
+	else if (_type == PLAYER_FLAMETHROWER) {
+		tmp.flamethrower.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
+	}
+	else if (_type == PLAYER_LASER) {
+		tmp.laser.timer = 0.f;
+	}
 
 	playerBulletsList->push_back(&playerBulletsList, &tmp);
 }
 
-void createPlayerBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos)
+void createPlayerBullets(bulletType _type, int _ownerId, sfVector2f _pos)
 {
+	bulletId id = 0;
+	if (_type <= PLAYER_FLAMETHROWER)
+		id = PLAYER_ID_BULLET;
+	else
+		id = ENEMY_ID_BULLET;
+
 	sfVector2f pos = VECTOR2F_NULL;
 	sfVector2f origin = VECTOR2F_NULL;
 	sfIntRect rect = IntRect(0,0,0,0);
 	sfVector2f velocity = VECTOR2F_NULL;
+	sfVector2f scale = vector2f(1.f, 1.f);
 	int damage = 0;
 	float fDamagePerSecond = 0.f;
 	float angle = 0.f;
@@ -85,10 +104,11 @@ void createPlayerBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2
 		origin = vector2f(0.f, 14.f);
 		pos = AddVectors(_pos, vector2f(36.f, 24.f));
 		rect = IntRect(0, 2172, 437, 28);
-		fDamagePerSecond = 2.f;
+		scale = vector2f(0.f, 1.f);
+		fDamagePerSecond = 7.f;
 		break;
 	case PLAYER_MINES:
-		pos = AddVectors(_pos, vector2f(50.f, 24.f));
+		pos = AddVectors(_pos, vector2f(-50.f, 24.f));
 		if (_ownerId) { // j2
 			origin = vector2f(38.f, 41.f);
 			rect = IntRect(0, 2332, 75, 75);
@@ -103,12 +123,12 @@ void createPlayerBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2
 		break;
 	case PLAYER_FLAMETHROWER:
 		pos = AddVectors(_pos, vector2f(50.f, 24.f));
-		fDamagePerSecond = 2.f;
+		fDamagePerSecond = 4.f;
 		break;
 	default:
 		break;
 	}
-	addBullets(_type, _id, _ownerId, pos, origin, rect, velocity, damage, fDamagePerSecond, angle, rotationSpeed, animTimer);
+	addBullets(_type, id, _ownerId, pos, origin, rect, velocity, scale, damage, fDamagePerSecond, angle, rotationSpeed, animTimer);
 
 }
 
@@ -124,7 +144,7 @@ void updateBullets(Window* _window)
 		}
 
 		playerBullets tmp;
-
+		
 		tmp.type = GETDATA_PLAYERBULLETS->type;
 
 		if (tmp.type == PLAYER_BASIC_BULLET || tmp.type == PLAYER_CHARGED_BULLET)
@@ -133,9 +153,24 @@ void updateBullets(Window* _window)
 		}
 		else if (tmp.type == PLAYER_LASER)
 		{
-			GETDATA_PLAYERBULLETS->pos = AddVectors(getPlayerPos(GETDATA_PLAYERBULLETS->ownerId), vector2f(36.f, 24.f));
+			GETDATA_PLAYERBULLETS->pos = AddVectors(getPlayerPos(GETDATA_PLAYERBULLETS->ownerId), vector2f(-20.f, 24.f));
+
+			if (GETDATA_PLAYERBULLETS->scale.x < 4.2f)
+				GETDATA_PLAYERBULLETS->scale.x += dt * 5.f;
+
+			GETDATA_PLAYERBULLETS->laser.timer += dt;
+
+			GETDATA_PLAYERBULLETS->scale.y = sin(GETDATA_PLAYERBULLETS->laser.timer) * 2.f;
+			float a = GETDATA_PLAYERBULLETS->laser.timer;
+
+			if (GETDATA_PLAYERBULLETS->scale.y < 1.f) {
+				GETDATA_PLAYERBULLETS->scale.y = 1.f;
+				GETDATA_PLAYERBULLETS->laser.timer = 0.6f;
+			}
+
 
 			if (Gamepad[GETDATA_PLAYERBULLETS->ownerId].TriggerL < 0.5f) {
+				player[GETDATA_PLAYERBULLETS->ownerId].isLightning = sfFalse;
 				playerBulletsList->erase(&playerBulletsList, i);
 				continue;
 			}
@@ -185,7 +220,20 @@ void updateBullets(Window* _window)
 		else if (tmp.type == PLAYER_FLAMETHROWER)
 		{
 			// estimated rect for collisions
+			sfVector2f tmpPos = getPlayerPos(GETDATA_PLAYERBULLETS->ownerId);
+			GETDATA_PLAYERBULLETS->bounds.left = tmpPos.x + 100.f;
+			GETDATA_PLAYERBULLETS->bounds.top = tmpPos.y - 74.f;
+			GETDATA_PLAYERBULLETS->bounds.width = 250.f;
+			GETDATA_PLAYERBULLETS->bounds.height = 200.f;
+
+			// erase it because there shouldn't be any flames at this point
+			if (!player[GETDATA_PLAYERBULLETS->ownerId].isFlamethrowering) {
+				playerBulletsList->erase(&playerBulletsList, i);
+				continue;
+			}
 		}
+
+
 
 
 		// collsions
@@ -204,6 +252,18 @@ void updateBullets(Window* _window)
 						playerBulletsList->erase(&playerBulletsList, i);
 						break;
 
+					}
+				}
+
+				else if (tmp.type == PLAYER_LASER) {
+					if (sfFloatRect_intersects(&GETDATA_PLAYERBULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
+
+						GD_ENEMIES->ftimeInAOE += dt * GETDATA_PLAYERBULLETS->fDamagePerSecond;
+
+						if (GD_ENEMIES->ftimeInAOE > 1.f) {
+							GD_ENEMIES->ftimeInAOE = 0.f;
+							GD_ENEMIES->life -= 1;
+						}
 					}
 				}
 
@@ -230,6 +290,19 @@ void updateBullets(Window* _window)
 					}
 				}
 
+				else if (tmp.type == PLAYER_FLAMETHROWER) {
+					
+					if (sfFloatRect_intersects(&GETDATA_PLAYERBULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
+
+						GD_ENEMIES->ftimeInAOE += dt * GETDATA_PLAYERBULLETS->fDamagePerSecond;
+
+						if (GD_ENEMIES->ftimeInAOE > 1.f) {
+							GD_ENEMIES->ftimeInAOE = 0.f;
+							GD_ENEMIES->life -= 1;
+						}
+					}
+				}
+
 				
 			}
 		}
@@ -241,13 +314,24 @@ void displayBullets(Window* _window)
 {
 	for (int i = 0; i < playerBulletsList->size(playerBulletsList); i++)
 	{
+
+
+		if (GETDATA_PLAYERBULLETS->type == PLAYER_FLAMETHROWER) {
+			sfRectangleShape_setPosition(tmpRectangle, vector2f(GETDATA_PLAYERBULLETS->bounds.left, GETDATA_PLAYERBULLETS->bounds.top));
+			sfRectangleShape_setSize(tmpRectangle, vector2f(GETDATA_PLAYERBULLETS->bounds.width, GETDATA_PLAYERBULLETS->bounds.height));
+			sfRectangleShape_setFillColor(tmpRectangle, color(255, 0, 0, 100));
+			//sfRenderTexture_drawRectangleShape(_window->renderTexture, tmpRectangle, NULL);
+			continue;
+		}
+
 		sfSprite_setPosition(bulletsSprite, GETDATA_PLAYERBULLETS->pos);
 		sfSprite_setOrigin(bulletsSprite, GETDATA_PLAYERBULLETS->origin);
 		sfSprite_setRotation(bulletsSprite, GETDATA_PLAYERBULLETS->angle);
+		sfVector2f tmpScale = GETDATA_PLAYERBULLETS->scale;
+		sfSprite_setScale(bulletsSprite, GETDATA_PLAYERBULLETS->scale);
 		sfSprite_setTextureRect(bulletsSprite, GETDATA_PLAYERBULLETS->rect);
 		sfRenderTexture_drawSprite(_window->renderTexture, bulletsSprite, NULL);
 
-		// if not flame thrower and mb laser too
 		GETDATA_PLAYERBULLETS->bounds = sfSprite_getGlobalBounds(bulletsSprite);
 	}
 }

@@ -15,6 +15,8 @@
 #define TILESET_PATH "..\\Ressources\\Tilesets\\"
 
 #define VECTOR2F_NULL vector2f(0.f, 0.f)
+#define MAX(a,b) a >= b ? a : b
+#define MIN(a,b) a <= b ? a : b
 
 typedef struct vector4f vector4f;
 struct vector4f

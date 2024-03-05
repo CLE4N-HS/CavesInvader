@@ -5,9 +5,6 @@
 #define DEG2RAD 0.0174533
 #define PI 3.1415926536f
 
-#define MAX(a,b) a >= b ? a : b
-#define MIN(a,b) a <= b ? a : b
-
 #define GRAVITATIONAL_FORCE 1.6e-8f
 
 

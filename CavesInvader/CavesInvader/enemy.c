@@ -2,6 +2,7 @@
 #include "textureManager.h"
 #include "player.h"
 
+#define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
 
 sfSprite* enemySprite;
 
@@ -43,7 +44,9 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 	tmp.vengefly.startFocusingPos = _startFocusingPos;
 	tmp.vengefly.startAttackingMoment = _startAttackingMoment;
 	tmp.vengefly.startAttackingTimer = _startAttackingTimer;
+
 	tmp.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
+	tmp.ftimeInAOE = 0.f;
 
 	STD_LIST_PUSHBACK(enemiesList, tmp);
 }
