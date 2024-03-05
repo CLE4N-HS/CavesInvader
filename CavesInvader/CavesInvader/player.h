@@ -75,3 +75,5 @@ void deinitPlayer();
 sfVector2f getClosestPlayerPos(sfVector2f _pos);
 
 sfVector2f getPlayerPos(int _playerId);
+
+sfVector2f getPlayerVelocity(int _playerId);

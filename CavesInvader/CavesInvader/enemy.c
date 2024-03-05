@@ -142,7 +142,7 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 			//*_origin = vector2f(31.f, 52.f);
 			*_animTimer = 0.f;
 			*_timeBetweenFrames = 0.1f;
-			*_speed = 700.f;
+			*_speed = 900.f;
 			*_forward = Normalize(CreateVector(_pos, getClosestPlayerPos(_pos)));
 			break;
 		case DEAD:
@@ -185,7 +185,7 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 			//*_origin = vector2f(31.f, 52.f);
 			*_animTimer = 0.f;
 			*_timeBetweenFrames = 0.1f;
-			*_speed = 900.f;
+			*_speed = 1100.f;
 			*_forward = Normalize(CreateVector(_pos, getClosestPlayerPos(_pos)));
 			break;
 		case DEAD:

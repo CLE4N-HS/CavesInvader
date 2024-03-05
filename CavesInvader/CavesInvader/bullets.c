@@ -123,7 +123,7 @@ void createPlayerBullets(bulletType _type, int _ownerId, sfVector2f _pos)
 		break;
 	case PLAYER_FLAMETHROWER:
 		pos = AddVectors(_pos, vector2f(50.f, 24.f));
-		fDamagePerSecond = 4.f;
+		fDamagePerSecond = 5.f;
 		break;
 	default:
 		break;
@@ -220,11 +220,12 @@ void updateBullets(Window* _window)
 		else if (tmp.type == PLAYER_FLAMETHROWER)
 		{
 			// estimated rect for collisions
-			sfVector2f tmpPos = getPlayerPos(GETDATA_PLAYERBULLETS->ownerId);
-			GETDATA_PLAYERBULLETS->bounds.left = tmpPos.x + 100.f;
-			GETDATA_PLAYERBULLETS->bounds.top = tmpPos.y - 74.f;
-			GETDATA_PLAYERBULLETS->bounds.width = 250.f;
-			GETDATA_PLAYERBULLETS->bounds.height = 200.f;
+			int tmpOwnerId = GETDATA_PLAYERBULLETS->ownerId;
+			sfVector2f tmpPos = getPlayerPos(tmpOwnerId);
+			GETDATA_PLAYERBULLETS->bounds.left = tmpPos.x + 100.f ;
+			GETDATA_PLAYERBULLETS->bounds.top = tmpPos.y - 74.f - getPlayerVelocity(tmpOwnerId).y / 10.f;
+			GETDATA_PLAYERBULLETS->bounds.width = 250.f - getPlayerVelocity(tmpOwnerId).x / 3.f;
+			GETDATA_PLAYERBULLETS->bounds.height = 200.f + getPlayerVelocity(tmpOwnerId).y / 3.f * 0.f;
 
 			// erase it because there shouldn't be any flames at this point
 			if (!player[GETDATA_PLAYERBULLETS->ownerId].isFlamethrowering) {
@@ -319,8 +320,8 @@ void displayBullets(Window* _window)
 		if (GETDATA_PLAYERBULLETS->type == PLAYER_FLAMETHROWER) {
 			sfRectangleShape_setPosition(tmpRectangle, vector2f(GETDATA_PLAYERBULLETS->bounds.left, GETDATA_PLAYERBULLETS->bounds.top));
 			sfRectangleShape_setSize(tmpRectangle, vector2f(GETDATA_PLAYERBULLETS->bounds.width, GETDATA_PLAYERBULLETS->bounds.height));
-			sfRectangleShape_setFillColor(tmpRectangle, color(255, 0, 0, 100));
-			//sfRenderTexture_drawRectangleShape(_window->renderTexture, tmpRectangle, NULL);
+			sfRectangleShape_setFillColor(tmpRectangle, color(255, 0, 0, 20));
+			sfRenderTexture_drawRectangleShape(_window->renderTexture, tmpRectangle, NULL);
 			continue;
 		}
 

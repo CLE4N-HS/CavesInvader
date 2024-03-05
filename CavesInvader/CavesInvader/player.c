@@ -307,7 +307,8 @@ void updatePlayer(Window* _window)
 				direction *= -1;
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 2.f, 2.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 1.f, 1.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
-			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 5000.f + (player[i].velocity.x / 15.f), 5000.f + (player[i].velocity.x / 15.f), 30.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.1f);
+			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 25.f), 25.f + (player[i].velocity.y / 25.f), direction, 10.f, 4000.f + (player[i].velocity.x * 5.f), 4000.f + (player[i].velocity.x * 5.f), 30.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.1f);
+			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 5000.f, 5000.f, 30.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.1f);
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 15.f), 25.f + (player[i].velocity.y / 15.f), direction, 10.f, 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 25.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
 			if (!player[i].isFlamethrowering) {
 				player[i].isFlamethrowering = sfTrue;
@@ -557,4 +558,9 @@ sfVector2f getClosestPlayerPos(sfVector2f _pos)
 sfVector2f getPlayerPos(int _playerId)
 {
 	return player[_playerId].pos;
+}
+
+sfVector2f getPlayerVelocity(int _playerId)
+{
+	return player[_playerId].velocity;
 }
