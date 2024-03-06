@@ -280,7 +280,7 @@ void displayHud(Window* _window)
 		sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
 
 		// mine text
-		sprintf(hudChar, "%d / 15", player[i].nbMine);
+		sprintf(hudChar, "%d / %d", player[i].nbMine, KILL_COUNT_REQUIRED);
 		sfText_setString(hudText, hudChar);
 		sfText_setCharacterSize(hudText, textHud[i].mineTextSize);
 		sfText_setPosition(hudText, textHud[i].mineTextPos);

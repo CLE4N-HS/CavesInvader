@@ -54,6 +54,7 @@ typedef struct Enemies {
 	int damage;
 
 	float ftimeInAOE;
+	int lastDamageSource;
 
 	union parameters
 	{

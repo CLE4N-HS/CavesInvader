@@ -13,7 +13,11 @@ typedef enum bulletType {
 	PLAYER_CHARGED_BULLET,
 	PLAYER_LASER,
 	PLAYER_MINES,
-	PLAYER_FLAMETHROWER
+	PLAYER_FLAMETHROWER,
+
+	ENEMY_YELLOW_BULLET,
+	ENEMY_GREEN_BULLET,
+	ENEMY_RED_BULLET
 }bulletType;
 
 typedef struct basicBulletParameters {
@@ -34,7 +38,7 @@ typedef struct flamethrowerParameters {
 }flamethrowerParameters;
 
 
-typedef struct playerBullets {
+typedef struct Bullets {
 	bulletType type;
 	bulletId id;
 	int ownerId;
@@ -59,12 +63,12 @@ typedef struct playerBullets {
 		flamethrowerParameters flamethrower;
 	};
 
-}playerBullets;
+}Bullets;
 
 
 void initBullets(Window* _window);
 
-void createPlayerBullets(bulletType _type, int _ownerId, sfVector2f _pos);
+void createBullets(bulletType _type, int _ownerId, sfVector2f _pos);
 
 void updateBullets(Window* _window);
 

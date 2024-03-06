@@ -7,6 +7,8 @@
 
 sfSprite* playerSprite;
 
+sfSprite* playerTexture;
+
 sfTexture* playerHitTexture;
 
 void initPlayer(Window* _window)
@@ -59,6 +61,8 @@ void initPlayer(Window* _window)
 		player[i].nbMine = 0;
 		player[i].nbRespawn = 3;
 		player[i].hasShield = sfFalse;
+		player[i].invulnerabilityTimer = 0.f;
+		player[i].color = color(255, 255, 255, 255);
 
 
 		//if (i >= nbPlayer)
@@ -273,7 +277,28 @@ void updatePlayer(Window* _window)
 
 
 
+		// invulnerabilty
+		if (player[i].invulnerabilityTimer > 0.f) {
 
+			if (player[i].invulnerabilityTimer > 2.9f) {
+				player[i].color.g = 0;
+				player[i].color.b = 0;
+			}
+			else {
+				player[i].color.g = 255;
+				player[i].color.b = 255;
+			}
+
+			float fColor = fabs(cosf(player[i].invulnerabilityTimer)) * 0.5f + 0.5f;
+			fColor -= 0.5f;
+			fColor *= 2.f;
+			sfUint8 color = fColor * 255;
+			player[i].color.a = color;
+			player[i].invulnerabilityTimer -= dt;
+
+		}
+		else
+			player[i].color = color(255, 255, 255, 255);
 
 
 		// Shots
@@ -281,11 +306,11 @@ void updatePlayer(Window* _window)
 		if (isKeyboardOrControllerButtonPressed(sfKeySpace, LB_XBOX) && player[i].bulletTimer > 0.2f) {
 
 			if (player[i].bulletTimer > 2.f) {
-				createPlayerBullets(PLAYER_CHARGED_BULLET, i, player[i].pos);
+				createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos);
 				player[i].bulletTimer = -0.1f;
 			}
 			else {
-				createPlayerBullets(PLAYER_BASIC_BULLET, i, player[i].pos);
+				createBullets(PLAYER_BASIC_BULLET, i, player[i].pos);
 				player[i].bulletTimer = 0.0f;
 			}
 
@@ -293,11 +318,11 @@ void updatePlayer(Window* _window)
 		// buttons to change
 		// TODO cheks if PC or controller for releasing a button or mb if both or released, yeah better, i agree, thanks man, am i alone or what
 		else if (isKeyboardOrControllerButtonMoved(sfKeyL, TRIGGER_L2_XBOX, sfFalse, 10.f) && player[i].nbLightning <= 0 && !player[i].isLightning) { // no timer but 15 seconds condition
-			createPlayerBullets(PLAYER_LASER, i, player[i].pos);
+			createBullets(PLAYER_LASER, i, player[i].pos);
 			player[i].isLightning = sfTrue;
 		}
 		else if (isKeyboardOrControllerButtonPressed(sfKeyM, RB_XBOX) && player[i].bulletTimer > 0.5f) { // no timer but 15 kills condition
-			createPlayerBullets(PLAYER_MINES, i, player[i].pos);
+			createBullets(PLAYER_MINES, i, player[i].pos);
 			player[i].bulletTimer = 0.f;
 		}
 		else if (isKeyboardOrControllerButtonMoved(sfKeyF, TRIGGER_R2_XBOX, sfFalse, 10.f) && player[i].bulletTimer > 0.02f) { // and the gauge is not empty
@@ -313,7 +338,7 @@ void updatePlayer(Window* _window)
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 15.f), 25.f + (player[i].velocity.y / 15.f), direction, 10.f, 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 25.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
 			if (!player[i].isFlamethrowering) {
 				player[i].isFlamethrowering = sfTrue;
-				createPlayerBullets(PLAYER_FLAMETHROWER, i, player[i].pos);
+				createBullets(PLAYER_FLAMETHROWER, i, player[i].pos);
 			}
 			player[i].bulletTimer = 0.f;
 		}
@@ -513,6 +538,36 @@ void updatePlayer(Window* _window)
 
 }
 
+void damagePlayer(int _playerId, int _damage)
+{
+	if (player[_playerId].invulnerabilityTimer > 0.f) {
+		NULL;
+	}
+	else if (player[_playerId].hasShield) {
+		player[_playerId].hasShield = sfFalse;
+	}
+	else {
+		player[_playerId].life -= _damage;
+		player[_playerId].nbMine = 0;
+		
+		//if (player[_playerId].life > 0) {
+			player[_playerId].invulnerabilityTimer = 3.f;
+		//}
+	}
+}
+
+void increasePlayerKillCount(int _playerId)
+{
+	for (int i = 0; i < nbPlayer; i++)
+	{
+		if (i == _playerId) {
+			if (player[_playerId].nbMine < KILL_COUNT_REQUIRED)
+				player[_playerId].nbMine += 1;
+		}
+	}
+
+}
+
 void displayPlayer(Window* _window)
 {
 	for (int i = 0; i < nbPlayer; i++)
@@ -523,7 +578,12 @@ void displayPlayer(Window* _window)
 		sfSprite_setScale(playerSprite, player[i].flame.scale);
 		sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
 
-		sfSprite_setTexture(playerSprite, player[i].texture, sfTrue);
+		//if (player[i].invulnerabilityTimer > 2.9f)
+		//	sfSprite_setTexture(playerSprite, playerHitTexture, sfTrue);
+		//else
+			sfSprite_setTexture(playerSprite, player[i].texture, sfTrue);
+
+		sfSprite_setColor(playerSprite, player[i].color);
 		sfSprite_setPosition(playerSprite, player[i].pos);
 		sfSprite_setOrigin(playerSprite, player[i].origin);
 		sfSprite_setScale(playerSprite, vector2f(1.f, 1.f));

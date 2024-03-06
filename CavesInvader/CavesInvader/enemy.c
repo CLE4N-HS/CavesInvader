@@ -2,6 +2,7 @@
 #include "textureManager.h"
 #include "player.h"
 #include "item.h"
+#include "bullets.h"
 
 #define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
 
@@ -59,6 +60,7 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 
 	tmp.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 	tmp.ftimeInAOE = 0.f;
+	tmp.lastDamageSource = -1;
 
 	STD_LIST_PUSHBACK(enemiesList, tmp);
 }
@@ -122,15 +124,36 @@ void createEnemy(enemyType _type)
 		origin = vector2f(38.f, 105.f);
 		originToCenter = vector2f(68.f, -18.f);
 		radius = 88.f;
-		pos = vector2f(1958.f, rand_float(105.f, 975.f));
+		pos = vector2f(1958.f, rand_float(105.f, 928.f));
 		life = 10;
 		damage = 1;
 		rect = IntRect(0, 1283, 190, 257);
 		animTimer = 0.f;
 		timeBetweenFrames = 0.1f;
 
-		startFocusingPos = rand_float(1400.f, 1780.f);
+		startFocusingPos = rand_float(1400.f, 1770.f);
 		startAttackingMoment = rand_float(1.5f, 2.5f);
+		focusingTimer = 0.f;
+		
+		if (pos.y < 540.f)
+			upMovement = sfFalse;
+		else
+			upMovement = sfTrue;
+
+		break;
+	case ENRAGED_HOPPER:
+		origin = vector2f(56.f, 152.f);
+		originToCenter = vector2f(96.f, -14.f);
+		radius = 123.f;
+		pos = vector2f(1976.f, rand_float(152.f, 761.f));
+		life = 20;
+		damage = 1;
+		rect = IntRect(0, 1540, 281, 371);
+		animTimer = 0.f;
+		timeBetweenFrames = 0.1f;
+
+		startFocusingPos = rand_float(1400.f, 1700.f);
+		startAttackingMoment = rand_float(0.75f, 1.5f);
 		focusingTimer = 0.f;
 		
 		if (pos.y < 540.f)
@@ -254,7 +277,26 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 		default:
 			break;
 		}
+		break;
 
+	case ENRAGED_HOPPER:
+
+		switch (_state)
+		{
+		case FLYING:
+			*_speed = 200.f;
+			break;
+		case ATTACKING:
+			*_speed = 140.f;
+			break;
+		case DEAD:
+			*_rect = IntRect(0, 545, 271, 367);
+			*_animTimer = 0.f;
+			*_timeBetweenFrames = 0.1f;
+			break;
+		default:
+			break;
+		}
 		break;
 	default:
 		break;
@@ -283,6 +325,10 @@ void updateEnemy(Window* _window)
 		createEnemy(HOPPER);
 		timer = 0.f;
 	}
+	if (isKeyboardOrControllerButtonPressed(sfKeyT, Y_XBOX) && timer > 0.2f) {
+		createEnemy(ENRAGED_HOPPER);
+		timer = 0.f;
+	}
 
 
 	for (int i = 0; i < enemiesList->size(enemiesList); i++)
@@ -292,7 +338,7 @@ void updateEnemy(Window* _window)
 
 
 		sfVector2f tmpVelocity = VECTOR2F_NULL;
-		sfBool dropCollectible = sfTrue;
+		sfBool honorableKill = sfTrue;
 
 		if (GETDATA_ENEMIES->pos.x < (-GETDATA_ENEMIES->rect.width + GETDATA_ENEMIES->origin.y)) {
 			enemiesList->erase(&enemiesList, i);
@@ -304,16 +350,22 @@ void updateEnemy(Window* _window)
 			for (int j = 0; j < nbPlayer; j++)
 			{
 				if (sfFloatRect_intersects(&GETDATA_ENEMIES->bounds, &player[j].bounds, NULL)) {
-					player[j].life -= GETDATA_ENEMIES->damage;
+					//player[j].life -= GETDATA_ENEMIES->damage;
+					damagePlayer(j, GETDATA_ENEMIES->damage);
 					GETDATA_ENEMIES->life = 0;
-					dropCollectible = sfFalse;
+					honorableKill = sfFalse;
 				}
 			}
 		}
 
 		if (GETDATA_ENEMIES->life <= 0 && GETDATA_ENEMIES->state != DEAD) {
-			if (dropCollectible)
+			if (honorableKill) {
 				createItem(RANDOM_ITEM, GETDATA_ENEMIES->pos);
+
+				if (GETDATA_ENEMIES->lastDamageSource >= 0) {
+					increasePlayerKillCount(GETDATA_ENEMIES->lastDamageSource);
+				}
+			}
 
 			GETDATA_ENEMIES->state = DEAD;
 		}
@@ -385,7 +437,7 @@ void updateEnemy(Window* _window)
 				break;
 			}
 		}
-		else if (tmp.type == HOPPER) {
+		else if (tmp.type == HOPPER || tmp.type == ENRAGED_HOPPER) {
 
 			switch (tmp.state)
 			{
@@ -409,7 +461,24 @@ void updateEnemy(Window* _window)
 				else
 					GETDATA_ENEMIES->hopper.focusingTimer += dt;
 
-				GETDATA_ENEMIES->forward.y = sin(GETDATA_ENEMIES->hopper.focusingTimer);
+				GETDATA_ENEMIES->forward.y = cosf(GETDATA_ENEMIES->hopper.focusingTimer);
+
+
+				GETDATA_ENEMIES->hopper.startAttackingTimer += dt;
+
+				if (GETDATA_ENEMIES->hopper.startAttackingTimer > GETDATA_ENEMIES->hopper.startAttackingMoment) {
+
+					GETDATA_ENEMIES->hopper.startAttackingTimer = 0.f;
+					if (tmp.type == HOPPER) {
+						createBullets(ENEMY_YELLOW_BULLET, i, GETDATA_ENEMIES->pos);
+						GETDATA_ENEMIES->hopper.startAttackingMoment = rand_float(1.5f, 2.5f);
+					}
+					else {
+						createBullets(ENEMY_GREEN_BULLET, i, GETDATA_ENEMIES->pos);
+						GETDATA_ENEMIES->hopper.startAttackingMoment = rand_float(0.75f, 1.5f);
+					}
+				}
+
 
 				GETDATA_ENEMIES->animTimer += dt;
 				Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 1, GETDATA_ENEMIES->timeBetweenFrames, 0.f);

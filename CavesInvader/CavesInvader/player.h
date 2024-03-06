@@ -7,7 +7,7 @@
 
 #define PLAYER_SPEED 500.f
 #define LIGTHNING_SECONDS_REQUIRED 15
-#define MINE_DEATHS_REQUIRED 15
+#define KILL_COUNT_REQUIRED 15
 
 typedef struct Flames {
 	sfTexture* texture;
@@ -44,6 +44,9 @@ typedef struct Players {
 	int nbRespawn;
 	sfBool hasShield;
 
+	float invulnerabilityTimer;
+	sfColor color;
+
 	// useless but i guess we never know
 	float anothertimer;
 	sfBool wasalreadymovingtbh;
@@ -62,6 +65,10 @@ Common common;
 void initPlayer(Window* _window);
 
 void updatePlayer(Window* _window);
+
+void damagePlayer(int _playerId, int _damage);
+
+void increasePlayerKillCount(int _playerId);
 
 void displayPlayer(Window* _window);
 
