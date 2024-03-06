@@ -6,6 +6,8 @@
 
 
 #define PLAYER_SPEED 500.f
+#define LIGTHNING_SECONDS_REQUIRED 15
+#define MINE_DEATHS_REQUIRED 15
 
 typedef struct Flames {
 	sfTexture* texture;
@@ -31,6 +33,17 @@ typedef struct Players {
 	float timeMoving;
 	float particlesTimer;
 
+	int nbGas;
+	float fGasTimer;
+	int nbLightning;
+	float fLightningTimer;
+	sfBool isLightning;
+	sfBool isFlamethrowering;
+	
+	int nbMine;
+	int nbRespawn;
+	sfBool hasShield;
+
 	// useless but i guess we never know
 	float anothertimer;
 	sfBool wasalreadymovingtbh;
@@ -38,7 +51,13 @@ typedef struct Players {
 }Players;
 Players player[MAX_PLAYER];
 
-
+typedef struct Common {
+	int multiplier;
+	int score;
+	int countdown;
+	float fcountdownTimer;
+}Common;
+Common common;
 
 void initPlayer(Window* _window);
 
@@ -56,3 +75,5 @@ void deinitPlayer();
 sfVector2f getClosestPlayerPos(sfVector2f _pos);
 
 sfVector2f getPlayerPos(int _playerId);
+
+sfVector2f getPlayerVelocity(int _playerId);

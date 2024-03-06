@@ -45,7 +45,7 @@ Window* windowSetup(const char* _Title, sfVector2i _defaultVideoMode)
 
 	strcpy(This->windowTitle, _Title);
 	
-	This->isFullscreen = sfFalse;
+	This->isFullscreen = sfTrue;
 	This->isDone = sfFalse;
 	This->videoMode = sfVideoMode_getDesktopMode();
 	This->defaultVideoMode = _defaultVideoMode;

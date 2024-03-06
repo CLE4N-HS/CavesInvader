@@ -1,6 +1,10 @@
 #include "hud.h"
 #include "textureManager.h"
 #include "fontManager.h"
+#include "player.h"
+
+#define TEXTORIGIN vector2f(tmpRect.width / 2.f, tmpRect.height) // center the size
+//#define TEXTORIGIN vector2f(tmpRect.width / 2.f, 0.f) // center the string
 
 typedef struct Hud {
 	sfVector2f mainPos;
@@ -23,19 +27,15 @@ Hud hud[MAX_PLAYER];
 typedef struct TextHud {
 	float gasTextSize;
 	sfVector2f gasTextPos;
-	sfVector2f gasTextOrigin;
 
 	float lightningTextSize;
 	sfVector2f lightningTextPos;
-	sfVector2f lightningTextOrigin;
 
 	float mineTextSize;
 	sfVector2f mineTextPos;
-	sfVector2f mineTextOrigin;
 
-	float lifeTextSize;
-	sfVector2f lifeTextPos;
-	sfVector2f lifeTextOrigin;
+	float respawnTextSize;
+	sfVector2f respawnTextPos;
 }TextHud;
 TextHud textHud[MAX_PLAYER];
 
@@ -51,11 +51,12 @@ CommonHud commonHud;
 typedef struct CommonTextHud {
 	float multiplierTextSize;
 	sfVector2f multiplierTextPos;
-	sfVector2f multiplierTextOrigin;
 
 	float scoreTextSize;
 	sfVector2f scoreTextPos;
-	sfVector2f scoreTextOrigin;
+
+	float countdownTextSize;
+	sfVector2f countdownTextPos;
 }CommonTextHud;
 CommonTextHud commonTextHud;
 
@@ -142,26 +143,72 @@ void initHud(Window* _window)
 		switch (i)
 		{
 		case 0:
-			textHud[i].gasTextPos = vector2f(48.f, 986.f);
-			textHud[i].gasTextOrigin = vector2f(0.f, -6.f);
+			textHud[i].gasTextPos = vector2f(62.f, 1000.f);
 			textHud[i].gasTextSize = 11.f;
+
+			textHud[i].lightningTextPos = vector2f(228.f, 1025.f);
+			textHud[i].lightningTextSize = 24.f;
+
+			textHud[i].mineTextPos = vector2f(388.f, 1032.f);
+			textHud[i].mineTextSize = 24.f;
+
+			textHud[i].respawnTextPos = vector2f(624.f, 1009.f);
+			textHud[i].respawnTextSize = 18.f;
+			break;
+		case 1:
+			// TODO
+			textHud[i].gasTextPos = vector2f(1859.f, 1000.f);
+			textHud[i].gasTextSize = 11.f;
+
+			textHud[i].lightningTextPos = vector2f(1742.f, 1030.f);
+			textHud[i].lightningTextSize = 24.f;
+
+			textHud[i].mineTextPos = vector2f(1532.f, 1037.f);
+			textHud[i].mineTextSize = 24.f;
+
+			textHud[i].respawnTextPos = vector2f(1350.f, 1010.f);
+			textHud[i].respawnTextSize = 18.f;
+			break;
 		default:
 			break;
 		}
 	}
 
-	sprintf(hudChar, "%d %%", 100);
+	commonTextHud.multiplierTextPos = vector2f(960.f, 962.f);
+	commonTextHud.multiplierTextSize = 60.f;
+
+	commonTextHud.scoreTextPos = vector2f(960.f, 1040.f);
+	commonTextHud.scoreTextSize = 36.f;
+
+	// TODO respawn
+
 }
 
 void updateHud(Window* _window)
 {
-	
-	sfText_setString(hudText, hudChar);
+	for (int i = 0; i < nbPlayer; i++)
+	{
+		if (player[i].life <= 0) {
+			hud[i].lifeRect.width = 0;
+		}
+		else if (player[i].life == 1) {
+			hud[i].lifeRect.top = 4892;
+			hud[i].lifeRect.width = 55;
+		}
+		else if (player[i].life == 2) {
+			hud[i].lifeRect.top = 4925;
+			hud[i].lifeRect.width = 113;
+		}
+		else if (player[i].life == 3) {
+			hud[i].lifeRect.top = 4958;
+			hud[i].lifeRect.width = 170;
+		}
+	}
 }
 
 void displayHud(Window* _window)
 {
-	for (int i = 0; i < /*nbPlayer*/2; i++)
+	for (int i = 0; i < nbPlayer; i++)
 	{
 		// main
 		sfSprite_setPosition(hudSprite, hud[i].mainPos);
@@ -184,16 +231,20 @@ void displayHud(Window* _window)
 		sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
 		
 		// shield
-		sfSprite_setPosition(hudSprite, hud[i].shieldPos);
-		sfSprite_setTextureRect(hudSprite, hud[i].shielRect);
-		sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
+		if (player[i].hasShield) {
+			sfSprite_setPosition(hudSprite, hud[i].shieldPos);
+			sfSprite_setTextureRect(hudSprite, hud[i].shielRect);
+			sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
+		}
 	}
 
-	// score multiplier
-	sfSprite_setPosition(hudSprite, commonHud.multiplierZonePos);
-	sfSprite_setTextureRect(hudSprite, commonHud.multiplierZoneRect);
-	sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
-
+	// multiplier
+	if (common.multiplier > 1) {
+		sfSprite_setPosition(hudSprite, commonHud.multiplierZonePos);
+		sfSprite_setTextureRect(hudSprite, commonHud.multiplierZoneRect);
+		sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
+	}
+	
 	// when needed
 	if (0) {
 		// click to join
@@ -204,46 +255,78 @@ void displayHud(Window* _window)
 
 
 
+	sfFloatRect tmpRect;
+
 	sfText_setColor(hudText, sfBlack);
 
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		// gas text
+		sprintf(hudChar, "%d %%", player[i].nbGas);
+		sfText_setString(hudText, hudChar);
 		sfText_setCharacterSize(hudText, textHud[i].gasTextSize);
 		sfText_setPosition(hudText, textHud[i].gasTextPos);
-		sfText_setOrigin(hudText, textHud[i].gasTextOrigin);
+		tmpRect = sfText_getLocalBounds(hudText);
+		sfText_setOrigin(hudText, TEXTORIGIN);
 		sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
 
-
-		sfText_setCharacterSize(hudText, textHud[i].gasTextSize);
-		sfText_setPosition(hudText, textHud[i].gasTextPos);
-		sfText_setOrigin(hudText, textHud[i].gasTextOrigin);
+		// lightning text
+		sprintf(hudChar, "%ds", player[i].nbLightning);
+		sfText_setString(hudText, hudChar);
+		sfText_setCharacterSize(hudText, textHud[i].lightningTextSize);
+		sfText_setPosition(hudText, textHud[i].lightningTextPos);
+		tmpRect = sfText_getLocalBounds(hudText);
+		sfText_setOrigin(hudText, TEXTORIGIN);
 		sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
 
-		sfText_setCharacterSize(hudText, textHud[i].gasTextSize);
-		sfText_setPosition(hudText, textHud[i].gasTextPos);
-		sfText_setOrigin(hudText, textHud[i].gasTextOrigin);
+		// mine text
+		sprintf(hudChar, "%d / 15", player[i].nbMine);
+		sfText_setString(hudText, hudChar);
+		sfText_setCharacterSize(hudText, textHud[i].mineTextSize);
+		sfText_setPosition(hudText, textHud[i].mineTextPos);
+		tmpRect = sfText_getLocalBounds(hudText);
+		sfText_setOrigin(hudText, TEXTORIGIN);
 		sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
 
-		sfText_setCharacterSize(hudText, textHud[i].gasTextSize);
-		sfText_setPosition(hudText, textHud[i].gasTextPos);
-		sfText_setOrigin(hudText, textHud[i].gasTextOrigin);
+		// respawn text
+		sprintf(hudChar, "x%d", player[i].nbRespawn);
+		sfText_setString(hudText, hudChar);
+		sfText_setCharacterSize(hudText, textHud[i].respawnTextSize);
+		sfText_setPosition(hudText, textHud[i].respawnTextPos);
+		tmpRect = sfText_getLocalBounds(hudText);
+		sfText_setOrigin(hudText, TEXTORIGIN);
 		sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
 
-		sfText_setCharacterSize(hudText, textHud[i].gasTextSize);
-		sfText_setPosition(hudText, textHud[i].gasTextPos);
-		sfText_setOrigin(hudText, textHud[i].gasTextOrigin);
+	}
+
+	// multiplier text
+	if (common.multiplier > 1) {
+		sprintf(hudChar, "x%d", common.multiplier);
+		sfText_setString(hudText, hudChar);
+		sfText_setCharacterSize(hudText, commonTextHud.multiplierTextSize);
+		sfText_setPosition(hudText, commonTextHud.multiplierTextPos);
+		tmpRect = sfText_getLocalBounds(hudText);
+		sfText_setOrigin(hudText, TEXTORIGIN);
 		sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
 	}
 
-	sfText_setCharacterSize(hudText, commonTextHud.multiplierTextSize);
-	sfText_setPosition(hudText, commonTextHud.multiplierTextPos);
-	sfText_setOrigin(hudText, commonTextHud.multiplierTextOrigin);
-	sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
-
+	// score text
+	sprintf(hudChar, "%d", common.score);
+	sfText_setString(hudText, hudChar);
 	sfText_setCharacterSize(hudText, commonTextHud.scoreTextSize);
 	sfText_setPosition(hudText, commonTextHud.scoreTextPos);
-	sfText_setOrigin(hudText, commonTextHud.scoreTextOrigin);
+	tmpRect = sfText_getLocalBounds(hudText);
+	sfText_setOrigin(hudText, TEXTORIGIN);
 	sfText_setColor(hudText, sfWhite);
 	sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
-
+	
+	// countdown to join
+	sprintf(hudChar, "%d", common.countdown);
+	sfText_setString(hudText, hudChar);
+	sfText_setCharacterSize(hudText, commonTextHud.countdownTextSize);
+	sfText_setPosition(hudText, commonTextHud.countdownTextPos);
+	tmpRect = sfText_getLocalBounds(hudText);
+	sfText_setOrigin(hudText, TEXTORIGIN);
+	sfText_setColor(hudText, sfWhite);
+	sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
 }

@@ -4,8 +4,6 @@
 #include "stateManager.h"
 #include "List.h"
 
-#define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
-
 typedef enum enemyType {
 	VENGELFY,
 	ENRAGED_VENGEFLY,
@@ -47,6 +45,8 @@ typedef struct Enemies {
 	float speed;
 	int life;
 	int damage;
+
+	float ftimeInAOE;
 
 	union parameters
 	{

@@ -26,6 +26,7 @@ void GamepadDetection()
 		}
 	}
 	nbPlayer = playernber;
+	nbPlayer = MAX(nbPlayer, 1);
 }
 
 void GamepadManager(int _joystickId, sfEvent event)

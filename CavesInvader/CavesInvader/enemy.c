@@ -1,7 +1,9 @@
 #include "enemy.h"
 #include "textureManager.h"
 #include "player.h"
+#include "item.h"
 
+#define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
 
 sfSprite* enemySprite;
 
@@ -43,7 +45,9 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 	tmp.vengefly.startFocusingPos = _startFocusingPos;
 	tmp.vengefly.startAttackingMoment = _startAttackingMoment;
 	tmp.vengefly.startAttackingTimer = _startAttackingTimer;
+
 	tmp.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
+	tmp.ftimeInAOE = 0.f;
 
 	STD_LIST_PUSHBACK(enemiesList, tmp);
 }
@@ -139,7 +143,7 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 			//*_origin = vector2f(31.f, 52.f);
 			*_animTimer = 0.f;
 			*_timeBetweenFrames = 0.1f;
-			*_speed = 700.f;
+			*_speed = 900.f;
 			*_forward = Normalize(CreateVector(_pos, getClosestPlayerPos(_pos)));
 			break;
 		case DEAD:
@@ -182,7 +186,7 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 			//*_origin = vector2f(31.f, 52.f);
 			*_animTimer = 0.f;
 			*_timeBetweenFrames = 0.1f;
-			*_speed = 900.f;
+			*_speed = 1100.f;
 			*_forward = Normalize(CreateVector(_pos, getClosestPlayerPos(_pos)));
 			break;
 		case DEAD:
@@ -242,7 +246,8 @@ void updateEnemy(Window* _window)
 			}
 		}
 
-		if (GETDATA_ENEMIES->life <= 0) {
+		if (GETDATA_ENEMIES->life <= 0 && GETDATA_ENEMIES->state != DEAD) {
+			createItem(RANDOM_ITEM, GETDATA_ENEMIES->pos);
 			GETDATA_ENEMIES->state = DEAD;
 		}
 

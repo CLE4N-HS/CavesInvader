@@ -50,19 +50,32 @@ void initPlayer(Window* _window)
 		player[i].flame.scale = vector2f(1.f, 1.f);
 		player[i].bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 
+		player[i].nbGas = 0;
+		player[i].fGasTimer = 15.f;
+		player[i].nbLightning = 0;
+		player[i].fLightningTimer = 0.f;
+		player[i].isLightning = sfFalse;
+		player[i].isFlamethrowering = sfFalse;
+		player[i].nbMine = 0;
+		player[i].nbRespawn = 3;
+		player[i].hasShield = sfFalse;
+
 
 		//if (i >= nbPlayer)
 		//	break;
 	}
 
-	sfSprite_setOrigin(playerSprite, player[0].origin);
+	common.multiplier = 1;
+	common.score = 0;
+	common.countdown = 5;
+	common.fcountdownTimer = 0.f;
 }
 
 void updatePlayer(Window* _window)
 {
 	float dt = getDeltaTime();
 
-	for (int i = 0; i < MAX_PLAYER; i++)
+	for (int i = 0; i < nbPlayer; i++)
 	{
 		float gamepadUp = Gamepad_isJoystickMoved(i, STICKLY);
 		float gamepadDown = Gamepad_isJoystickMoved(i, STICKLY);
@@ -268,22 +281,23 @@ void updatePlayer(Window* _window)
 		if (isKeyboardOrControllerButtonPressed(sfKeySpace, LB_XBOX) && player[i].bulletTimer > 0.2f) {
 
 			if (player[i].bulletTimer > 2.f) {
-				createPlayerBullets(PLAYER_CHARGED_BULLET, PLAYER_ID_BULLET, i, player[i].pos);
+				createPlayerBullets(PLAYER_CHARGED_BULLET, i, player[i].pos);
 				player[i].bulletTimer = -0.1f;
 			}
 			else {
-				createPlayerBullets(PLAYER_BASIC_BULLET, PLAYER_ID_BULLET, i, player[i].pos);
+				createPlayerBullets(PLAYER_BASIC_BULLET, i, player[i].pos);
 				player[i].bulletTimer = 0.0f;
 			}
 
 		}
 		// buttons to change
-		else if (isKeyboardOrControllerButtonMoved(sfKeyL, TRIGGER_L2_XBOX, sfFalse, 10.f) && player[i].bulletTimer > 0.2f) { // no timer but 15 seconds condition
-			createPlayerBullets(PLAYER_LASER, PLAYER_ID_BULLET, i, player[i].pos);
-			player[i].bulletTimer = 0.f;
+		// TODO cheks if PC or controller for releasing a button or mb if both or released, yeah better, i agree, thanks man, am i alone or what
+		else if (isKeyboardOrControllerButtonMoved(sfKeyL, TRIGGER_L2_XBOX, sfFalse, 10.f) && player[i].nbLightning <= 0 && !player[i].isLightning) { // no timer but 15 seconds condition
+			createPlayerBullets(PLAYER_LASER, i, player[i].pos);
+			player[i].isLightning = sfTrue;
 		}
-		else if (isKeyboardOrControllerButtonPressed(sfKeyM, RB_XBOX) && player[i].bulletTimer > 0.8f) { // no timer but 15 kills condition
-			createPlayerBullets(PLAYER_MINES, PLAYER_ID_BULLET, i, player[i].pos);
+		else if (isKeyboardOrControllerButtonPressed(sfKeyM, RB_XBOX) && player[i].bulletTimer > 0.5f) { // no timer but 15 kills condition
+			createPlayerBullets(PLAYER_MINES, i, player[i].pos);
 			player[i].bulletTimer = 0.f;
 		}
 		else if (isKeyboardOrControllerButtonMoved(sfKeyF, TRIGGER_R2_XBOX, sfFalse, 10.f) && player[i].bulletTimer > 0.02f) { // and the gauge is not empty
@@ -293,10 +307,28 @@ void updatePlayer(Window* _window)
 			if (randomDirection)
 				direction *= -1;
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 2.f, 2.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
-			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 1.f, 1.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
+			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 1.f, 1.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
+			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 25.f), 25.f + (player[i].velocity.y / 25.f), direction, 10.f, 4000.f + (player[i].velocity.x * 5.f), 4000.f + (player[i].velocity.x * 5.f), 30.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.1f);
+			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 5000.f, 5000.f, 30.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.1f);
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 15.f), 25.f + (player[i].velocity.y / 15.f), direction, 10.f, 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 25.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
+			if (!player[i].isFlamethrowering) {
+				player[i].isFlamethrowering = sfTrue;
+				createPlayerBullets(PLAYER_FLAMETHROWER, i, player[i].pos);
+			}
 			player[i].bulletTimer = 0.f;
 		}
+
+		if (player[i].isLightning)
+			player[i].speed = PLAYER_SPEED * 7.f / 10.f;
+		else
+			player[i].speed = PLAYER_SPEED;
+
+
+		// TODO know better when you're not flamethrowering lmao
+		if (player[i].bulletTimer > 0.3f)
+			player[i].isFlamethrowering = sfFalse; // will erase the bullet
+
+
 
 
 		// Particles
@@ -314,8 +346,6 @@ void updatePlayer(Window* _window)
 		player[i].flame.pos = AddVectors(player[i].pos, vector2f(-113.f, 1.f));
 		player[i].flame.scale = LerpVector(vector2f(1.0f, 1.0f), vector2f(0.5f, 0.5f), 1.f - player[i].timeMoving);
 
-		if (nbPlayer <= 1)
-			break;
 	}
 
 	//for (int i = 0; i < MAX_PLAYER; i++)
@@ -485,7 +515,7 @@ void updatePlayer(Window* _window)
 
 void displayPlayer(Window* _window)
 {
-	for (int i = 0; i < MAX_PLAYER; i++)
+	for (int i = 0; i < nbPlayer; i++)
 	{
 		sfSprite_setTexture(playerSprite, player[i].flame.texture, sfTrue);
 		sfSprite_setPosition(playerSprite, player[i].flame.pos);
@@ -501,8 +531,6 @@ void displayPlayer(Window* _window)
 
 		player[i].bounds = sfSprite_getGlobalBounds(playerSprite);
 
-		if (nbPlayer <= 1)
-			break;
 	}
 }
 
@@ -540,4 +568,9 @@ sfVector2f getClosestPlayerPos(sfVector2f _pos)
 sfVector2f getPlayerPos(int _playerId)
 {
 	return player[_playerId].pos;
+}
+
+sfVector2f getPlayerVelocity(int _playerId)
+{
+	return player[_playerId].velocity;
 }

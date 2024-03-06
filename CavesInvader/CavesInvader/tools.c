@@ -45,14 +45,14 @@ int getFrameX(sfIntRect _rect)
 {
 	if (_rect.width <= 0)
 		return 0;
-	return _rect.left / _rect.width;
+	return _rect.left / _rect.width + 1;
 }
 
 int getFrameY(sfIntRect _rect)
 {
 	if (_rect.height <= 0)
 		return 0;
-	return _rect.top / _rect.height;
+	return _rect.top / _rect.height + 1;
 }
 
 void Animator(sfIntRect* _rect, float* _timer, int _maxFrameX, int _maxFrameY, float _maxTimer, float _resetTimer)
