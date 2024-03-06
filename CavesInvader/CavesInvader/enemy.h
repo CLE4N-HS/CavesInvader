@@ -27,6 +27,13 @@ typedef struct vengeflyParameters {
 	float startAttackingTimer;
 }vengeflyParameters;
 
+typedef struct hopperParameters {
+	float startAttackingPos;
+	float focusingTimer;
+	float startAttackingMoment;
+	float startAttackingTimer;
+	sfBool upMovement;
+}hopperParameters;
 
 typedef struct Enemies {
 	enemyType type;
@@ -51,6 +58,7 @@ typedef struct Enemies {
 	union parameters
 	{
 		vengeflyParameters vengefly;
+		hopperParameters hopper;
 		int tni;
 	};
 }Enemies;
