@@ -291,6 +291,7 @@ void updatePlayer(Window* _window)
 
 		}
 		// buttons to change
+		// TODO cheks if PC or controller for releasing a button or mb if both or released, yeah better, i agree, thanks man, am i alone or what
 		else if (isKeyboardOrControllerButtonMoved(sfKeyL, TRIGGER_L2_XBOX, sfFalse, 10.f) && player[i].nbLightning <= 0 && !player[i].isLightning) { // no timer but 15 seconds condition
 			createPlayerBullets(PLAYER_LASER, i, player[i].pos);
 			player[i].isLightning = sfTrue;
@@ -316,9 +317,18 @@ void updatePlayer(Window* _window)
 			}
 			player[i].bulletTimer = 0.f;
 		}
+
+		if (player[i].isLightning)
+			player[i].speed = PLAYER_SPEED * 7.f / 10.f;
+		else
+			player[i].speed = PLAYER_SPEED;
+
+
 		// TODO know better when you're not flamethrowering lmao
 		if (player[i].bulletTimer > 0.3f)
 			player[i].isFlamethrowering = sfFalse; // will erase the bullet
+
+
 
 
 		// Particles

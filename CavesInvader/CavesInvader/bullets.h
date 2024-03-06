@@ -16,6 +16,10 @@ typedef enum bulletType {
 	PLAYER_FLAMETHROWER
 }bulletType;
 
+typedef struct basicBulletParameters {
+	float deathTimer;
+}basicBulletParameters;
+
 typedef struct laserParameters {
 	float timer;
 }laserParameters;
@@ -46,8 +50,10 @@ typedef struct playerBullets {
 	float rotationSpeed;
 	float animTimer;
 
+	sfBool canDealDamages;
 	union bulletsParameters
 	{
+		basicBulletParameters basicBullet;
 		laserParameters laser;
 		minesParameters mine;
 		flamethrowerParameters flamethrower;

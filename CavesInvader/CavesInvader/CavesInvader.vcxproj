@@ -142,6 +142,7 @@
     <ClCompile Include="gamepad.c" />
     <ClCompile Include="gamepadx.c" />
     <ClCompile Include="hud.c" />
+    <ClCompile Include="item.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="menu.c" />
     <ClCompile Include="options.c" />
@@ -168,6 +169,7 @@
     <ClInclude Include="gamepad.h" />
     <ClInclude Include="gamepadx.h" />
     <ClInclude Include="hud.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="options.h" />
     <ClInclude Include="particlesSystemManager.h" />

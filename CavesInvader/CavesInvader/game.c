@@ -11,6 +11,7 @@
 #include "bullets.h"
 #include "particlesSystemManager.h"
 #include "hud.h"
+#include "item.h"
 #include <Windows.h>
 
 #define NB_BG 8
@@ -114,6 +115,7 @@ void initGame(Window* _window)
 	initBullets(_window);
 	initPause(_window);
 	initHud(_window);
+	initItem(_window);
 		
 	
 
@@ -155,6 +157,7 @@ void updateGame(Window* _window)
 	updateEnemy(_window);
 	updateParticlesSystem(_window);
 	updateHud(_window);
+	updateItem(_window);
 }
 
 void displayGame(Window* _window)
@@ -168,8 +171,9 @@ void displayGame(Window* _window)
 
 
 	displayParticlesSystem(_window); // the particles will be behind the 2nd player
-	displayEnemy(_window);
+	displayItem(_window);
 	displayBullets(_window);
+	displayEnemy(_window);
 	displayPlayer(_window);
 	displayHud(_window);
 

@@ -1,6 +1,7 @@
 #include "enemy.h"
 #include "textureManager.h"
 #include "player.h"
+#include "item.h"
 
 #define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
 
@@ -245,7 +246,8 @@ void updateEnemy(Window* _window)
 			}
 		}
 
-		if (GETDATA_ENEMIES->life <= 0) {
+		if (GETDATA_ENEMIES->life <= 0 && GETDATA_ENEMIES->state != DEAD) {
+			createItem(RANDOM_ITEM, GETDATA_ENEMIES->pos);
 			GETDATA_ENEMIES->state = DEAD;
 		}
 
