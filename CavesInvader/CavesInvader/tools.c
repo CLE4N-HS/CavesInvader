@@ -67,7 +67,6 @@ void Animator(sfIntRect* _rect, float* _timer, int _maxFrameX, int _maxFrameY, f
 					_rect->top = 0;
 				}
 			}
-
 		}
 		*_timer = _resetTimer;
 	}
