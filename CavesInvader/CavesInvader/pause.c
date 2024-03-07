@@ -7,6 +7,7 @@
 #include "dialogBox.h"
 #include "quit.h"
 #include "CustomMath.h"
+#include "soundManager.h"
 
 //sfRectangleShape* rshape;
 //
@@ -99,6 +100,9 @@ void resetPause()
 	choicePauseTimer = 0.f;
 	sliderTimer = 0.f;
 	allowedToSlide = sfFalse;
+
+	setSliderPos(&sliderSFXPosX, SFXVolume, 782.f, 1049.f);
+	setSliderPos(&sliderMusicPosX, musicVolume, 788.f, 1055.f);
 }
 
 void initPause(Window* _window)
@@ -208,12 +212,12 @@ void updatePause(Window* _window)
 		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
 			sliderSFXPosX -= dt * 100.f;
 			sliderSFXPosX = MAX(sliderSFXPosX, 782.f);
-			// TODO change volume
+			ChangeVolume(SOUNDFX, getSliderValue(sliderSFXPosX, 782.f, 1049.f));
 		}
 		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
 			sliderSFXPosX += dt * 100.f;
 			sliderSFXPosX = MIN(sliderSFXPosX, 1049.f);
-			// TODO change volume	
+			ChangeVolume(SOUNDFX, getSliderValue(sliderSFXPosX, 782.f, 1049.f));
 		}
 		break;
 	case FULLSCREEN_PAUSE:
@@ -233,12 +237,12 @@ void updatePause(Window* _window)
 		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
 			sliderMusicPosX -= dt * 100.f;
 			sliderMusicPosX = MAX(sliderMusicPosX, 788.f);
-			// TODO change volume
+			ChangeVolume(MUSIC, getSliderValue(sliderMusicPosX, 788.f, 1055.f));
 		}
 		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
 			sliderMusicPosX += dt * 100.f;
 			sliderMusicPosX = MIN(sliderMusicPosX, 1055.f);
-			// TODO change volume	
+			ChangeVolume(MUSIC, getSliderValue(sliderMusicPosX, 788.f, 1055.f));
 		}
 		break;
 	case QUIT_PAUSE:

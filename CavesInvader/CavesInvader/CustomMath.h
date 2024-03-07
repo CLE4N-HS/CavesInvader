@@ -151,6 +151,10 @@ sfBool Rectangle_Collision(sfFloatRect _box1, sfFloatRect _box2);
 
 sfVector2f PolarCoords(sfVector2f v, float r, float theta);
 
+float getSliderValue(float _currentPos, float _minPos, float _maxPos);
+
+void setSliderPos(float* _sliderPos, float _value, float _minPos, float _maxPos);
+
 /// <summary>
 /// Create a vector using 2 other vectors
 /// </summary>
