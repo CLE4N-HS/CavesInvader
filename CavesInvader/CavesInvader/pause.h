@@ -2,11 +2,14 @@
 #include "tools.h"
 #include "windowManager.h"
 
+
 /// <summary>
 /// Initializes everything needed for the Pause
 /// </summary>
 /// <param name="_window">The whole structure of the Window</param>
 void initPause(Window* _window);
+
+void resetPause();
 
 /// <summary>
 /// Updates everything needed for the Pause

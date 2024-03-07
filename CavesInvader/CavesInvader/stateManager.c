@@ -2,6 +2,7 @@
 #include "ressourcesManager.h"
 #include "textureManager.h"
 #include "soundManager.h"
+#include "fontManager.h"
 #include "pause.h"
 #include "menu.h"
 #include "game.h"
@@ -216,7 +217,7 @@ void stateDeinit(Window* _window)
 {
 	RemoveAllTextureButALL();
 	RemoveAllSoundsButALL();
-	//fonts but all
+	RemoveAllFontsButALL();
 	if (state == INTRO)
 	{
 

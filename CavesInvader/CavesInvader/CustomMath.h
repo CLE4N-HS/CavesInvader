@@ -2,7 +2,7 @@
 #include "tools.h"
 
 #define EPSILON (float)1e-6
-#define DEG2RAD 0.0174533
+#define DEG2RAD 0.0174532925f
 #define PI 3.1415926536f
 
 #define GRAVITATIONAL_FORCE 1.6e-8f

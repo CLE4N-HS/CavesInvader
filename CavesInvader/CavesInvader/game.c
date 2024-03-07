@@ -50,6 +50,7 @@ void initGame(Window* _window)
 	Font_Onload(GAME);
 
 	gameSprite = sfSprite_create();
+	timer = 0.f;
 
 	for (int i = 0; i < NB_BG; i++)
 	{
@@ -117,7 +118,6 @@ void initGame(Window* _window)
 	initHud(_window);
 	initItem(_window);
 		
-	
 
 	w.state = sfTrue;
 
@@ -170,7 +170,7 @@ void displayGame(Window* _window)
 	}
 
 
-	displayParticlesSystem(_window); // the particles will be behind the 2nd player
+	displayParticlesSystem(_window); // the particles will be behind the 2nd player, mb add a layer sytem but it will be big
 	displayItem(_window);
 	displayBullets(_window);
 	displayEnemy(_window);
@@ -185,6 +185,9 @@ void deinitGame()
 	deinitPlayer();
 	deinitEnemy();
 	deinitBullets();
+	deinitHud();
+	deinitItem();
+
 	sfSprite_destroy(gameSprite);
 	//RemoveAllTextureButALL();
 }

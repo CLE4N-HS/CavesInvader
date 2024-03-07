@@ -97,6 +97,13 @@ void createItem(ItemType _type, sfVector2f _pos)
 	addItem(_type, _pos, origin, rect, speed);
 }
 
+void collectItem(int i)
+{
+	GETDATA_ITEM->isCollectible = sfFalse;
+	GETDATA_ITEM->rect = IntRect(0, 912, 153, 159);
+	GETDATA_ITEM->origin = vector2f(77.f, 80.f);
+}
+
 void updateItem(Window* _window)
 {
 	float dt = getDeltaTime();
@@ -117,16 +124,63 @@ void updateItem(Window* _window)
 			continue;
 		}
 
+		if (GETDATA_ITEM->pos.x < -GETDATA_ITEM->rect.width + GETDATA_ITEM->origin.x) {
+			itemList->erase(&itemList, i);
+			continue;
+		}
+
 
 		GETDATA_ITEM->pos.x -= dt * GETDATA_ITEM->speed;
 	
 		for (int j = 0; j < nbPlayer; j++)
 		{
 			if (sfFloatRect_intersects(&player[j].bounds, &GETDATA_ITEM->bounds, NULL)) {
-	
-				GETDATA_ITEM->isCollectible = sfFalse;
-				GETDATA_ITEM->rect = IntRect(0, 912, 153, 159);
-				GETDATA_ITEM->origin = vector2f(77.f, 80.f);
+
+				ItemType tmpType = GETDATA_ITEM->type;
+
+				switch (tmpType)
+				{
+				case SHIELD_ITEM:
+					if (!player[j].hasShield) {
+						player[j].hasShield = sfTrue;
+						collectItem(i);
+					}
+					break;
+				case DAMAGE_ITEM:
+					break;
+				case GAS_ITEM:
+					if (player[j].nbGas < 100) {
+						player[j].nbGas = 100;
+						collectItem(i);
+					}
+					break;
+				case BULLET_ITEM:
+					if (player[j].nbBullet < 3) {
+						player[j].nbBullet += 1;
+						collectItem(i);
+					}
+					break;
+				case LIFE_ITEM:
+					if (player[j].life < 3) {
+						player[j].life += 1;
+						collectItem(i);
+					}
+					break;
+				case TIMES2_ITEM:
+					if (common.multiplier <= 2) {
+						common.multiplier = 2;
+						common.multiplierTimer = MULTIPLIER_ITEM_DURATION;
+						collectItem(i);
+					}
+					break;
+				case TIMES3_ITEM:
+					common.multiplier = 3;
+					common.multiplierTimer = MULTIPLIER_ITEM_DURATION;
+					collectItem(i);
+					break;
+				default:
+					break;
+				}
 			}
 		}
 	}
@@ -148,4 +202,10 @@ void displayItem(Window* _window)
 		
 		GETDATA_ITEM->bounds = sfSprite_getGlobalBounds(itemSprite);
 	}
+}
+
+void deinitItem()
+{
+	sfSprite_destroy(itemSprite);
+	itemList->destroy(&itemList);
 }

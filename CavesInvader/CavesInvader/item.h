@@ -2,6 +2,8 @@
 #include "tools.h"
 #include "stateManager.h"
 
+#define MULTIPLIER_ITEM_DURATION 15.f
+
 typedef enum ItemType {
 	RANDOM_ITEM,
 	SHIELD_ITEM,
@@ -35,4 +37,4 @@ void updateItem(Window* _window);
 
 void displayItem(Window* _window);
 
-// TODO deinit
+void deinitItem();

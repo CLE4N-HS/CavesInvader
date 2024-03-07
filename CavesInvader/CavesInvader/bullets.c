@@ -1,7 +1,6 @@
 #include "bullets.h"
 #include "textureManager.h"
 #include "List.h"
-#include "Vector.h"
 #include "enemy.h"
 #include "particlesSystemManager.h"
 #include "gamepad.h"
@@ -18,7 +17,7 @@ sfTexture* bulletsTexture;
 
 sfTexture* enemyBulletsTexture;
 
-sfRectangleShape* tmpRectangle;
+sfRectangleShape* tmpRectangle; // to remove
 
 
 void initBullets(Window* _window)
@@ -36,7 +35,7 @@ void initBullets(Window* _window)
 
 }
 
-void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _velocity, sfVector2f _scale, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer)
+void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _forward, float _speed, sfVector2f _velocity, sfVector2f _scale, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer)
 {
 	Bullets tmp;
 	tmp.type = _type;
@@ -46,6 +45,8 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	tmp.origin = _origin;
 	tmp.scale = _scale;
 	tmp.rect = _rect;
+	tmp.forward = _forward;
+	tmp.speed = _speed;
 	tmp.velocity = _velocity;
 	tmp.damage = _damage;
 	tmp.fDamagePerSecond = _fDamagePerSecond;
@@ -72,13 +73,16 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	bulletsList->push_back(&bulletsList, &tmp);
 }
 
-void createBullets(bulletType _type, int _ownerId, sfVector2f _pos)
+void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle)
 {
 	bulletId id = 0;
 	if (_type <= PLAYER_FLAMETHROWER)
 		id = PLAYER_ID_BULLET;
 	else
-		id = ENEMY_ID_BULLET;
+		id = ENEMY_ID_BULLET;	
+
+	sfVector2f forward = VECTOR2F_NULL;
+	float speed = 0.f;
 
 	sfVector2f pos = VECTOR2F_NULL;
 	sfVector2f origin = VECTOR2F_NULL;
@@ -99,6 +103,8 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos)
 		rect = IntRect(0, 2452, 23, 13);
 		velocity = vector2f(800.f, 0.f);  // TODO : check the nbBullet the player can shot to adjust the velocity
 		damage = 1;
+		forward = PolarCoords(VECTOR2F_NULL, 1.f, _angle * DEG2RAD);
+		speed = 800.f;
 		break;
 	case PLAYER_CHARGED_BULLET:
 		origin = vector2f(0.f, 15.f);
@@ -106,6 +112,8 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos)
 		rect = IntRect(0, 2407, 56, 31);
 		velocity = vector2f(1200.f, 0.f);
 		damage = 5;
+		forward = PolarCoords(VECTOR2F_NULL, 1.f, _angle * DEG2RAD);
+		speed = 1200.f;
 		break;
 	case PLAYER_LASER:
 		origin = vector2f(0.f, 14.f);
@@ -151,7 +159,7 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos)
 	default:
 		break;
 	}
-	addBullets(_type, id, _ownerId, pos, origin, rect, velocity, scale, damage, fDamagePerSecond, angle, rotationSpeed, animTimer);
+	addBullets(_type, id, _ownerId, pos, origin, rect, forward, speed, velocity, scale, damage, fDamagePerSecond, angle, rotationSpeed, animTimer);
 
 }
 
@@ -181,8 +189,10 @@ void updateBullets(Window* _window)
 
 		if (tmp.type == PLAYER_BASIC_BULLET || tmp.type == PLAYER_CHARGED_BULLET)
 		{
-			if (GETDATA_BULLETS->canDealDamages)
-				GETDATA_BULLETS->pos = AddVectors(GETDATA_BULLETS->pos, MultiplyVector(GETDATA_BULLETS->velocity, dt));
+			if (GETDATA_BULLETS->canDealDamages) {
+				//GETDATA_BULLETS->pos = AddVectors(GETDATA_BULLETS->pos, MultiplyVector(GETDATA_BULLETS->velocity, dt));
+				GETDATA_BULLETS->pos = AddVectors(GETDATA_BULLETS->pos, MultiplyVector(GETDATA_BULLETS->forward, GETDATA_BULLETS->speed * dt));
+			}
 
 			else {
 				GETDATA_BULLETS->basicBullet.deathTimer += dt;
@@ -421,5 +431,5 @@ void displayBullets(Window* _window)
 void deinitBullets()
 {
 	sfSprite_destroy(bulletsSprite);
-	free(bulletsList);
+	bulletsList->destroy(&bulletsList);
 }

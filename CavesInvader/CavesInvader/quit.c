@@ -1,6 +1,7 @@
 #include "quit.h"
 #include "gamepad.h"
 #include "menu.h"
+#include "pause.h"
 
 typedef enum QuitChoice {
 	NO_QUIT,
@@ -17,6 +18,17 @@ sfTexture* menuBgTexture;
 sfTexture* quitTexture;
 sfTexture* quitBoxTexture;
 
+float timer;
+float timerQuit;
+
+
+void resetQuit()
+{
+	choiceQuit = NO_QUIT;
+	timer = 0.f;
+	timerQuit = 0.f;
+}
+
 void initQuit(Window* _window)
 {
 	opaqueRectangle = sfRectangleShape_create();
@@ -31,41 +43,49 @@ void initQuit(Window* _window)
 	quitBoxTexture = GetTexture("quitBox");
 
 
-	choiceQuit = NO_QUIT;
+	resetQuit();
 }
 
 void updateQuit(Window* _window)
 {
-	static float timer = 0.f;
 	timer += getUnscaledDeltaTime();
-	static float timerQuit = 0.f;
 	timerQuit += getUnscaledDeltaTime();
 
 	if (timerQuit > 0.4f) {
 		if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)) {
 			timerQuit = 0.f;
 			toggleQuit();
-			resetMenu();
+			resetQuit();
+			if (getState() == MENU) {
+				resetMenu();
+			}
+			else {
+				togglePause();
+				resetPause();
+			}
 			return;
 		}
 		else if (isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
-			timerQuit = 0.f;
 			
 			if (getState() == MENU) {
 				if (choiceQuit == YES_QUIT) _window->isDone = sfTrue;
 				else {
 					toggleQuit();
+					resetQuit();
 					resetMenu();
 				}
 			}
 			else {
 				if (choiceQuit == YES_QUIT) {
 					toggleQuit();
+					resetQuit();
 					resetMenu();
 					changeState(_window, MENU);
 				}
 				else {
 					toggleQuit();
+					resetQuit();
+					togglePause();
 					resetMenu();
 				}
 			}
@@ -111,11 +131,6 @@ void displayQuit(Window* _window)
 	else sfSprite_setPosition(quitSprite, vector2f(1081.f, 562.f));
 	sfRenderTexture_drawSprite(_window->renderTexture, quitSprite, NULL);
 
-}
-
-void resetQuit()
-{
-	choiceQuit = NO_QUIT;
 }
 
 void deinitQuit()
