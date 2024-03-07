@@ -46,6 +46,8 @@ typedef struct Bullets {
 	sfFloatRect bounds;
 	sfVector2f pos;
 	sfVector2f origin;
+	sfVector2f forward;
+	float speed;
 	sfVector2f velocity;
 	sfVector2f scale;
 	int damage;
@@ -68,7 +70,7 @@ typedef struct Bullets {
 
 void initBullets(Window* _window);
 
-void createBullets(bulletType _type, int _ownerId, sfVector2f _pos);
+void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle);
 
 void updateBullets(Window* _window);
 

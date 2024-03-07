@@ -7,8 +7,6 @@
 
 sfSprite* playerSprite;
 
-sfSprite* playerTexture;
-
 sfTexture* playerHitTexture;
 
 void initPlayer(Window* _window)
@@ -43,6 +41,7 @@ void initPlayer(Window* _window)
 		player[i].timeMoving = 0.f;
 		player[i].anothertimer = 0.f;
 		player[i].wasalreadymovingtbh = sfFalse;
+		player[i].nbBullet = 1;
 		player[i].bulletTimer = 0.f;
 		player[i].origin = vector2f(156.f, 48.f);
 		player[i].particlesTimer = 0.f;
@@ -70,6 +69,7 @@ void initPlayer(Window* _window)
 	}
 
 	common.multiplier = 1;
+	common.multiplierTimer = 0.f;
 	common.score = 0;
 	common.countdown = 5;
 	common.fcountdownTimer = 0.f;
@@ -304,13 +304,34 @@ void updatePlayer(Window* _window)
 		// Shots
 		// TODO : priority order between shots
 		if (isKeyboardOrControllerButtonPressed(sfKeySpace, LB_XBOX) && player[i].bulletTimer > 0.2f) {
-
 			if (player[i].bulletTimer > 2.f) {
-				createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos);
+				if (player[i].nbBullet == 1) {
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 0.f);
+				}
+				else if (player[i].nbBullet == 2) {
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, -10.f);
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 10.f);
+				}
+				else if (player[i].nbBullet == 3) {
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, -10.f);
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 0.f);
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 10.f);
+				}
 				player[i].bulletTimer = -0.1f;
 			}
 			else {
-				createBullets(PLAYER_BASIC_BULLET, i, player[i].pos);
+				if (player[i].nbBullet == 1) {
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 0.f);
+				}
+				else if (player[i].nbBullet == 2) {
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, -10.f);
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 10.f);
+				}
+				else if (player[i].nbBullet == 3) {
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, -10.f);
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 0.f);
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 10.f);
+				}
 				player[i].bulletTimer = 0.0f;
 			}
 
@@ -318,11 +339,11 @@ void updatePlayer(Window* _window)
 		// buttons to change
 		// TODO cheks if PC or controller for releasing a button or mb if both or released, yeah better, i agree, thanks man, am i alone or what
 		else if (isKeyboardOrControllerButtonMoved(sfKeyL, TRIGGER_L2_XBOX, sfFalse, 10.f) && player[i].nbLightning <= 0 && !player[i].isLightning) { // no timer but 15 seconds condition
-			createBullets(PLAYER_LASER, i, player[i].pos);
+			createBullets(PLAYER_LASER, i, player[i].pos, 0.f);
 			player[i].isLightning = sfTrue;
 		}
 		else if (isKeyboardOrControllerButtonPressed(sfKeyM, RB_XBOX) && player[i].bulletTimer > 0.5f) { // no timer but 15 kills condition
-			createBullets(PLAYER_MINES, i, player[i].pos);
+			createBullets(PLAYER_MINES, i, player[i].pos, 0.f);
 			player[i].bulletTimer = 0.f;
 		}
 		else if (isKeyboardOrControllerButtonMoved(sfKeyF, TRIGGER_R2_XBOX, sfFalse, 10.f) && player[i].bulletTimer > 0.02f) { // and the gauge is not empty
@@ -338,7 +359,7 @@ void updatePlayer(Window* _window)
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 15.f), 25.f + (player[i].velocity.y / 15.f), direction, 10.f, 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 25.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
 			if (!player[i].isFlamethrowering) {
 				player[i].isFlamethrowering = sfTrue;
-				createBullets(PLAYER_FLAMETHROWER, i, player[i].pos);
+				createBullets(PLAYER_FLAMETHROWER, i, player[i].pos, 0.f);
 			}
 			player[i].bulletTimer = 0.f;
 		}
@@ -597,6 +618,8 @@ void displayPlayer(Window* _window)
 void deinitPlayer()
 {
 	sfSprite_destroy(playerSprite);
+	//free(player[0].texture);
+	//free(player[1].texture);
 }
 
 sfVector2f getClosestPlayerPos(sfVector2f _pos)

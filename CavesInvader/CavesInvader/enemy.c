@@ -23,9 +23,10 @@ void initEnemy(Window* _window)
 	deadEnemyTexture = GetTexture("deadEnemies");
 
 	sfSprite_setTexture(enemySprite, enemyTexture, sfTrue);
+	
 }
 
-void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRect _rect, sfVector2f _origin, sfVector2f _originToCenter, float _radius, float _animTimer, float _timeBetweenFrames, sfVector2f _pos, sfVector2f _velocity, sfVector2f _forward, float _speed, int _life, int _damage, float _startFocusingPos, float _startAttackingMoment, float _startAttackingTimer, float _focusingTimer, sfBool _upMovement)
+void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRect _rect, sfVector2f _origin, sfVector2f _originToCenter, float _radius, float _animTimer, float _timeBetweenFrames, sfVector2f _pos, sfVector2f _velocity, sfVector2f _forward, float _speed, int _life, int _damage, int _scoreValue, float _startFocusingPos, float _startAttackingMoment, float _startAttackingTimer, float _focusingTimer, sfBool _upMovement)
 {
 	Enemies tmp;
 	tmp.type = _type;
@@ -43,6 +44,7 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 	tmp.speed = _speed;
 	tmp.life = _life;
 	tmp.damage = _damage;
+	tmp.scoreValue = _scoreValue;
 
 	if (tmp.type == VENGELFY || tmp.type == ENRAGED_VENGEFLY) {
 		tmp.vengefly.startFocusingPos = _startFocusingPos;
@@ -81,6 +83,7 @@ void createEnemy(enemyType _type)
 	float timeBetweenFrames = 0.f;
 	int life = 0;
 	int damage = 0;
+	int scoreValue = 0;
 
 	// unique parameters
 	float startFocusingPos = 0.f;
@@ -103,6 +106,7 @@ void createEnemy(enemyType _type)
 		//timeBetweenFrames = 0.1f;
 		life = 2;
 		damage = 1;
+		scoreValue = 10;
 		startFocusingPos = rand_float(1400.f, 1780.f);
 		startAttackingMoment = rand_float(1.f, 3.f);
 		break;
@@ -117,6 +121,7 @@ void createEnemy(enemyType _type)
 		//timeBetweenFrames = 0.1f;
 		life = 2;
 		damage = 2;
+		scoreValue = 25;
 		startFocusingPos = rand_float(1400.f, 1780.f);
 		startAttackingMoment = rand_float(0.5f, 1.5f);
 		break;
@@ -127,6 +132,7 @@ void createEnemy(enemyType _type)
 		pos = vector2f(1958.f, rand_float(105.f, 928.f));
 		life = 10;
 		damage = 1;
+		scoreValue = 20;
 		rect = IntRect(0, 1283, 190, 257);
 		animTimer = 0.f;
 		timeBetweenFrames = 0.1f;
@@ -148,6 +154,7 @@ void createEnemy(enemyType _type)
 		pos = vector2f(1976.f, rand_float(152.f, 761.f));
 		life = 20;
 		damage = 1;
+		scoreValue = 50;
 		rect = IntRect(0, 1540, 281, 371);
 		animTimer = 0.f;
 		timeBetweenFrames = 0.1f;
@@ -166,7 +173,7 @@ void createEnemy(enemyType _type)
 		break;
 	}
 
-	addEnemy(_type, state, lastState, rect, origin, originToCenter, radius, animTimer, timeBetweenFrames, pos, velocity, forward, speed, life, damage, startFocusingPos, startAttackingMoment, startAttackingTimer, focusingTimer, upMovement);
+	addEnemy(_type, state, lastState, rect, origin, originToCenter, radius, animTimer, timeBetweenFrames, pos, velocity, forward, speed, life, damage, scoreValue, startFocusingPos, startAttackingMoment, startAttackingTimer, focusingTimer, upMovement);
 }
 
 void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f* _origin, float* _animTimer, float *_timeBetweenFrames, sfVector2f* _forward, sfVector2f _pos, float* _speed)
@@ -362,6 +369,8 @@ void updateEnemy(Window* _window)
 			if (honorableKill) {
 				createItem(RANDOM_ITEM, GETDATA_ENEMIES->pos);
 
+				common.score += GETDATA_ENEMIES->scoreValue * common.multiplier;
+
 				if (GETDATA_ENEMIES->lastDamageSource >= 0) {
 					increasePlayerKillCount(GETDATA_ENEMIES->lastDamageSource);
 				}
@@ -470,11 +479,11 @@ void updateEnemy(Window* _window)
 
 					GETDATA_ENEMIES->hopper.startAttackingTimer = 0.f;
 					if (tmp.type == HOPPER) {
-						createBullets(ENEMY_YELLOW_BULLET, i, GETDATA_ENEMIES->pos);
+						createBullets(ENEMY_YELLOW_BULLET, i, GETDATA_ENEMIES->pos, 180.f);
 						GETDATA_ENEMIES->hopper.startAttackingMoment = rand_float(1.5f, 2.5f);
 					}
 					else {
-						createBullets(ENEMY_GREEN_BULLET, i, GETDATA_ENEMIES->pos);
+						createBullets(ENEMY_GREEN_BULLET, i, GETDATA_ENEMIES->pos, 180.f);
 						GETDATA_ENEMIES->hopper.startAttackingMoment = rand_float(0.75f, 1.5f);
 					}
 				}
@@ -529,4 +538,5 @@ void displayEnemy(Window* _window)
 void deinitEnemy()
 {
 	sfSprite_destroy(enemySprite);
+	enemiesList->destroy(&enemiesList);
 }

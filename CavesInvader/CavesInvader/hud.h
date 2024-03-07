@@ -9,4 +9,4 @@ void updateHud(Window* _window);
 
 void displayHud(Window* _window);
 
-void deinitHud(Window* _window);
+void deinitHud();

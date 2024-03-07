@@ -94,7 +94,7 @@ PauseChoice changePauseChoice(sfKeyCode _key)
 
 void resetPause()
 {
-	choicePause = RESUME_PAUSE;
+	//choicePause = RESUME_PAUSE;
 	escapePauseTimer = 0.f;
 	choicePauseTimer = 0.f;
 	sliderTimer = 0.f;
@@ -121,6 +121,7 @@ void initPause(Window* _window)
 	sliderMusicPosX = 788.f;
 
 	resetPause();
+	choicePause = RESUME_PAUSE;
 
 	//rshape = sfRectangleShape_create();
 	//sfRectangleShape_setSize(rshape, (sfVector2f) { (float)mainView->defaultVideoMode.x, (float)mainView->defaultVideoMode.y});
@@ -194,6 +195,7 @@ void updatePause(Window* _window)
 		if (escapePauseTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
 			togglePause();
 			resetPause();
+			choicePause = RESUME_PAUSE;
 		}
 		break;
 	case SLIDERSFX_PAUSE:
@@ -243,8 +245,10 @@ void updatePause(Window* _window)
 		if (escapePauseTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
 			togglePause();
 			resetPause();
+			
 			forceReleasedButton(A_XBOX);
 			toggleQuit();
+			resetQuit();
 		}
 		break;
 	default:

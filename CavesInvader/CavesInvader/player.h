@@ -28,6 +28,7 @@ typedef struct Players {
 	sfVector2f forward;
 	sfVector2f previousForward;
 	float drag;
+	int nbBullet;
 	float bulletTimer;
 	sfBool isMoving;
 	float timeMoving;
@@ -56,6 +57,7 @@ Players player[MAX_PLAYER];
 
 typedef struct Common {
 	int multiplier;
+	float multiplierTimer;
 	int score;
 	int countdown;
 	float fcountdownTimer;

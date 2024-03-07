@@ -52,6 +52,7 @@ typedef struct Enemies {
 	float speed;
 	int life;
 	int damage;
+	int scoreValue;
 
 	float ftimeInAOE;
 	int lastDamageSource;

@@ -2,6 +2,7 @@
 #include "textureManager.h"
 #include "fontManager.h"
 #include "player.h"
+#include "item.h"
 
 #define TEXTORIGIN vector2f(tmpRect.width / 2.f, tmpRect.height) // center the size
 //#define TEXTORIGIN vector2f(tmpRect.width / 2.f, 0.f) // center the string
@@ -51,6 +52,7 @@ CommonHud commonHud;
 typedef struct CommonTextHud {
 	float multiplierTextSize;
 	sfVector2f multiplierTextPos;
+	float multiplierTextAngle;
 
 	float scoreTextSize;
 	sfVector2f scoreTextPos;
@@ -186,6 +188,7 @@ void initHud(Window* _window)
 
 void updateHud(Window* _window)
 {
+	float udt = getUnscaledDeltaTime();
 	for (int i = 0; i < nbPlayer; i++)
 	{
 		if (player[i].life <= 0) {
@@ -204,6 +207,26 @@ void updateHud(Window* _window)
 			hud[i].lifeRect.width = 170;
 		}
 	}
+
+	if (common.multiplierTimer > 0.f) {
+		common.multiplierTimer -= udt;
+
+		if (common.multiplierTimer > MULTIPLIER_ITEM_DURATION - 1.f) {
+			commonTextHud.multiplierTextSize = 60.f * (MULTIPLIER_ITEM_DURATION - common.multiplierTimer);
+			commonTextHud.multiplierTextAngle = 90.f * (MULTIPLIER_ITEM_DURATION - common.multiplierTimer) - 90.f;
+			//commonTextHud.multiplierTextAngle = (common.multiplierTimer - MULTIPLIER_ITEM_DURATION - 1.f) * 90.f + 180.f;
+		}
+		else {
+			commonTextHud.multiplierTextSize = 60.f;
+			commonTextHud.multiplierTextAngle = 0.f;
+		}
+		
+	}
+	else {
+		common.multiplier = 1;
+	}
+
+
 }
 
 void displayHud(Window* _window)
@@ -305,10 +328,14 @@ void displayHud(Window* _window)
 		sfText_setString(hudText, hudChar);
 		sfText_setCharacterSize(hudText, commonTextHud.multiplierTextSize);
 		sfText_setPosition(hudText, commonTextHud.multiplierTextPos);
+		sfText_setRotation(hudText, commonTextHud.multiplierTextAngle);
 		tmpRect = sfText_getLocalBounds(hudText);
 		sfText_setOrigin(hudText, TEXTORIGIN);
 		sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
 	}
+
+	sfText_setRotation(hudText, 0.f);
+
 
 	// score text
 	sprintf(hudChar, "%d", common.score);
@@ -329,4 +356,10 @@ void displayHud(Window* _window)
 	sfText_setOrigin(hudText, TEXTORIGIN);
 	sfText_setColor(hudText, sfWhite);
 	sfRenderTexture_drawText(_window->renderTexture, hudText, NULL);
+}
+
+void deinitHud()
+{
+	sfSprite_destroy(hudSprite);
+	sfText_destroy(hudText);
 }

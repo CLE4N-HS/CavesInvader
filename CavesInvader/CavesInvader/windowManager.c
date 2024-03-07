@@ -7,7 +7,7 @@
 sfTexture* allTextures;
 sfSprite* allSprites;
 
-
+float fullscreenTimer;
 
 sfBool IsDone(Window* This)
 {
@@ -45,6 +45,7 @@ Window* windowSetup(const char* _Title, sfVector2i _defaultVideoMode)
 
 	strcpy(This->windowTitle, _Title);
 	
+	fullscreenTimer = 0.f;
 	This->isFullscreen = sfTrue;
 	This->isDone = sfFalse;
 	This->videoMode = sfVideoMode_getDesktopMode();
@@ -80,9 +81,13 @@ void windowCreate(Window* This)
 
 void ToggleFullscreen(Window* This)
 {
-	This->isFullscreen = !This->isFullscreen;
-	windowDestroy(This);
-	windowCreate(This);
+	if (fullscreenTimer > 0.5f) {
+		This->isFullscreen = !This->isFullscreen;
+		windowDestroy(This);
+		windowCreate(This);
+		fullscreenTimer = 0.f;
+	}
+
 }
 
 void windowInit(Window* This) // useless because stateInit() is called in changeState()
@@ -114,11 +119,14 @@ void windowUpdate(Window* This)
 		}
 		stateEventUpdate(This, &This->event);
 	}
-	if (sfKeyboard_isKeyPressed(sfKeyF11))
+
+	fullscreenTimer += getUnscaledDeltaTime();
+
+	if (sfKeyboard_isKeyPressed(sfKeyF11) && sfRenderWindow_hasFocus(This->renderWindow))
 	{
 		ToggleFullscreen(This);
 	}
-	if (sfKeyboard_isKeyPressed(sfKeyF10))
+	if (sfKeyboard_isKeyPressed(sfKeyF10) && sfRenderWindow_hasFocus(This->renderWindow))
 	{
 		screenshot(This->renderWindow);
 	}
