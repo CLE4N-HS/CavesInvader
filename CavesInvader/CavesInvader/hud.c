@@ -13,9 +13,13 @@ typedef struct Hud {
 
 	sfVector2f gasPos;
 	sfIntRect gasRect;
+	sfVector2f fullGasPos;
+	sfIntRect fullGasRect;
 
 	sfVector2f lightningPos;
 	sfIntRect lightningRect;
+	sfVector2f fullLightningPos;
+	sfIntRect fullLightningRect;
 
 	sfVector2f lifePos;
 	sfIntRect lifeRect;
@@ -104,8 +108,17 @@ void initHud(Window* _window)
 			hud[i].gasPos = vector2f(8.f, 917.f);
 			hud[i].gasRect = IntRect(0, 4412, 106, 152);
 
-			hud[i].lightningPos = vector2f(155.f, 980.f);
-			hud[i].lightningRect = IntRect(0, 4801, 53, 85);
+			hud[i].fullGasPos = vector2f(8.f, 1069.f);
+			hud[i].fullGasRect = IntRect(0, 4564, 106, 0);
+
+			//hud[i].lightningPos = vector2f(155.f, 980.f);
+			//hud[i].lightningRect = IntRect(0, 4801, 53, 85);
+
+			hud[i].lightningPos = vector2f(160.f, 981.f);
+			hud[i].lightningRect = IntRect(0, 4716, 53, 85);
+
+			hud[i].fullLightningPos = vector2f(158.f, 1070.f);
+			hud[i].fullLightningRect = IntRect(0, 4801, 58, 0);
 
 			hud[i].lifePos = vector2f(521.f, 1032.f);
 			hud[i].lifeRect = IntRect(0, 4958, 170, 33);
@@ -120,8 +133,17 @@ void initHud(Window* _window)
 			hud[i].gasPos = vector2f(1805.f, 917.f);
 			hud[i].gasRect = IntRect(0, 4412, 106, 152);
 
-			hud[i].lightningPos = vector2f(1667.f, 984.f);
-			hud[i].lightningRect = IntRect(0, 4801, 53, 85);
+			hud[i].fullGasPos = vector2f(1805.f, 1069.f);
+			hud[i].fullGasRect = IntRect(0, 4564, 106, 0);
+
+			//hud[i].lightningPos = vector2f(1667.f, 984.f);
+			//hud[i].lightningRect = IntRect(0, 4716, 53, 85);
+
+			hud[i].lightningPos = vector2f(1672.f, 985.f);
+			hud[i].lightningRect = IntRect(0, 4716, 53, 85);
+
+			hud[i].fullLightningPos = vector2f(1670.f, 1074.f);
+			hud[i].fullLightningRect = IntRect(0, 4801, 58, 0);
 
 			hud[i].lifePos = vector2f(1232.f, 1032.f);
 			hud[i].lifeRect = IntRect(0, 4958, 170, 33);
@@ -145,7 +167,7 @@ void initHud(Window* _window)
 		switch (i)
 		{
 		case 0:
-			textHud[i].gasTextPos = vector2f(62.f, 1000.f);
+			textHud[i].gasTextPos = vector2f(64.f, 1000.f);
 			textHud[i].gasTextSize = 11.f;
 
 			textHud[i].lightningTextPos = vector2f(228.f, 1025.f);
@@ -159,7 +181,7 @@ void initHud(Window* _window)
 			break;
 		case 1:
 			// TODO
-			textHud[i].gasTextPos = vector2f(1859.f, 1000.f);
+			textHud[i].gasTextPos = vector2f(1861.f, 1000.f);
 			textHud[i].gasTextSize = 11.f;
 
 			textHud[i].lightningTextPos = vector2f(1742.f, 1030.f);
@@ -189,8 +211,10 @@ void initHud(Window* _window)
 void updateHud(Window* _window)
 {
 	float udt = getUnscaledDeltaTime();
+
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		// dynamic life
 		if (player[i].life <= 0) {
 			hud[i].lifeRect.width = 0;
 		}
@@ -206,6 +230,26 @@ void updateHud(Window* _window)
 			hud[i].lifeRect.top = 4958;
 			hud[i].lifeRect.width = 170;
 		}
+
+		// dynamic gas
+		hud[i].fullGasPos.y = 1069.f - ((float)player[i].nbGas / 100.f * 152.f);
+		hud[i].fullGasRect.height = player[i].nbGas * 152 / 100;
+		hud[i].fullGasRect.top = 4716 - (player[i].nbGas * 152 / 100);
+
+		//// dynamic lightning
+		//hud[i].fullLightningPos.y = 1066.f - ((float)player[i].nbLightning / 100.f * 91.f);
+		//hud[i].fullLightningRect.height = player[i].nbLightning * 91 / 100;
+		//hud[i].fullLightningRect.top = 4892 - (player[i].nbLightning * 91 / 100);
+		// 
+		// dynamic lightning
+		if (i)
+			hud[i].fullLightningPos.y = 1074.f - ((LIGTHNING_SECONDS_REQUIRED - (float)player[i].nbLightning) / LIGTHNING_SECONDS_REQUIRED * 91.f);
+		else
+			hud[i].fullLightningPos.y = 1070.f - ((LIGTHNING_SECONDS_REQUIRED - (float)player[i].nbLightning) / LIGTHNING_SECONDS_REQUIRED * 91.f);
+		
+		hud[i].fullLightningRect.height = ((int)LIGTHNING_SECONDS_REQUIRED - player[i].nbLightning) * 91 / (int)LIGTHNING_SECONDS_REQUIRED;
+		hud[i].fullLightningRect.top = 4892 - (((int)LIGTHNING_SECONDS_REQUIRED - player[i].nbLightning) * 91 / (int)LIGTHNING_SECONDS_REQUIRED);
+
 	}
 
 	if (common.multiplierTimer > 0.f) {
@@ -226,7 +270,6 @@ void updateHud(Window* _window)
 		common.multiplier = 1;
 	}
 
-
 }
 
 void displayHud(Window* _window)
@@ -242,12 +285,20 @@ void displayHud(Window* _window)
 		sfSprite_setPosition(hudSprite, hud[i].gasPos);
 		sfSprite_setTextureRect(hudSprite, hud[i].gasRect);
 		sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
+
+		sfSprite_setPosition(hudSprite, hud[i].fullGasPos);
+		sfSprite_setTextureRect(hudSprite, hud[i].fullGasRect);
+		sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
 		
 		// lightning
 		sfSprite_setPosition(hudSprite, hud[i].lightningPos);
 		sfSprite_setTextureRect(hudSprite, hud[i].lightningRect);
 		sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
-		
+
+		sfSprite_setPosition(hudSprite, hud[i].fullLightningPos);
+		sfSprite_setTextureRect(hudSprite, hud[i].fullLightningRect);
+		sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
+
 		// life
 		sfSprite_setPosition(hudSprite, hud[i].lifePos);
 		sfSprite_setTextureRect(hudSprite, hud[i].lifeRect);
