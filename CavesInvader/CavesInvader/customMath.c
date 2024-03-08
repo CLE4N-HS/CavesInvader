@@ -92,6 +92,18 @@ sfVector2f PolarCoords(sfVector2f v, float r, float theta)
     return vector2f(v.x + (r * cosf(theta)), v.y + (r * sinf(theta)));
 }
 
+float getSliderValue(float _currentPos, float _minPos, float _maxPos)
+{
+	float value = 0.f;
+	value = (_currentPos - _minPos) / (_maxPos - _minPos) * 100.f;
+	return value;
+}
+
+void setSliderPos(float* _sliderPos, float _value, float _minPos, float _maxPos)
+{
+	*_sliderPos = _minPos + ((_maxPos - _minPos) * _value / 100.f);
+}
+
 sfVector2f CreateVector(sfVector2f _v1, sfVector2f _v2)
 {
     sfVector2f v = { (_v2.x - _v1.x) , (_v2.y - _v1.y) };

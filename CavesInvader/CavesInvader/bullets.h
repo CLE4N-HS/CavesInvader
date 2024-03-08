@@ -37,6 +37,9 @@ typedef struct flamethrowerParameters {
 	sfFloatRect bounds;
 }flamethrowerParameters;
 
+typedef struct enemyBulletParameters {
+	float deathTimer;
+}enemyBulletParameters;
 
 typedef struct Bullets {
 	bulletType type;
@@ -63,6 +66,7 @@ typedef struct Bullets {
 		laserParameters laser;
 		minesParameters mine;
 		flamethrowerParameters flamethrower;
+		enemyBulletParameters enemyBullet;
 	};
 
 }Bullets;

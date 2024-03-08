@@ -69,6 +69,9 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	else if (_type == PLAYER_LASER) {
 		tmp.laser.timer = 0.f;
 	}
+	else if (_type == ENEMY_YELLOW_BULLET || _type == ENEMY_GREEN_BULLET) {
+		tmp.enemyBullet.deathTimer = 0.f;
+	}
 
 	bulletsList->push_back(&bulletsList, &tmp);
 }
@@ -221,7 +224,7 @@ void updateBullets(Window* _window)
 			}
 
 
-			if (Gamepad[GETDATA_BULLETS->ownerId].TriggerL < 0.5f && !sfKeyboard_isKeyPressed(sfKeyL)) {
+			if (getTriggerValue(GETDATA_BULLETS->ownerId, sfTrue) <= 0.1f || player[GETDATA_BULLETS->ownerId].nbLightning >= LIGTHNING_SECONDS_REQUIRED) {
 				player[GETDATA_BULLETS->ownerId].isLightning = sfFalse;
 				bulletsList->erase(&bulletsList, i);
 				continue;
@@ -287,14 +290,26 @@ void updateBullets(Window* _window)
 		}
 		else if (tmp.type == ENEMY_YELLOW_BULLET || tmp.type == ENEMY_GREEN_BULLET)
 		{
-			sfVector2f tmpScale = GETDATA_BULLETS->scale;
-			if (tmpScale.x < 1.f) {
-				GETDATA_BULLETS->scale = AddVectors(tmpScale, vector2f(dt, dt));
-			}
-			else
-				GETDATA_BULLETS->scale = vector2f(1.f, 1.f);
+			if (GETDATA_BULLETS->canDealDamages) {
 
-			GETDATA_BULLETS->pos.x += GETDATA_BULLETS->velocity.x * dt;
+				sfVector2f tmpScale = GETDATA_BULLETS->scale;
+				if (tmpScale.x < 1.f) {
+					GETDATA_BULLETS->scale = AddVectors(tmpScale, vector2f(dt, dt));
+				}
+				else
+					GETDATA_BULLETS->scale = vector2f(1.f, 1.f);
+	
+				GETDATA_BULLETS->pos.x += GETDATA_BULLETS->velocity.x * dt;
+			}
+			else {
+				GETDATA_BULLETS->enemyBullet.deathTimer += dt;
+				Animator(&GETDATA_BULLETS->rect, &GETDATA_BULLETS->enemyBullet.deathTimer, 6, 1, 0.05f, 0.f);
+
+				if (getFrameX(GETDATA_BULLETS->rect) > 5) {
+					bulletsList->erase(&bulletsList, i);
+					continue;
+				}
+			}
 
 		}
 
@@ -389,7 +404,17 @@ void updateBullets(Window* _window)
 					//player[j].life -= GETDATA_BULLETS->damage;
 					damagePlayer(j, GETDATA_BULLETS->damage);
 
-					bulletsList->erase(&bulletsList, i);
+					//bulletsList->erase(&bulletsList, i);
+					GETDATA_BULLETS->canDealDamages = sfFalse;
+
+					if (tmp.type == ENEMY_YELLOW_BULLET) {
+						GETDATA_BULLETS->rect = IntRect(0, 1192, 66, 62);
+						GETDATA_BULLETS->origin = vector2f(66.f, 31.f);
+					}
+					else if (tmp.type == ENEMY_GREEN_BULLET) {
+						GETDATA_BULLETS->rect = IntRect(0, 1130, 66, 62);
+						GETDATA_BULLETS->origin = vector2f(66.f, 31.f);
+					}
 					continue;
 				}
 			}
@@ -405,17 +430,21 @@ void displayBullets(Window* _window)
 
 
 		if (GETDATA_BULLETS->type == PLAYER_FLAMETHROWER) {
-			sfRectangleShape_setPosition(tmpRectangle, vector2f(GETDATA_BULLETS->bounds.left, GETDATA_BULLETS->bounds.top));
-			sfRectangleShape_setSize(tmpRectangle, vector2f(GETDATA_BULLETS->bounds.width, GETDATA_BULLETS->bounds.height));
-			sfRectangleShape_setFillColor(tmpRectangle, color(255, 0, 0, 20));
-			sfRenderTexture_drawRectangleShape(_window->renderTexture, tmpRectangle, NULL);
+			//sfRectangleShape_setPosition(tmpRectangle, vector2f(GETDATA_BULLETS->bounds.left, GETDATA_BULLETS->bounds.top));
+			//sfRectangleShape_setSize(tmpRectangle, vector2f(GETDATA_BULLETS->bounds.width, GETDATA_BULLETS->bounds.height));
+			//sfRectangleShape_setFillColor(tmpRectangle, color(255, 0, 0, 20));
+			//sfRenderTexture_drawRectangleShape(_window->renderTexture, tmpRectangle, NULL);
 			continue; // keep this but to remove all above
 		}
 
 		if (GETDATA_BULLETS->id == PLAYER_ID_BULLET)
 			sfSprite_setTexture(bulletsSprite, bulletsTexture, sfFalse);
-		else
-			sfSprite_setTexture(bulletsSprite, enemyBulletsTexture, sfFalse);
+		else {
+			if (GETDATA_BULLETS->canDealDamages)
+				sfSprite_setTexture(bulletsSprite, enemyBulletsTexture, sfFalse);
+			else
+				sfSprite_setTexture(bulletsSprite, bulletsTexture, sfFalse);
+		}
 
 		sfSprite_setTextureRect(bulletsSprite, GETDATA_BULLETS->rect);
 		sfSprite_setPosition(bulletsSprite, GETDATA_BULLETS->pos);

@@ -83,6 +83,21 @@ void getTriggers(t_joyNum joyNum, float* left, float* right)
     *right = (float)(state.Gamepad.bRightTrigger) / 255;
 }
 
+float getTriggerValue(t_joyNum _id, sfBool _leftTrigger)
+{
+    XINPUT_STATE state;
+    ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+    XInputGetState(_id, &state);
+
+    // Normalise
+    float value = 0.f;
+    if (_leftTrigger) value = (float)(state.Gamepad.bLeftTrigger) / 255;
+    else value = (float)(state.Gamepad.bRightTrigger) / 255;
+
+    return value;
+}
+
 // Cette méthode ne retourne rien
 // Elle modifie directement l'état des arguments left et right passé avec la valeur des sticks
 // Les valeurs verient entre -100 et 100
@@ -121,6 +136,61 @@ void getSticksPosition(t_joyNum joyNum, sfVector2f* left, sfVector2f* right)
     left->y = (float)(state.Gamepad.sThumbLY / 327);
     right->x = (float)(state.Gamepad.sThumbRX / 327);
     right->y = (float)(state.Gamepad.sThumbRY / 327);
+}
+
+float getStickPos(t_joyNum _id, sfBool _leftStick, sfBool _XAxis)
+{
+    XINPUT_STATE state;
+    ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+    XInputGetState(_id, &state);
+
+    // Verifie la "DEAD ZONE"
+    // Stick Gauche
+    if ((state.Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+        state.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
+        (state.Gamepad.sThumbLY < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+            state.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)) {
+
+        state.Gamepad.sThumbLX = 0;
+        state.Gamepad.sThumbLY = 0;
+
+    }
+
+    // Stick Droit
+    if ((state.Gamepad.sThumbRX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+        state.Gamepad.sThumbRX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
+        (state.Gamepad.sThumbRY < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+            state.Gamepad.sThumbRY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)) {
+
+        state.Gamepad.sThumbRX = 0;
+        state.Gamepad.sThumbRY = 0;
+
+    }
+
+    // Converti les valeurs dans le style SFML (-100..100)
+    float value = 0.f;
+    if (_leftStick) {
+        if (_XAxis) value = (float)(state.Gamepad.sThumbLX / 327);
+        else value = (float)(state.Gamepad.sThumbLY / 327);
+    }
+    else {
+        if (_XAxis) value = (float)(state.Gamepad.sThumbRX / 327);
+        else value = (float)(state.Gamepad.sThumbRY / 327);
+    }
+
+    return value;
+}
+
+sfBool isAControllerButtonPressedOrKeyboard(t_joyNum _id, sfKeyCode _key, gamepadXBox _button)
+{
+    if (sfKeyboard_isKeyPressed(_key))
+        return sfTrue;
+
+    if (isButtonPressed(_id, _button))
+        return sfTrue;
+
+    return sfFalse;
 }
 
 // Cette méthode configure les vibrations de 0.0 à 1.0

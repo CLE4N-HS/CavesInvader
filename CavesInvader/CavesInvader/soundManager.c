@@ -172,17 +172,20 @@ void PlayASound(char* _name, sfBool _loop)
 
 void ChangeVolume(ressourceType _type, float _volume)
 {
+	if (_type == MUSIC) musicVolume = _volume;
+	else if (_type == SOUNDFX) SFXVolume = _volume;
+
 	Sound* tmpSound = soundBegin;
 	while (tmpSound != NULL)
 	{
 		if (_type == MUSIC) {
 			if (tmpSound->type == MUSIC) {
-			sfMusic_setVolume(tmpSound->music, _volume);
+			sfMusic_setVolume(tmpSound->music, musicVolume);
 			}
 		}
 		else if (_type == SOUNDFX) {
 			if (tmpSound->type == SOUNDFX) {
-			sfSound_setVolume(tmpSound->sound, _volume);
+			sfSound_setVolume(tmpSound->sound, SFXVolume);
 			}
 		}
 		tmpSound = tmpSound->pNext;

@@ -65,6 +65,8 @@ sfBool isAnyXBox360ControllerConnected();
 /// <param name="right">Right trigger</param>
 void getTriggers(t_joyNum joyNum, float* left, float* right);
 
+float getTriggerValue(t_joyNum _id, sfBool _leftTrigger);
+
 /// <summary>
 /// Gets the values of the sticks and modfies them directly (between -100.f and 100.f)
 /// </summary>
@@ -73,8 +75,12 @@ void getTriggers(t_joyNum joyNum, float* left, float* right);
 /// <param name="right">Right stick</param>
 void getSticksPosition(t_joyNum joyNum, sfVector2f* left, sfVector2f* right);
 
+float getStickPos(t_joyNum _id, sfBool _leftStick, sfBool _XAxis);
+
+sfBool isAControllerButtonPressedOrKeyboard(t_joyNum _id, sfKeyCode _key, t_buttonNum _button);
+
 /// <summary>
-/// Sets the vibration of a controller (between 0.f and 1.f) (dosn't go back to 0 automatically)
+/// Sets the vibration of a controller (between 0.f and 1.f) (doesn't go back to 0 automatically)
 /// </summary>
 /// <param name="joyNum">The controller's ID</param>
 /// <param name="leftMotor">Vibration intensity for the Left motor</param>
