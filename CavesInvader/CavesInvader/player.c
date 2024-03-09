@@ -8,12 +8,14 @@
 sfSprite* playerSprite;
 
 sfTexture* playerHitTexture;
+sfTexture* playerShapeTexture;
 
 void initPlayer(Window* _window)
 {
 	playerSprite = sfSprite_create();
 
 	playerHitTexture = GetTexture("playerHit");
+	playerShapeTexture = sfTexture_createFromFile("../Ressources/Textures/Game/PLAYERS/shape.png", NULL);
 	
 	for (int i = 0; i < MAX_PLAYER; i++)
 	{
@@ -63,6 +65,16 @@ void initPlayer(Window* _window)
 		player[i].invulnerabilityTimer = 0.f;
 		player[i].color = color(255, 255, 255, 255);
 
+		player[i].ISMOVING = sfFalse;
+		
+		for (int j = 0; j < NB_SHADOWS; j++)
+		{
+			player[i].shadow[j].pos = player[i].pos;
+			player[i].shadow[j].opacity = 255 * (j + 1) / NB_SHADOWS;
+
+		}
+		player[i].shadowsTimer = 0.f;
+
 
 		//if (i >= nbPlayer)
 		//	break;
@@ -81,6 +93,31 @@ void updatePlayer(Window* _window)
 
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		player[i].shadowsTimer += dt;
+		
+		if (player[i].shadowsTimer > 0.02f) {
+
+			for (int j = 0; j < NB_SHADOWS; j++)
+			{
+				if (j < NB_SHADOWS - 1) {
+					player[i].shadow[j].pos = player[i].shadow[j + 1].pos;
+				}
+				else {
+					player[i].shadow[j].pos = player[i].pos;
+				}
+
+
+
+
+				player[i].shadow[j].opacity -= 1;
+			}
+
+			player[i].shadowsTimer = 0.f;
+		}
+
+
+
+
 		float LStickYValue = getStickPos(i, sfTrue, sfFalse);
 		float LStickXValue = getStickPos(i, sfTrue, sfTrue);
 
@@ -92,21 +129,40 @@ void updatePlayer(Window* _window)
 
 		//player[i].velocity = VECTOR2F_NULL;
 		if (LStickYValue < -10.f) {
+			if (!player[i].ISMOVING) {
+				player[i].forward = VECTOR2F_NULL;
+			}
 			player[i].forward.y -= dt * LStickYValue;
 			player[i].isMoving = sfTrue;
+			player[i].ISMOVING = sfTrue;
 		}
 		if (LStickYValue > 10.f) {
+			if (!player[i].ISMOVING) {
+				player[i].forward = VECTOR2F_NULL;
+			}
 			player[i].forward.y += dt * -LStickYValue;
 			player[i].isMoving = sfTrue;
+			player[i].ISMOVING = sfTrue;
 		}
 		if (LStickXValue < -10.f) {
+			if (!player[i].ISMOVING) {
+				player[i].forward = VECTOR2F_NULL;
+			}
 			player[i].forward.x -= dt * -LStickXValue;
 			player[i].isMoving = sfTrue;
+			player[i].ISMOVING = sfTrue;
 		}
 		if (LStickXValue > 10.f) {
+			if (!player[i].ISMOVING) {
+				player[i].forward = VECTOR2F_NULL;
+			}
 			player[i].forward.x += dt * LStickXValue;
 			player[i].isMoving = sfTrue;
+			player[i].ISMOVING = sfTrue;
 		}
+
+		
+
 
 		player[i].forward = Normalize(player[i].forward);
 		if (player[i].isMoving) {
@@ -132,6 +188,7 @@ void updatePlayer(Window* _window)
 				//player[i].timeMoving = 0.f;
 			}
 
+			player[i].ISMOVING = sfFalse;
 
 			player[i].wasalreadymovingtbh = sfTrue;
 			player[i].timeMoving -= getDeltaTime();
@@ -147,7 +204,8 @@ void updatePlayer(Window* _window)
 
 
 		//player[i].velocity = MultiplyVector(player[i].forward, dt * player[i].speed.x * player[i].timeMoving)
-		player[i].velocity = MultiplyVector(player[i].forward, player[i].speed * player[i].anothertimer);
+		//player[i].velocity = MultiplyVector(player[i].forward, player[i].speed * player[i].anothertimer);
+		player[i].velocity = MultiplyVector(player[i].forward, player[i].speed * player[i].timeMoving);
 
 		//player[i].velocity.x += gamepadRight * dt * 5.f;
 		//player[i].velocity.y += gamepadDown * dt * 5.f;
@@ -861,6 +919,19 @@ void displayPlayer(Window* _window)
 {
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		sfSprite_setOrigin(playerSprite, player[i].origin);
+
+		for (int j = 0; j < NB_SHADOWS; j++)
+		{
+			sfSprite_setTexture(playerSprite, playerShapeTexture, sfTrue);
+			sfSprite_setPosition(playerSprite, player[i].shadow[j].pos);
+			sfSprite_setColor(playerSprite, color(255, 255, 255, j * 255 / NB_SHADOWS / NB_SHADOWS * 2));
+			sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
+		}
+
+		sfSprite_setColor(playerSprite, color(255, 255, 255, 255));
+
+
 		sfSprite_setTexture(playerSprite, player[i].flame.texture, sfTrue);
 		sfSprite_setPosition(playerSprite, player[i].flame.pos);
 		sfSprite_setOrigin(playerSprite, player[i].flame.origin);

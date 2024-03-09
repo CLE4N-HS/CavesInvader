@@ -9,12 +9,19 @@
 #define LIGTHNING_SECONDS_REQUIRED 15
 #define KILL_COUNT_REQUIRED 15
 
+#define NB_SHADOWS 15
+
 typedef struct Flames {
 	sfTexture* texture;
 	sfVector2f pos;
 	sfVector2f origin;
 	sfVector2f scale;
 }Flames;
+
+typedef struct Shadows {
+	sfVector2f pos;
+	float opacity;
+}Shadows;
 
 typedef struct Players {
 	sfTexture* texture;
@@ -48,10 +55,16 @@ typedef struct Players {
 	float invulnerabilityTimer;
 	sfColor color;
 
+	Shadows shadow[NB_SHADOWS];
+	float shadowsTimer;
+
 	// useless but i guess we never know
 	float anothertimer;
 	sfBool wasalreadymovingtbh;
 	sfBool wasnt;
+
+	//yeah better mb idk fr tbh
+	sfBool ISMOVING;
 }Players;
 Players player[MAX_PLAYER];
 
