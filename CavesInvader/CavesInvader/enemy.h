@@ -4,7 +4,7 @@
 #include "stateManager.h"
 #include "List.h"
 
-#define BOSS_HEALTH 10
+#define BOSS_HEALTH 200
 
 typedef enum enemyType {
 	VENGELFY,
@@ -87,6 +87,9 @@ typedef struct Enemies {
 
 	float ftimeInAOE;
 	int lastDamageSource;
+	sfColor color;
+
+	sfBool isLasered;
 
 	union parameters
 	{
@@ -105,6 +108,8 @@ void initEnemy(Window* _window);
 void createEnemy(enemyType _type);
 
 void updateEnemy(Window* _window);
+
+sfBool canDamageEnemy(enemyType _type);
 
 void resetBossPosition();
 

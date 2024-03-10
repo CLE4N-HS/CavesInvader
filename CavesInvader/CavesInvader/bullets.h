@@ -59,6 +59,8 @@ typedef struct Bullets {
 	float angle;
 	float rotationSpeed;
 	float animTimer;
+	sfVector2f originToCenter;
+	float radius;
 
 	sfBool canDealDamages;
 	union bulletsParameters

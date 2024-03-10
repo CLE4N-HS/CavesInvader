@@ -47,7 +47,10 @@ typedef struct Players {
 	float fLightningTimer;
 	sfBool isLightning;
 	sfBool isFlamethrowering;
-	
+	float flameThroweringTimer;
+	float damageTimer;
+	int damageFactor;
+
 	int nbMine;
 	int nbRespawn;
 	sfBool hasShield;
@@ -58,10 +61,8 @@ typedef struct Players {
 	Shadows shadow[NB_SHADOWS];
 	float shadowsTimer;
 
-	// useless but i guess we never know
 	float anothertimer;
-	sfBool wasalreadymovingtbh;
-	sfBool wasnt;
+	sfBool wasAlreadyMoving;
 
 	//yeah better mb idk fr tbh
 	sfBool ISMOVING;
@@ -99,3 +100,5 @@ sfVector2f getClosestPlayerPos(sfVector2f _pos);
 sfVector2f getPlayerPos(int _playerId);
 
 sfVector2f getPlayerVelocity(int _playerId);
+
+int getPlayerDamageFactor(int _playerId);

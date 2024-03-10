@@ -42,7 +42,7 @@ void initPlayer(Window* _window)
 		player[i].isMoving = sfFalse;
 		player[i].timeMoving = 0.f;
 		player[i].anothertimer = 0.f;
-		player[i].wasalreadymovingtbh = sfFalse;
+		player[i].wasAlreadyMoving = sfFalse;
 		player[i].nbBullet = 1;
 		player[i].bulletTimer = 0.f;
 		player[i].origin = vector2f(156.f, 48.f);
@@ -59,6 +59,9 @@ void initPlayer(Window* _window)
 		player[i].fLightningTimer = 0.f;
 		player[i].isLightning = sfFalse;
 		player[i].isFlamethrowering = sfFalse;
+		player[i].flameThroweringTimer = 1.f;
+		player[i].damageTimer = 0.f;
+		player[i].damageFactor = 1;
 		player[i].nbMine = 0;
 		player[i].nbRespawn = 3;
 		player[i].hasShield = sfFalse;
@@ -94,7 +97,7 @@ void updatePlayer(Window* _window)
 	for (int i = 0; i < nbPlayer; i++)
 	{
 		player[i].shadowsTimer += dt;
-		
+
 		if (player[i].shadowsTimer > 0.02f) {
 
 			for (int j = 0; j < NB_SHADOWS; j++)
@@ -172,25 +175,18 @@ void updatePlayer(Window* _window)
 			player[i].anothertimer = MIN(player[i].anothertimer, 1.f);
 			player[i].anothertimer = player[i].timeMoving;
 			//
-			if (player[i].wasalreadymovingtbh) {
+			if (player[i].wasAlreadyMoving) {
 				player[i].velocity = VECTOR2F_NULL;
-				player[i].wasalreadymovingtbh = sfFalse;
+				player[i].wasAlreadyMoving = sfFalse;
 			}
-
-			player[i].wasnt = sfTrue;
 
 			player[i].previousForward = player[i].forward;
 		}
 		else {
 
-			if (player[i].wasnt) {
-				player[i].wasnt = sfFalse;
-				//player[i].timeMoving = 0.f;
-			}
-
 			player[i].ISMOVING = sfFalse;
 
-			player[i].wasalreadymovingtbh = sfTrue;
+			player[i].wasAlreadyMoving = sfTrue;
 			player[i].timeMoving -= getDeltaTime();
 			player[i].velocity = LerpVector(VECTOR2F_NULL, player[i].velocity, player[i].timeMoving);
 
@@ -273,9 +269,10 @@ void updatePlayer(Window* _window)
 				player[i].color.b = 255;
 			}
 
-			float fColor = fabs(cosf(player[i].invulnerabilityTimer)) * 0.5f + 0.5f;
-			fColor -= 0.5f;
-			fColor *= 2.f;
+			float fColor = fabs(cosf(player[i].invulnerabilityTimer));
+			//float fColor = fabs(cosf(player[i].invulnerabilityTimer)) * 0.5f + 0.5f;
+			//fColor -= 0.5f;
+			//fColor *= 2.f;
 			sfUint8 color = fColor * 255;
 			player[i].color.a = color;
 			player[i].invulnerabilityTimer -= dt;
@@ -368,6 +365,7 @@ void updatePlayer(Window* _window)
 			}
 			player[i].fGasTimer = 0.f;
 			player[i].nbGas -= 1;
+			player[i].flameThroweringTimer = 0.f;
 		}
 
 		if (player[i].isLightning)
@@ -377,9 +375,18 @@ void updatePlayer(Window* _window)
 
 
 		// TODO know better when you're not flamethrowering lmao
-		if (player[i].bulletTimer > 0.3f)
+		player[i].flameThroweringTimer += dt;
+		if (player[i].flameThroweringTimer > 0.3f)
 			player[i].isFlamethrowering = sfFalse; // will erase the bullet
 
+
+		// increase damage item
+		if (player[i].damageTimer > 0.f) {
+			player[i].damageTimer -= dt;
+			player[i].damageFactor = 2;
+		}
+		else
+			player[i].damageFactor = 1;
 
 
 
@@ -413,9 +420,13 @@ void damagePlayer(int _playerId, int _damage)
 		player[_playerId].life -= _damage;
 		player[_playerId].nbMine = 0;
 		
-		//if (player[_playerId].life > 0) {
-			player[_playerId].invulnerabilityTimer = 3.f;
-		//}
+		player[_playerId].invulnerabilityTimer = 3.f;
+
+		if (player[_playerId].life <= 0) {
+			player[_playerId].life = 3;
+			player[_playerId].nbRespawn -= 1;
+			player[_playerId].pos = vector2f(300.f, 450.f);
+		}
 	}
 }
 
@@ -511,4 +522,9 @@ sfVector2f getPlayerPos(int _playerId)
 sfVector2f getPlayerVelocity(int _playerId)
 {
 	return player[_playerId].velocity;
+}
+
+int getPlayerDamageFactor(int _playerId)
+{
+	return player[_playerId].damageFactor;
 }

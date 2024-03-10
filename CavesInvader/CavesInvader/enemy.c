@@ -14,6 +14,7 @@ sfTexture* enemyTexture;
 sfTexture* deadEnemyTexture;
 
 sfBool resetBossPos;
+float invulnerabilityTimer;
 
 void initEnemy(Window* _window)
 {
@@ -25,8 +26,9 @@ void initEnemy(Window* _window)
 	deadEnemyTexture = GetTexture("deadEnemies");
 
 	sfSprite_setTexture(enemySprite, enemyTexture, sfTrue);
+
 	resetBossPos = sfFalse;
-	
+	invulnerabilityTimer = 0.f;
 }
 
 void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRect _rect, sfVector2f _origin, sfVector2f _originToCenter, float _radius, float _animTimer, float _timeBetweenFrames, sfVector2f _pos, sfVector2f _velocity, sfVector2f _forward, float _speed, int _life, int _damage, int _scoreValue, float _startFocusingPos, float _startAttackingMoment, float _startAttackingTimer, float _focusingTimer, sfBool _upMovement)
@@ -85,6 +87,8 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 	tmp.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 	tmp.ftimeInAOE = 0.f;
 	tmp.lastDamageSource = -1;
+	tmp.color = color(255, 255, 255, 255);
+	tmp.isLasered = sfFalse;
 
 	STD_LIST_PUSHBACK(enemiesList, tmp);
 }
@@ -382,16 +386,19 @@ void setupBoss(bossPhase _phase, sfIntRect* _rect, float* _speed, int* _totalBul
 		*_rect = IntRect(0, 2567, 566, 656);
 		*_speed = 175.f;
 		*_totalBullets = 14;
+		invulnerabilityTimer = 3.f;
 		break;
 	case PHASE3:
 		*_rect = IntRect(0, 3223, 566, 656);
 		*_speed = 250.f;
 		*_totalBullets = 21;
+		invulnerabilityTimer = 3.f;
 		break;
 	case PHASE4:
 		*_rect = IntRect(0, 3879, 566, 656);
 		*_speed = 300.f;
 		*_totalBullets = 28;
+		invulnerabilityTimer = 3.f;
 		break;
 	default:
 		break;
@@ -483,7 +490,7 @@ void updateEnemy(Window* _window)
 				}
 			}
 
-			else if (tmp.type == TAMER) {
+			if (tmp.type == TAMER) {
 				CreateParticles(GETDATA_ENEMIES->pos, vector2f(15.f, 15.f), VECTOR2F_NULL, vector2f(0.5f, 0.5f), 0.f, 360.f, 0.f, 0.f, 1000.f, 5000.f, 10.f, color(21, 50, 54, 255), color(21, 50, 54, 0), 0.4f, 0.6f, 50, "null", IntRect(0, 0, 0, 0), NULL, 0.f, 0.f, 0.1f);
 				enemiesList->erase(&enemiesList, i);
 				continue;
@@ -637,6 +644,38 @@ void updateEnemy(Window* _window)
 			else if (tmpLife <= (BOSS_HEALTH / 2) + (BOSS_HEALTH / 4)) {
 				GETDATA_ENEMIES->tamer.phase = PHASE2;
 			}
+
+			// invulnerabilty
+			if (invulnerabilityTimer > 0.f) {
+
+				if (invulnerabilityTimer > 2.9f) {
+					GETDATA_ENEMIES->color.g = 0;
+					GETDATA_ENEMIES->color.b = 0;
+				}
+				else {
+					GETDATA_ENEMIES->color.g = 255;
+					GETDATA_ENEMIES->color.b = 255;
+				}
+
+				float fColor = fabs(cosf(invulnerabilityTimer));
+				//float fColor = fabs(cosf(invulnerabilityTimer)) * 0.5f + 0.5f;
+				//fColor -= 0.5f;
+				//fColor *= 2.f;
+				sfUint8 color = fColor * 255;
+				GETDATA_ENEMIES->color.a = color;
+				invulnerabilityTimer -= dt;
+
+			}
+			else {
+				GETDATA_ENEMIES->color = color(255, 255, 255, 255);
+			}
+
+			// lasered
+			if (GETDATA_ENEMIES->isLasered) {
+				GETDATA_ENEMIES->color = color(255, 127, 127, 255);
+			}
+			else
+				GETDATA_ENEMIES->color = color(255, 255, 255, 255);
 		
 			GETDATA_ENEMIES->animTimer += dt;
 			Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 1, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
@@ -652,6 +691,7 @@ void updateEnemy(Window* _window)
 				break;
 		
 			case ATTACKING:
+
 				if (GETDATA_ENEMIES->tamer.isSpecial) {
 
 					if (GETDATA_ENEMIES->pos.y > -3000.f) {
@@ -729,14 +769,20 @@ void updateEnemy(Window* _window)
 				break;
 			}
 		}
-
-
 			
 
 
 
 
 	}
+}
+
+sfBool canDamageEnemy(enemyType _type)
+{
+	if (_type == TAMER && invulnerabilityTimer > 0.f)
+		return sfFalse;
+
+	return sfTrue;
 }
 
 void resetBossPosition()
@@ -756,6 +802,7 @@ void displayEnemy(Window* _window)
 		sfSprite_setOrigin(enemySprite, GETDATA_ENEMIES->origin);
 		sfSprite_setTextureRect(enemySprite, GETDATA_ENEMIES->rect);
 		sfSprite_setPosition(enemySprite, GETDATA_ENEMIES->pos);
+		sfSprite_setColor(enemySprite, GETDATA_ENEMIES->color);
 		sfRenderTexture_drawSprite(_window->renderTexture, enemySprite, NULL);
 
 		GETDATA_ENEMIES->bounds = sfSprite_getGlobalBounds(enemySprite);

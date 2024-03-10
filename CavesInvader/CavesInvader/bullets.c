@@ -35,7 +35,7 @@ void initBullets(Window* _window)
 
 }
 
-void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _forward, float _speed, sfVector2f _velocity, sfVector2f _scale, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer, sfBool _canDealDamages)
+void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _forward, float _speed, sfVector2f _velocity, sfVector2f _scale, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer, sfBool _canDealDamages, sfVector2f _originToCenter, float _radius)
 {
 	Bullets tmp;
 	tmp.type = _type;
@@ -54,6 +54,8 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	tmp.angle = _angle;
 	tmp.rotationSpeed = _rotationSpeed;
 	tmp.animTimer = _animTimer;
+	tmp.originToCenter = _originToCenter;
+	tmp.radius = _radius;
 
 	tmp.canDealDamages = _canDealDamages;
 	// unique parameters
@@ -98,11 +100,15 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 	float rotationSpeed = 0.f;
 	float animTimer = 0.f;
 	sfBool canDealDamages = sfTrue;
+	float radius = 0.f;
+	sfVector2f originToCenter = VECTOR2F_NULL;
 	//vector2f(156.f, 48.f) playerOrigin 
 	switch (_type)
 	{
 	case PLAYER_BASIC_BULLET:
 		origin = vector2f(0.f, 6.f);
+		originToCenter = vector2f(/*19*/0.f, 0.f);
+		radius = 7.f;
 		pos = AddVectors(_pos, vector2f(50.f, 23.f));
 		rect = IntRect(0, 2452, 23, 13);
 		velocity = vector2f(800.f, 0.f);  // TODO : check the nbBullet the player can shot to adjust the velocity
@@ -112,6 +118,8 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 		break;
 	case PLAYER_CHARGED_BULLET:
 		origin = vector2f(0.f, 15.f);
+		originToCenter = vector2f(/*44*/-44.f, 0.f);
+		radius = 16.f;
 		pos = AddVectors(_pos, vector2f(50.f, 23.f));
 		rect = IntRect(0, 2407, 56, 31);
 		velocity = vector2f(1200.f, 0.f);
@@ -136,13 +144,15 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 			origin = vector2f(39.f, 41.f);
 			rect = IntRect(0, 2257, 77, 75); // IntRect(0, 2256, 77, 76)
 		}
+		originToCenter = vector2f(-38.f, 0.f);
+		radius = 38.f;
 		velocity = vector2f(500.f, 0.f);
 		damage = 5;
 		rotationSpeed = 100.f;
 		break;
 	case PLAYER_FLAMETHROWER:
 		pos = AddVectors(_pos, vector2f(50.f, 24.f));
-		fDamagePerSecond = 5.f;
+		fDamagePerSecond = 10.f;
 		break;
 	case ENEMY_YELLOW_BULLET:
 		pos = AddVectors(_pos, vector2f(-34.f, 20.f));
@@ -178,7 +188,7 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 	default:
 		break;
 	}
-	addBullets(_type, id, _ownerId, pos, origin, rect, forward, speed, velocity, scale, damage, fDamagePerSecond, angle, rotationSpeed, animTimer, canDealDamages);
+	addBullets(_type, id, _ownerId, pos, origin, rect, forward, speed, velocity, scale, damage, fDamagePerSecond, angle, rotationSpeed, animTimer, canDealDamages, originToCenter, radius);
 
 }
 
@@ -242,6 +252,12 @@ void updateBullets(Window* _window)
 
 			if (getTriggerValue(GETDATA_BULLETS->ownerId, sfTrue) <= 0.1f || player[GETDATA_BULLETS->ownerId].nbLightning >= LIGTHNING_SECONDS_REQUIRED) {
 				player[GETDATA_BULLETS->ownerId].isLightning = sfFalse;
+
+				for (int j = 0; j < enemiesList->size(enemiesList); j++)
+				{
+					GD_ENEMIES->isLasered = sfFalse;
+				}
+
 				bulletsList->erase(&bulletsList, i);
 				continue;
 			}
@@ -296,7 +312,7 @@ void updateBullets(Window* _window)
 			GETDATA_BULLETS->bounds.left = tmpPos.x + 100.f ;
 			GETDATA_BULLETS->bounds.top = tmpPos.y - 74.f - getPlayerVelocity(tmpOwnerId).y / 10.f;
 			GETDATA_BULLETS->bounds.width = 250.f - getPlayerVelocity(tmpOwnerId).x / 3.f;
-			GETDATA_BULLETS->bounds.height = 200.f + getPlayerVelocity(tmpOwnerId).y / 3.f * 0.f;
+			GETDATA_BULLETS->bounds.height = 200.f /*+ getPlayerVelocity(tmpOwnerId).y / 3.f * 0.f*/;
 
 			// erase it because there shouldn't be any flames at this point
 			if (!player[GETDATA_BULLETS->ownerId].isFlamethrowering) {
@@ -357,12 +373,10 @@ void updateBullets(Window* _window)
 				if (tmpRect.top < 1300)
 					GETDATA_BULLETS->animTimer = -0.2f;
 				else 
-					GETDATA_BULLETS->animTimer = 0.f;
+					GETDATA_BULLETS->animTimer = 0.1f;
 			}
 
 		}
-
-
 
 
 		// collsions
@@ -372,11 +386,31 @@ void updateBullets(Window* _window)
 				if (GD_ENEMIES->state == DEAD || GD_ENEMIES->life <= 0)
 					continue;
 
+				enemyType tmpType = GD_ENEMIES->type;
+
+				GD_ENEMIES->isLasered = sfFalse;
+
 				if (tmp.type == PLAYER_BASIC_BULLET || tmp.type == PLAYER_CHARGED_BULLET)
 				{
-					if (sfFloatRect_intersects(&GETDATA_BULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
+					if (tmpType == TAMER) {
+						if (GetSqrMagnitude(CreateVector(GETDATA_BULLETS->pos, AddVectors(GD_ENEMIES->pos, GD_ENEMIES->originToCenter))) <= GETDATA_BULLETS->radius * GETDATA_BULLETS->radius + GD_ENEMIES->radius * GD_ENEMIES->radius) {
+							if (canDamageEnemy(tmpType))
+								GD_ENEMIES->life -= GETDATA_BULLETS->damage * getPlayerDamageFactor(GETDATA_BULLETS->ownerId);
+					
+							GD_ENEMIES->lastDamageSource = GETDATA_BULLETS->ownerId;
+					
+							GETDATA_BULLETS->canDealDamages = sfFalse;
+							GETDATA_BULLETS->rect = IntRect(0, 1071, 69, 59);
+							GETDATA_BULLETS->origin = vector2f(0.f, 30.f);
+							break;
+						}
+					}
 
-						GD_ENEMIES->life -= GETDATA_BULLETS->damage;
+					else if (sfFloatRect_intersects(&GETDATA_BULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
+
+						if (canDamageEnemy(tmpType))
+							GD_ENEMIES->life -= GETDATA_BULLETS->damage * getPlayerDamageFactor(GETDATA_BULLETS->ownerId);
+
 						GD_ENEMIES->lastDamageSource = GETDATA_BULLETS->ownerId;
 
 						GETDATA_BULLETS->canDealDamages = sfFalse;
@@ -392,11 +426,18 @@ void updateBullets(Window* _window)
 				else if (tmp.type == PLAYER_LASER) {
 					if (sfFloatRect_intersects(&GETDATA_BULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
 
-						GD_ENEMIES->ftimeInAOE += dt * GETDATA_BULLETS->fDamagePerSecond;
+						float damageFactor = 1.f;
+						if (getPlayerDamageFactor(GETDATA_BULLETS->ownerId) == 2) {
+							damageFactor = 2.f;
+						}
+						GD_ENEMIES->ftimeInAOE += dt * GETDATA_BULLETS->fDamagePerSecond * damageFactor;
+						GD_ENEMIES->isLasered = sfTrue;
 
 						if (GD_ENEMIES->ftimeInAOE > 1.f) {
 							GD_ENEMIES->ftimeInAOE = 0.f;
-							GD_ENEMIES->life -= 1;
+							if (canDamageEnemy(tmpType))
+								GD_ENEMIES->life -= 1;
+
 							GD_ENEMIES->lastDamageSource = GETDATA_BULLETS->ownerId;
 						}
 					}
@@ -407,9 +448,26 @@ void updateBullets(Window* _window)
 					// basic mine
 					if (GETDATA_BULLETS->rect.top < 2460) {
 
-						if (sfFloatRect_intersects(&GETDATA_BULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
+						if (tmpType == TAMER) {
+							if (GetSqrMagnitude(CreateVector(GETDATA_BULLETS->pos, AddVectors(GD_ENEMIES->pos, GD_ENEMIES->originToCenter))) <= GETDATA_BULLETS->radius * GETDATA_BULLETS->radius + GD_ENEMIES->radius * GD_ENEMIES->radius) {
+								if (canDamageEnemy(tmpType))
+									GD_ENEMIES->life -= GETDATA_BULLETS->damage * getPlayerDamageFactor(GETDATA_BULLETS->ownerId);
 
-							GD_ENEMIES->life -= GETDATA_BULLETS->damage;
+								GD_ENEMIES->lastDamageSource = GETDATA_BULLETS->ownerId;
+
+								GETDATA_BULLETS->rect = IntRect(898, 2465, 898, 798);
+								GETDATA_BULLETS->angle = 0.f;
+								GETDATA_BULLETS->origin = vector2f(449.f, 399.f);
+
+								GETDATA_BULLETS->mine.radius = 35.f;
+							}
+						}
+
+						else if (sfFloatRect_intersects(&GETDATA_BULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
+
+							if (canDamageEnemy(tmpType))
+								GD_ENEMIES->life -= GETDATA_BULLETS->damage;
+
 							GD_ENEMIES->lastDamageSource = GETDATA_BULLETS->ownerId;
 
 							GETDATA_BULLETS->rect = IntRect(898, 2465, 898, 798);
@@ -422,7 +480,9 @@ void updateBullets(Window* _window)
 					// exploded mine
 					else if (GETDATA_BULLETS->mine.radius > 0.f) {
 						if (GetSqrMagnitude(CreateVector(GETDATA_BULLETS->pos, AddVectors(GD_ENEMIES->pos, GD_ENEMIES->originToCenter))) <= GETDATA_BULLETS->mine.radius * GETDATA_BULLETS->mine.radius + GD_ENEMIES->radius * GD_ENEMIES->radius) {
-							GD_ENEMIES->life -= GETDATA_BULLETS->damage;
+							if (canDamageEnemy(tmpType))
+								GD_ENEMIES->life -= GETDATA_BULLETS->damage;
+
 							GD_ENEMIES->lastDamageSource = GETDATA_BULLETS->ownerId;
 						}
 					}
@@ -432,11 +492,17 @@ void updateBullets(Window* _window)
 					
 					if (sfFloatRect_intersects(&GETDATA_BULLETS->bounds, &GD_ENEMIES->bounds, NULL)) {
 
-						GD_ENEMIES->ftimeInAOE += dt * GETDATA_BULLETS->fDamagePerSecond;
+						float damageFactor = 1.f;
+						if (getPlayerDamageFactor(GETDATA_BULLETS->ownerId) == 2) {
+							damageFactor = 2.f;
+						}
+						GD_ENEMIES->ftimeInAOE += dt * GETDATA_BULLETS->fDamagePerSecond * damageFactor;
 
 						if (GD_ENEMIES->ftimeInAOE > 1.f) {
 							GD_ENEMIES->ftimeInAOE = 0.f;
-							GD_ENEMIES->life -= 1;
+							if (canDamageEnemy(tmpType))
+								GD_ENEMIES->life -= 1;
+
 							GD_ENEMIES->lastDamageSource = GETDATA_BULLETS->ownerId;
 						}
 					}
