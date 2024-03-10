@@ -75,7 +75,7 @@ void windowCreate(Window* This)
 	sfWindowStyle style = (This->isFullscreen ? sfFullscreen : sfDefaultStyle);
 
 	This->renderWindow = sfRenderWindow_create(This->videoMode, This->windowTitle, style, NULL);
-	//sfRenderWindow_setFramerateLimit(This->renderWindow, 60);
+	sfRenderWindow_setFramerateLimit(This->renderWindow, 120);
 
 }
 

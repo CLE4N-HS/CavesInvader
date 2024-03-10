@@ -3,6 +3,7 @@
 #include "player.h"
 #include "item.h"
 #include "bullets.h"
+#include "particlesSystemManager.h"
 
 #define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
 
@@ -12,6 +13,8 @@ sfTexture* enemyTexture;
 
 sfTexture* deadEnemyTexture;
 
+sfBool resetBossPos;
+float invulnerabilityTimer;
 
 void initEnemy(Window* _window)
 {
@@ -23,12 +26,15 @@ void initEnemy(Window* _window)
 	deadEnemyTexture = GetTexture("deadEnemies");
 
 	sfSprite_setTexture(enemySprite, enemyTexture, sfTrue);
-	
+
+	resetBossPos = sfFalse;
+	invulnerabilityTimer = 0.f;
 }
 
 void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRect _rect, sfVector2f _origin, sfVector2f _originToCenter, float _radius, float _animTimer, float _timeBetweenFrames, sfVector2f _pos, sfVector2f _velocity, sfVector2f _forward, float _speed, int _life, int _damage, int _scoreValue, float _startFocusingPos, float _startAttackingMoment, float _startAttackingTimer, float _focusingTimer, sfBool _upMovement)
 {
 	Enemies tmp;
+
 	tmp.type = _type;
 	tmp.state = _state;
 	tmp.lastState = _lastState;
@@ -58,11 +64,31 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 		tmp.hopper.focusingTimer = _focusingTimer;
 		tmp.hopper.upMovement = _upMovement;
 	}
+	else if (tmp.type == TAMER) {
+		tmp.tamer.phase = PHASE1;
+		tmp.tamer.lastPhase = PHASE0;
+		tmp.tamer.startAttackingPos = _startFocusingPos;
+		tmp.tamer.startAttackingMoment = _startAttackingMoment;
+		tmp.tamer.startAttackingTimer = _startAttackingTimer;
+		tmp.tamer.focusingTimer = _focusingTimer;
+		tmp.tamer.upMovement = sfTrue;
+		tmp.tamer.nbBullets = 0;
+		tmp.tamer.totalBullets = 5;
+		tmp.tamer.wantedSpeed = 100.f;
+
+		tmp.tamer.isSpecial = sfFalse;
+		tmp.tamer.specialAnimTimer = 0.f;
+		tmp.tamer.specialTimer = 0.f;
+		tmp.tamer.specialMoment = 0.f;
+		tmp.tamer.shouldResetPos = sfFalse;
+	}
 
 
 	tmp.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 	tmp.ftimeInAOE = 0.f;
 	tmp.lastDamageSource = -1;
+	tmp.color = color(255, 255, 255, 255);
+	tmp.isLasered = sfFalse;
 
 	STD_LIST_PUSHBACK(enemiesList, tmp);
 }
@@ -92,6 +118,8 @@ void createEnemy(enemyType _type)
 	
 	float focusingTimer = 0.f;
 	sfBool upMovement = sfFalse;
+
+	int randomMovement = iRand(0, 1);
 
 	switch (_type)
 	{
@@ -141,7 +169,7 @@ void createEnemy(enemyType _type)
 		startAttackingMoment = rand_float(1.5f, 2.5f);
 		focusingTimer = 0.f;
 		
-		if (pos.y < 540.f)
+		if (randomMovement)
 			upMovement = sfFalse;
 		else
 			upMovement = sfTrue;
@@ -168,6 +196,26 @@ void createEnemy(enemyType _type)
 		else
 			upMovement = sfTrue;
 
+		break;
+	case TAMER:
+		origin = vector2f(120.f, 340.f);
+		originToCenter = vector2f(92.f, 3.f);
+		radius = 225.f;
+		pos = vector2f(2040.f, 410.f);
+		life = BOSS_HEALTH;
+		damage = 1;
+		scoreValue = 500;
+		//rect = IntRect(0, 1911, 566, 656);
+		animTimer = 0.f;
+		timeBetweenFrames = 0.1f;
+		startFocusingPos = 1474.f;
+		startAttackingMoment = rand_float(2.f, 3.f);
+		focusingTimer = 0.f;
+
+		if (randomMovement)
+			upMovement = sfFalse;
+		else
+			upMovement = sfTrue;
 		break;
 	default:
 		break;
@@ -305,10 +353,56 @@ void setupEnemy(enemyType _type, enemyState _state, sfIntRect* _rect, sfVector2f
 			break;
 		}
 		break;
+	case TAMER:
+
+		switch (_state)
+		{
+		case FLYING:
+			*_forward = vector2f(-1.f, 0.f);
+			break;
+		case ATTACKING:
+			*_forward = VECTOR2F_NULL;
+			break;
+		default:
+			break;
+		}
+
 	default:
 		break;
 	}
 
+}
+
+void setupBoss(bossPhase _phase, sfIntRect* _rect, float* _speed, int* _totalBullets)
+{
+	switch (_phase)
+	{
+	case PHASE1:
+		*_rect = IntRect(0, 1911, 566, 656);
+		*_speed = 100.f;
+		*_totalBullets = 7;
+		break;
+	case PHASE2:
+		*_rect = IntRect(0, 2567, 566, 656);
+		*_speed = 175.f;
+		*_totalBullets = 14;
+		invulnerabilityTimer = 3.f;
+		break;
+	case PHASE3:
+		*_rect = IntRect(0, 3223, 566, 656);
+		*_speed = 250.f;
+		*_totalBullets = 21;
+		invulnerabilityTimer = 3.f;
+		break;
+	case PHASE4:
+		*_rect = IntRect(0, 3879, 566, 656);
+		*_speed = 300.f;
+		*_totalBullets = 28;
+		invulnerabilityTimer = 3.f;
+		break;
+	default:
+		break;
+	}
 }
 
 void updateEnemy(Window* _window)
@@ -336,12 +430,17 @@ void updateEnemy(Window* _window)
 		createEnemy(ENRAGED_HOPPER);
 		timer = 0.f;
 	}
+	if (isKeyboardOrControllerButtonPressed(sfKeyY, SELECT_XBOX) && timer > 0.2f) {
+		createEnemy(TAMER);
+		timer = 0.f;
+	}
 
 
 	for (int i = 0; i < enemiesList->size(enemiesList); i++)
 	{
 		Enemies tmp;
 
+		tmp.type = GETDATA_ENEMIES->type;
 
 
 		sfVector2f tmpVelocity = VECTOR2F_NULL;
@@ -352,20 +451,26 @@ void updateEnemy(Window* _window)
 			continue;
 		}
 
-		// players collisions
+		//players collisions
 		if (GETDATA_ENEMIES->state != DEAD) {
 			for (int j = 0; j < nbPlayer; j++)
 			{
-				if (sfFloatRect_intersects(&GETDATA_ENEMIES->bounds, &player[j].bounds, NULL)) {
-					//player[j].life -= GETDATA_ENEMIES->damage;
-					damagePlayer(j, GETDATA_ENEMIES->damage);
-					GETDATA_ENEMIES->life = 0;
-					honorableKill = sfFalse;
+				if (player[j].invulnerabilityTimer <= 0.f) {
+					if (sfFloatRect_intersects(&GETDATA_ENEMIES->bounds, &player[j].bounds, NULL)) {
+						damagePlayer(j, GETDATA_ENEMIES->damage);
+
+						if (tmp.type == VENGELFY || tmp.type == ENRAGED_VENGEFLY) {
+							GETDATA_ENEMIES->life = 0;
+							honorableKill = sfFalse;
+						}
+					}
 				}
 			}
 		}
 
 		if (GETDATA_ENEMIES->life <= 0 && GETDATA_ENEMIES->state != DEAD) {
+			GETDATA_ENEMIES->state = DEAD;
+
 			if (honorableKill) {
 				createItem(RANDOM_ITEM, GETDATA_ENEMIES->pos);
 
@@ -376,16 +481,35 @@ void updateEnemy(Window* _window)
 				}
 			}
 
-			GETDATA_ENEMIES->state = DEAD;
+
+			if (tmp.type == ENRAGED_VENGEFLY && !honorableKill) {
+				for (int j = 0; j < 20; j++)
+				{
+					int random = iRand(0, 1);
+					CreateParticles(GETDATA_ENEMIES->pos, vector2f(1.f, 1.f), VECTOR2F_NULL, vector2f(13.f, 12.f), 0.f, 360.f, 100.f, 10.f, 500.f, 1000.f, 10.f, color(21, 50, 54, 255), color(21, 50, 54, 255), 0.4f, 0.6f, 1, "particles", IntRect(0, 102 + random * 22, 25, 22), NULL, 0.f, 0.f, 0.1f);
+				}
+			}
+
+			if (tmp.type == TAMER) {
+				CreateParticles(GETDATA_ENEMIES->pos, vector2f(15.f, 15.f), VECTOR2F_NULL, vector2f(0.5f, 0.5f), 0.f, 360.f, 0.f, 0.f, 1000.f, 5000.f, 10.f, color(21, 50, 54, 255), color(21, 50, 54, 0), 0.4f, 0.6f, 50, "null", IntRect(0, 0, 0, 0), NULL, 0.f, 0.f, 0.1f);
+				enemiesList->erase(&enemiesList, i);
+				continue;
+			}
+
 		}
 
-		tmp.type = GETDATA_ENEMIES->type;
 		tmp.state = GETDATA_ENEMIES->state;
 		tmp.lastState = GETDATA_ENEMIES->lastState;
+		tmp.tamer.phase = GETDATA_ENEMIES->tamer.phase;
+		tmp.tamer.lastPhase = GETDATA_ENEMIES->tamer.lastPhase;
 
 		if (tmp.state != tmp.lastState) {
-			setupEnemy(GETDATA_ENEMIES->type, GETDATA_ENEMIES->state, &GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->origin, &GETDATA_ENEMIES->animTimer, &GETDATA_ENEMIES->timeBetweenFrames, &GETDATA_ENEMIES->forward, GETDATA_ENEMIES->pos, &GETDATA_ENEMIES->speed);
+			setupEnemy(tmp.type, tmp.state, &GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->origin, &GETDATA_ENEMIES->animTimer, &GETDATA_ENEMIES->timeBetweenFrames, &GETDATA_ENEMIES->forward, GETDATA_ENEMIES->pos, &GETDATA_ENEMIES->speed);
 			GETDATA_ENEMIES->lastState = tmp.state;
+		}
+		if (tmp.tamer.phase != tmp.tamer.lastPhase && tmp.type == TAMER) {
+			setupBoss(tmp.tamer.phase, &GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->speed, &GETDATA_ENEMIES->tamer.totalBullets);
+			GETDATA_ENEMIES->tamer.lastPhase = tmp.tamer.phase;
 		}
 
 		if (tmp.type == VENGELFY || tmp.type == ENRAGED_VENGEFLY)
@@ -507,14 +631,163 @@ void updateEnemy(Window* _window)
 				break;
 			}
 		}
+		else if (tmp.type == TAMER) {
+		
+			int tmpLife = GETDATA_ENEMIES->life;
+		
+			if (tmpLife <= BOSS_HEALTH / 4) {
+				GETDATA_ENEMIES->tamer.phase = PHASE4;
+			}
+			else if (tmpLife <= BOSS_HEALTH / 2) {
+				GETDATA_ENEMIES->tamer.phase = PHASE3;
+			}
+			else if (tmpLife <= (BOSS_HEALTH / 2) + (BOSS_HEALTH / 4)) {
+				GETDATA_ENEMIES->tamer.phase = PHASE2;
+			}
+
+			// invulnerabilty
+			if (invulnerabilityTimer > 0.f) {
+
+				if (invulnerabilityTimer > 2.9f) {
+					GETDATA_ENEMIES->color.g = 0;
+					GETDATA_ENEMIES->color.b = 0;
+				}
+				else {
+					GETDATA_ENEMIES->color.g = 255;
+					GETDATA_ENEMIES->color.b = 255;
+				}
+
+				float fColor = fabs(cosf(invulnerabilityTimer));
+				//float fColor = fabs(cosf(invulnerabilityTimer)) * 0.5f + 0.5f;
+				//fColor -= 0.5f;
+				//fColor *= 2.f;
+				sfUint8 color = fColor * 255;
+				GETDATA_ENEMIES->color.a = color;
+				invulnerabilityTimer -= dt;
+
+			}
+			else {
+				GETDATA_ENEMIES->color = color(255, 255, 255, 255);
+			}
+
+			// lasered
+			if (GETDATA_ENEMIES->isLasered) {
+				GETDATA_ENEMIES->color = color(255, 127, 127, 255);
+			}
+			else
+				GETDATA_ENEMIES->color = color(255, 255, 255, 255);
+		
+			GETDATA_ENEMIES->animTimer += dt;
+			Animator(&GETDATA_ENEMIES->rect, &GETDATA_ENEMIES->animTimer, 3, 1, GETDATA_ENEMIES->timeBetweenFrames, 0.f);
+		
+			switch (tmp.state)
+			{
+			case FLYING:
+				GETDATA_ENEMIES->pos.x -= GETDATA_ENEMIES->speed * dt;
+		
+				if (GETDATA_ENEMIES->pos.x < GETDATA_ENEMIES->tamer.startAttackingPos)
+					GETDATA_ENEMIES->state = ATTACKING;
+		
+				break;
+		
+			case ATTACKING:
+
+				if (GETDATA_ENEMIES->tamer.isSpecial) {
+
+					if (GETDATA_ENEMIES->pos.y > -3000.f) {
+						tmpVelocity = MultiplyVector(vector2f(0.f, -1.f), dt * 1000.f);
+						GETDATA_ENEMIES->pos = AddVectors(GETDATA_ENEMIES->pos, tmpVelocity);
+					}
+					else {
+						if (GETDATA_ENEMIES->tamer.canLaunchBullet) {
+							createBullets(ENEMY_WARNING_BULLET, i, VECTOR2F_NULL, 180.f);
+							GETDATA_ENEMIES->tamer.canLaunchBullet = sfFalse;
+						}
+						if (resetBossPos) {
+							GETDATA_ENEMIES->tamer.isSpecial = sfFalse;
+							GETDATA_ENEMIES->tamer.specialTimer = 0.f;
+							GETDATA_ENEMIES->tamer.specialMoment = rand_float(12.f, 18.f);
+							GETDATA_ENEMIES->tamer.nbBullets = 0;
+							GETDATA_ENEMIES->tamer.focusingTimer = 0.f;
+							int randomMovement = iRand(0, 1);
+							if (randomMovement)
+								GETDATA_ENEMIES->tamer.upMovement = sfFalse;
+							else
+								GETDATA_ENEMIES->tamer.upMovement = sfTrue;
+
+							GETDATA_ENEMIES->pos = vector2f(2040.f, 410.f);
+							GETDATA_ENEMIES->state = FLYING;
+							resetBossPos = sfFalse;
+						}
+					}
+
+				}
+				else {
+					tmpVelocity = MultiplyVector(GETDATA_ENEMIES->forward, dt * GETDATA_ENEMIES->tamer.wantedSpeed);
+					GETDATA_ENEMIES->pos = AddVectors(GETDATA_ENEMIES->pos, tmpVelocity);
+		
+					if (GETDATA_ENEMIES->tamer.upMovement)
+						GETDATA_ENEMIES->tamer.focusingTimer -= dt;
+					else
+						GETDATA_ENEMIES->tamer.focusingTimer += dt;
+		
+					GETDATA_ENEMIES->forward.y = cosf(GETDATA_ENEMIES->tamer.focusingTimer);
+
+					if (GETDATA_ENEMIES->forward.y > 0.999f || GETDATA_ENEMIES->forward.y < -0.999f) {
+						GETDATA_ENEMIES->tamer.wantedSpeed = GETDATA_ENEMIES->speed;
+					}
+		
+		
+					GETDATA_ENEMIES->tamer.startAttackingTimer += dt;
+		
+					if (GETDATA_ENEMIES->tamer.startAttackingTimer > GETDATA_ENEMIES->tamer.startAttackingMoment) {
+		
+						createBullets(ENEMY_RED_BULLET, i, GETDATA_ENEMIES->pos, 180.f);
+						GETDATA_ENEMIES->tamer.nbBullets += 1;
+		
+						if (GETDATA_ENEMIES->tamer.nbBullets > GETDATA_ENEMIES->tamer.totalBullets) {
+							GETDATA_ENEMIES->tamer.startAttackingMoment = rand_float(3.f, 5.f);
+							GETDATA_ENEMIES->tamer.nbBullets = 0;
+						}
+						else {
+							GETDATA_ENEMIES->tamer.startAttackingMoment = 0.2f;
+						}
+							GETDATA_ENEMIES->tamer.startAttackingTimer = 0.f;
+					}
 
 
+					GETDATA_ENEMIES->tamer.specialTimer += dt;
+
+					if (GETDATA_ENEMIES->tamer.specialTimer > GETDATA_ENEMIES->tamer.specialMoment && GETDATA_ENEMIES->tamer.phase >= PHASE3) {
+						GETDATA_ENEMIES->tamer.isSpecial = sfTrue;
+						GETDATA_ENEMIES->tamer.canLaunchBullet = sfTrue;
+					}
+
+				}
+				break;
+			default:
+				break;
+			}
+		}
 			
 
 
 
 
 	}
+}
+
+sfBool canDamageEnemy(enemyType _type)
+{
+	if (_type == TAMER && invulnerabilityTimer > 0.f)
+		return sfFalse;
+
+	return sfTrue;
+}
+
+void resetBossPosition()
+{
+	resetBossPos = sfTrue;
 }
 
 void displayEnemy(Window* _window)
@@ -529,6 +802,7 @@ void displayEnemy(Window* _window)
 		sfSprite_setOrigin(enemySprite, GETDATA_ENEMIES->origin);
 		sfSprite_setTextureRect(enemySprite, GETDATA_ENEMIES->rect);
 		sfSprite_setPosition(enemySprite, GETDATA_ENEMIES->pos);
+		sfSprite_setColor(enemySprite, GETDATA_ENEMIES->color);
 		sfRenderTexture_drawSprite(_window->renderTexture, enemySprite, NULL);
 
 		GETDATA_ENEMIES->bounds = sfSprite_getGlobalBounds(enemySprite);

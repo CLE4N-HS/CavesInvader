@@ -147,6 +147,8 @@ void updateItem(Window* _window)
 					}
 					break;
 				case DAMAGE_ITEM:
+					player[j].damageTimer = 10.f;
+					collectItem(i);
 					break;
 				case GAS_ITEM:
 					if (player[j].nbGas < 100) {
