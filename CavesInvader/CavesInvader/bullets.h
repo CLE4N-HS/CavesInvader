@@ -17,7 +17,8 @@ typedef enum bulletType {
 
 	ENEMY_YELLOW_BULLET,
 	ENEMY_GREEN_BULLET,
-	ENEMY_RED_BULLET
+	ENEMY_RED_BULLET,
+	ENEMY_WARNING_BULLET
 }bulletType;
 
 typedef struct basicBulletParameters {

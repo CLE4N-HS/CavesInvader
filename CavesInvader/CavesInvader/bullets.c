@@ -35,7 +35,7 @@ void initBullets(Window* _window)
 
 }
 
-void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _forward, float _speed, sfVector2f _velocity, sfVector2f _scale, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer)
+void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, sfVector2f _origin, sfIntRect _rect, sfVector2f _forward, float _speed, sfVector2f _velocity, sfVector2f _scale, int _damage, float _fDamagePerSecond, float _angle, float _rotationSpeed, float _animTimer, sfBool _canDealDamages)
 {
 	Bullets tmp;
 	tmp.type = _type;
@@ -55,7 +55,7 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	tmp.rotationSpeed = _rotationSpeed;
 	tmp.animTimer = _animTimer;
 
-	tmp.canDealDamages = sfTrue;
+	tmp.canDealDamages = _canDealDamages;
 	// unique parameters
 	if (_type == PLAYER_BASIC_BULLET || _type == PLAYER_CHARGED_BULLET) {
 		tmp.basicBullet.deathTimer = 0.f;
@@ -82,7 +82,7 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 	if (_type <= PLAYER_FLAMETHROWER)
 		id = PLAYER_ID_BULLET;
 	else
-		id = ENEMY_ID_BULLET;	
+		id = ENEMY_ID_BULLET;
 
 	sfVector2f forward = VECTOR2F_NULL;
 	float speed = 0.f;
@@ -97,6 +97,7 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 	float angle = 0.f;
 	float rotationSpeed = 0.f;
 	float animTimer = 0.f;
+	sfBool canDealDamages = sfTrue;
 	//vector2f(156.f, 48.f) playerOrigin 
 	switch (_type)
 	{
@@ -159,10 +160,25 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 		scale = vector2f(0.5f, 0.5f);
 		velocity = vector2f(-600.f, 0.f);
 		break;
+	case ENEMY_RED_BULLET:
+		pos = AddVectors(_pos, vector2f(-60.f, 125.f));
+		rect = IntRect(0, 4535, 88, 86);
+		origin = vector2f(44.f, 43.f);
+		damage = 1;
+		scale = vector2f(0.5f, 0.5f);
+		velocity = vector2f(-500.f, 0.f);
+		break;
+	case ENEMY_WARNING_BULLET:
+		pos = vector2f(0.f, rand_float(100.f, 674.f));
+		rect = IntRect(0, 1254, 1920, 306);
+		origin = vector2f(0.f, 0.f);
+		damage = 1;
+		canDealDamages = sfFalse;
+		break;
 	default:
 		break;
 	}
-	addBullets(_type, id, _ownerId, pos, origin, rect, forward, speed, velocity, scale, damage, fDamagePerSecond, angle, rotationSpeed, animTimer);
+	addBullets(_type, id, _ownerId, pos, origin, rect, forward, speed, velocity, scale, damage, fDamagePerSecond, angle, rotationSpeed, animTimer, canDealDamages);
 
 }
 
@@ -288,7 +304,7 @@ void updateBullets(Window* _window)
 				continue;
 			}
 		}
-		else if (tmp.type == ENEMY_YELLOW_BULLET || tmp.type == ENEMY_GREEN_BULLET)
+		else if (tmp.type == ENEMY_YELLOW_BULLET || tmp.type == ENEMY_GREEN_BULLET || tmp.type == ENEMY_RED_BULLET)
 		{
 			if (GETDATA_BULLETS->canDealDamages) {
 
@@ -309,6 +325,39 @@ void updateBullets(Window* _window)
 					bulletsList->erase(&bulletsList, i);
 					continue;
 				}
+			}
+
+		}
+		else if (tmp.type == ENEMY_WARNING_BULLET)
+		{
+			GETDATA_BULLETS->animTimer += dt;
+
+			if (GETDATA_BULLETS->animTimer > 0.2f) {
+				GETDATA_BULLETS->rect.left += GETDATA_BULLETS->rect.width;
+
+				if (GETDATA_BULLETS->rect.left > 4000) {
+					GETDATA_BULLETS->rect.left = 0;
+					GETDATA_BULLETS->rect.top += GETDATA_BULLETS->rect.height;
+				}
+
+				sfIntRect tmpRect = GETDATA_BULLETS->rect;
+
+				if (tmpRect.top > 1800 && tmpRect.left > 100) {
+					resetBossPosition();
+					bulletsList->erase(&bulletsList, i);
+					continue;
+				}
+
+				if (tmpRect.top > 1500 && tmpRect.top < 1600 && tmpRect.left < 2000)
+					GETDATA_BULLETS->canDealDamages = sfTrue;
+				else
+					GETDATA_BULLETS->canDealDamages = sfFalse;
+
+
+				if (tmpRect.top < 1300)
+					GETDATA_BULLETS->animTimer = -0.2f;
+				else 
+					GETDATA_BULLETS->animTimer = 0.f;
 			}
 
 		}
@@ -440,7 +489,9 @@ void displayBullets(Window* _window)
 		if (GETDATA_BULLETS->id == PLAYER_ID_BULLET)
 			sfSprite_setTexture(bulletsSprite, bulletsTexture, sfFalse);
 		else {
-			if (GETDATA_BULLETS->canDealDamages)
+			if (GETDATA_BULLETS->type == ENEMY_WARNING_BULLET)
+				sfSprite_setTexture(bulletsSprite, bulletsTexture, sfFalse);
+			else if (GETDATA_BULLETS->canDealDamages)
 				sfSprite_setTexture(bulletsSprite, enemyBulletsTexture, sfFalse);
 			else
 				sfSprite_setTexture(bulletsSprite, bulletsTexture, sfFalse);

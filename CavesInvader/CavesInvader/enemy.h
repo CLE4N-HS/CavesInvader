@@ -4,6 +4,8 @@
 #include "stateManager.h"
 #include "List.h"
 
+#define BOSS_HEALTH 10
+
 typedef enum enemyType {
 	VENGELFY,
 	ENRAGED_VENGEFLY,
@@ -21,6 +23,14 @@ typedef enum enemyState {
 	DEAD
 }enemyState;
 
+typedef enum bossPhase {
+	PHASE0,
+	PHASE1,
+	PHASE2,
+	PHASE3,
+	PHASE4
+}bossPhase;
+
 typedef struct vengeflyParameters {
 	float startFocusingPos;
 	float startAttackingMoment;
@@ -34,6 +44,27 @@ typedef struct hopperParameters {
 	float startAttackingTimer;
 	sfBool upMovement;
 }hopperParameters;
+
+typedef struct tamerParameters {
+	bossPhase phase;
+	bossPhase lastPhase;
+	float startAttackingPos;
+	float focusingTimer;
+	float startAttackingMoment;
+	float startAttackingTimer;
+	sfBool upMovement;
+	int nbBullets;
+	int totalBullets;
+	float wantedSpeed;
+
+	sfBool isSpecial;
+	float specialAnimTimer;
+	float specialTimer;
+	float specialMoment;
+	sfBool canLaunchBullet;
+	sfBool shouldResetPos;
+
+}tamerParameters;
 
 typedef struct Enemies {
 	enemyType type;
@@ -61,7 +92,7 @@ typedef struct Enemies {
 	{
 		vengeflyParameters vengefly;
 		hopperParameters hopper;
-		int tni;
+		tamerParameters tamer;
 	};
 }Enemies;
 
@@ -74,6 +105,8 @@ void initEnemy(Window* _window);
 void createEnemy(enemyType _type);
 
 void updateEnemy(Window* _window);
+
+void resetBossPosition();
 
 void displayEnemy(Window* _window);
 
