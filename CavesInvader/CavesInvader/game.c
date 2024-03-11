@@ -169,6 +169,7 @@ void updateGame(Window* _window)
 	static float checkTimer = 0.f;
 	checkTimer += dt;
 
+
 	if (checkTimer > 1.f && createEnemyTimer > 5.f && nbWaveEnemies >= totalWaveEnemies && getTotalEnemies() == 0) {
 		nextWave = sfTrue;
 		checkTimer = 0.f;
@@ -205,7 +206,7 @@ void updateGame(Window* _window)
 	}
 
 
-	createEnemyTimer += dt * (1.f + (float)totalWaveEnemies);
+	createEnemyTimer += dt * (1.f + (float)nbWave);
 
 	if (allowedToCreateEnemies && createEnemyTimer > 5.f) {
 		int randomEnemy = iRand(0, 4);
@@ -235,6 +236,11 @@ void updateGame(Window* _window)
 	updateParticlesSystem(_window);
 	updateHud(_window);
 	updateItem(_window);
+}
+
+int getNbWave()
+{
+	return nbWave;
 }
 
 void displayGame(Window* _window)

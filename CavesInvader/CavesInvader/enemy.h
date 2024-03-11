@@ -64,6 +64,8 @@ typedef struct tamerParameters {
 	float specialMoment;
 	sfBool canLaunchBullet;
 	sfBool shouldResetPos;
+	float addVengelfiesTimer;
+	sfBool addHoppers;
 
 }tamerParameters;
 

@@ -47,11 +47,11 @@ void createItem(ItemType _type, sfVector2f _pos)
 		int random = iRand(0, 99);
 		if (random < 3) _type = BULLET_ITEM;
 		else if (random < 10) _type = SHIELD_ITEM;
-		else if (random < 20) _type = LIFE_ITEM;
-		else if (random < 30) _type = GAS_ITEM;
-		else if (random < 40) _type = TIMES3_ITEM;
-		else if (random < 50) _type = DAMAGE_ITEM;
-		else _type = TIMES2_ITEM;
+		else if (random < 20) _type = TIMES3_ITEM;
+		else if (random < 30) _type = DAMAGE_ITEM;
+		else if (random < 45) _type = LIFE_ITEM;
+		else if (random < 65) _type = TIMES2_ITEM;
+		else _type = GAS_ITEM;
 	}
 
 
