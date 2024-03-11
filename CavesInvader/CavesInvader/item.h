@@ -12,7 +12,7 @@ typedef enum ItemType {
 	BULLET_ITEM,
 	LIFE_ITEM,
 	TIMES2_ITEM,
-	TIMES3_ITEM,
+	TIMES3_ITEM
 }ItemType;
 
 typedef struct Items {

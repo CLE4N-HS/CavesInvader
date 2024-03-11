@@ -14,6 +14,8 @@ void initGame(Window* _window);
 /// <param name="_window">The whole structure of the Window</param>
 void updateGame(Window* _window);
 
+int getNbWave();
+
 /// <summary>
 /// Displays everything needed for the Game
 /// </summary>

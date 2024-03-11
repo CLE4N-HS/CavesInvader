@@ -104,7 +104,7 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 	sfBool canDealDamages = sfTrue;
 	float radius = 0.f;
 	sfVector2f originToCenter = VECTOR2F_NULL;
-	//vector2f(156.f, 48.f) playerOrigin 
+
 	switch (_type)
 	{
 	case PLAYER_BASIC_BULLET:

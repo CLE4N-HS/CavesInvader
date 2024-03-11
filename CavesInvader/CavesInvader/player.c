@@ -126,11 +126,9 @@ void updatePlayer(Window* _window)
 
 		player[i].isMoving = sfFalse;
 
-		//player[i].forward = VECTOR2F_NULL;
 		player[i].bulletTimer += dt;
 		player[i].particlesTimer += dt;
 
-		//player[i].velocity = VECTOR2F_NULL;
 		if (LStickYValue < -10.f) {
 			if (!player[i].ISMOVING) {
 				player[i].forward = VECTOR2F_NULL;
@@ -174,7 +172,7 @@ void updatePlayer(Window* _window)
 			player[i].anothertimer += dt;
 			player[i].anothertimer = MIN(player[i].anothertimer, 1.f);
 			player[i].anothertimer = player[i].timeMoving;
-			//
+			
 			if (player[i].wasAlreadyMoving) {
 				player[i].velocity = VECTOR2F_NULL;
 				player[i].wasAlreadyMoving = sfFalse;
@@ -196,20 +194,8 @@ void updatePlayer(Window* _window)
 		player[i].timeMoving = MIN(player[i].timeMoving, 1.f);
 		player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 
-		// TODO CLE4N that and don't stop the player but mb add a drag that is more consequent if you don't move
-
-
-		//player[i].velocity = MultiplyVector(player[i].forward, dt * player[i].speed.x * player[i].timeMoving)
-		//player[i].velocity = MultiplyVector(player[i].forward, player[i].speed * player[i].anothertimer);
 		player[i].velocity = MultiplyVector(player[i].forward, player[i].speed * player[i].timeMoving);
 
-		//player[i].velocity.x += gamepadRight * dt * 5.f;
-		//player[i].velocity.y += gamepadDown * dt * 5.f;
-
-		//player[i].velocity = MultiplyVector(player[i].velocity, 1.f / (1.f +  (dt * player[i].drag * 10000.f)
-		//player[i].velocity = AddVectors(player[i].velocity, force);
-		//player[i].velocity = MultiplyVector(player[i].velocity, 1.f - dt);
-		// drag is useless now
 		if (player[i].velocity.x < 0.001f && player[i].velocity.x > -0.001f && !player[i].isMoving) {
 			player[i].velocity.x = 0.f;
 		}
@@ -222,12 +208,12 @@ void updatePlayer(Window* _window)
 
 		if (player[i].pos.x < 156.f) {
 			player[i].pos.x = 156.f;
-			player[i].timeMoving -= dt * 2.f;
+			//player[i].timeMoving -= dt * 2.f;
 		}
 		if (player[i].pos.x > 1829.f) {
 			player[i].pos.x = 1829.f;
-			player[i].timeMoving -= dt * 2.f;
-			player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
+			//player[i].timeMoving -= dt * 2.f;
+			//player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 		}
 		if (player[i].pos.y < 48.f) {
 			player[i].pos.y = 48.f;
@@ -239,12 +225,6 @@ void updatePlayer(Window* _window)
 			player[i].timeMoving -= dt * 2.f;
 			player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 		}
-
-		//printf("%f\n", player[0].timeMoving);
-		//printf("%f, %f\n", player[0].velocity.x, player[0].velocity.y);
-
-		//player[i].pos = vector2f(MAX(player[i].pos.x, 0.f), MAX(player[i].pos.y, 0.f));
-		//player[i].pos = vector2f(MIN(player[i].pos.x, 1920.f - 278.f), MIN(player[i].pos.y, 1080.f - 139.f));
 
 
 
