@@ -14,8 +14,8 @@ stdList* bulletsList;
 sfSprite* bulletsSprite;
 
 sfTexture* bulletsTexture;
-
 sfTexture* enemyBulletsTexture;
+sfTexture* laserTexture;
 
 sfRectangleShape* tmpRectangle; // to remove
 
@@ -26,6 +26,7 @@ void initBullets(Window* _window)
 
 	bulletsTexture = GetTexture("bullets");
 	enemyBulletsTexture = GetTexture("enemyBullets");
+	laserTexture = GetTexture("laser");
 
 	sfSprite_setTexture(bulletsSprite, bulletsTexture, sfTrue);
 
@@ -70,6 +71,7 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	}
 	else if (_type == PLAYER_LASER) {
 		tmp.laser.timer = 0.f;
+		tmp.laser.timeLasering = 0.f;
 	}
 	else if (_type == ENEMY_YELLOW_BULLET || _type == ENEMY_GREEN_BULLET) {
 		tmp.enemyBullet.deathTimer = 0.f;
@@ -130,7 +132,8 @@ void createBullets(bulletType _type, int _ownerId, sfVector2f _pos, float _angle
 	case PLAYER_LASER:
 		origin = vector2f(0.f, 14.f);
 		pos = AddVectors(_pos, vector2f(36.f, 24.f));
-		rect = IntRect(0, 2172, 437, 28);
+		//rect = IntRect(0, 2172, 437, 28);
+		rect = IntRect(0, 0, 1275, 28);
 		scale = vector2f(0.f, 1.f);
 		fDamagePerSecond = 8.f;
 		break;
@@ -237,21 +240,23 @@ void updateBullets(Window* _window)
 		{
 			GETDATA_BULLETS->pos = AddVectors(getPlayerPos(GETDATA_BULLETS->ownerId), vector2f(-20.f, 24.f));
 
-			if (GETDATA_BULLETS->scale.x < 4.2f)
-				GETDATA_BULLETS->scale.x += dt * 5.f;
-
 			GETDATA_BULLETS->laser.timer += dt;
-
 			GETDATA_BULLETS->scale.y = sin(GETDATA_BULLETS->laser.timer) * 2.f;
+
+			if (GETDATA_BULLETS->scale.x < 1.5f)
+				GETDATA_BULLETS->scale.x += dt * 2.f;
+
 
 			if (GETDATA_BULLETS->scale.y < 1.f) {
 				GETDATA_BULLETS->scale.y = 1.f;
 				GETDATA_BULLETS->laser.timer = 0.6f;
 			}
 
+			GETDATA_BULLETS->laser.timeLasering += dt;
 
-			if (getTriggerValue(GETDATA_BULLETS->ownerId, sfTrue) <= 0.1f || player[GETDATA_BULLETS->ownerId].nbLightning >= LIGTHNING_SECONDS_REQUIRED) {
+			if (GETDATA_BULLETS->laser.timeLasering > 4.f) {
 				player[GETDATA_BULLETS->ownerId].isLightning = sfFalse;
+				player[GETDATA_BULLETS->ownerId].nbLightning = 15;
 
 				for (int j = 0; j < enemiesList->size(enemiesList); j++)
 				{
@@ -261,6 +266,34 @@ void updateBullets(Window* _window)
 				bulletsList->erase(&bulletsList, i);
 				continue;
 			}
+
+
+			//GETDATA_BULLETS->pos = AddVectors(getPlayerPos(GETDATA_BULLETS->ownerId), vector2f(-20.f, 24.f));
+			//
+			//if (GETDATA_BULLETS->scale.x < 4.2f)
+			//	GETDATA_BULLETS->scale.x += dt * 5.f;
+			//
+			//GETDATA_BULLETS->laser.timer += dt;
+			//
+			//GETDATA_BULLETS->scale.y = sin(GETDATA_BULLETS->laser.timer) * 2.f;
+			//
+			//if (GETDATA_BULLETS->scale.y < 1.f) {
+			//	GETDATA_BULLETS->scale.y = 1.f;
+			//	GETDATA_BULLETS->laser.timer = 0.6f;
+			//}
+
+
+			//if (getTriggerValue(GETDATA_BULLETS->ownerId, sfTrue) <= 0.1f || player[GETDATA_BULLETS->ownerId].nbLightning >= LIGTHNING_SECONDS_REQUIRED) {
+			//	player[GETDATA_BULLETS->ownerId].isLightning = sfFalse;
+			//
+			//	for (int j = 0; j < enemiesList->size(enemiesList); j++)
+			//	{
+			//		GD_ENEMIES->isLasered = sfFalse;
+			//	}
+			//
+			//	bulletsList->erase(&bulletsList, i);
+			//	continue;
+			//}
 		}
 		else if (tmp.type == PLAYER_MINES)
 		{
@@ -552,8 +585,12 @@ void displayBullets(Window* _window)
 			continue; // keep this but to remove all above
 		}
 
-		if (GETDATA_BULLETS->id == PLAYER_ID_BULLET)
-			sfSprite_setTexture(bulletsSprite, bulletsTexture, sfFalse);
+		if (GETDATA_BULLETS->id == PLAYER_ID_BULLET) {
+			if (GETDATA_BULLETS->type == PLAYER_LASER)
+				sfSprite_setTexture(bulletsSprite, laserTexture, sfFalse);
+			else
+				sfSprite_setTexture(bulletsSprite, bulletsTexture, sfFalse);
+		}
 		else {
 			if (GETDATA_BULLETS->type == ENEMY_WARNING_BULLET)
 				sfSprite_setTexture(bulletsSprite, bulletsTexture, sfFalse);

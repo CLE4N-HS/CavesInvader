@@ -287,15 +287,24 @@ void updatePlayer(Window* _window)
 		
 		player[i].fGasTimer += dt;
 
-		if (player[i].isLightning) {
-			player[i].fLightningTimer += dt * 3.f;
+		//if (player[i].isLightning) {
+		//	player[i].fLightningTimer += dt * 3.f;
+		//
+		//	if (player[i].fLightningTimer > 1.f) {
+		//		player[i].nbLightning += 1;
+		//		player[i].fLightningTimer = 0.f;
+		//	}
+		//}
+		//else if (player[i].nbLightning > 0 && player[i].nbLightning <= LIGTHNING_SECONDS_REQUIRED) {
+		//	player[i].fLightningTimer += dt;
+		//	if (player[i].fLightningTimer > 1.f) {
+		//		player[i].nbLightning -= 1;
+		//		player[i].fLightningTimer = 0.f;
+		//	}
+		//
+		//}
 
-			if (player[i].fLightningTimer > 1.f) {
-				player[i].nbLightning += 1;
-				player[i].fLightningTimer = 0.f;
-			}
-		}
-		else if (player[i].nbLightning > 0 && player[i].nbLightning <= LIGTHNING_SECONDS_REQUIRED) {
+		if (player[i].nbLightning > 0) {
 			player[i].fLightningTimer += dt;
 			if (player[i].fLightningTimer > 1.f) {
 				player[i].nbLightning -= 1;
@@ -311,13 +320,13 @@ void updatePlayer(Window* _window)
 					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 0.f);
 				}
 				else if (player[i].nbBullet == 2) {
-					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, -10.f);
-					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 10.f);
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, -5.f);
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 5.f);
 				}
 				else if (player[i].nbBullet == 3) {
-					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, -10.f);
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, -5.f);
 					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 0.f);
-					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 10.f);
+					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 5.f);
 				}
 				player[i].bulletTimer = -0.1f;
 			}
@@ -326,13 +335,13 @@ void updatePlayer(Window* _window)
 					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 0.f);
 				}
 				else if (player[i].nbBullet == 2) {
-					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, -10.f);
-					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 10.f);
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, -5.f);
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 5.f);
 				}
 				else if (player[i].nbBullet == 3) {
-					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, -10.f);
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, -5.f);
 					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 0.f);
-					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 10.f);
+					createBullets(PLAYER_BASIC_BULLET, i, player[i].pos, 5.f);
 				}
 				player[i].bulletTimer = 0.0f;
 			}
@@ -372,7 +381,6 @@ void updatePlayer(Window* _window)
 			player[i].speed = PLAYER_SPEED * 7.f / 10.f;
 		else
 			player[i].speed = PLAYER_SPEED;
-
 
 		// TODO know better when you're not flamethrowering lmao
 		player[i].flameThroweringTimer += dt;

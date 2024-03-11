@@ -27,6 +27,7 @@ typedef struct basicBulletParameters {
 
 typedef struct laserParameters {
 	float timer;
+	float timeLasering;
 }laserParameters;
 
 typedef struct minesParameters {
