@@ -13,6 +13,9 @@
 #include "particlesSystemManager.h"
 #include "quit.h"
 
+sfTexture* bgTexture;
+sfTexture* loadingTexture;
+float angle;
 
 void stateInit(Window* _window)
 {
@@ -23,11 +26,16 @@ void stateInit(Window* _window)
 		Texture_Onload(ALL);
 		Sound_Onload(ALL);
 		spLoading = sfSprite_create();
-		sfSprite_setTexture(spLoading, GetTexture("loading"), sfTrue);
-		sfIntRect AnimRect = { 0, 0, 128, 128 };
-		sfSprite_setOrigin(spLoading, vector2f(64.0f, 64.0f));
-		sfSprite_setPosition(spLoading, vector2f(mainView->PosView.x, mainView->PosView.y));
-		sfSprite_setTextureRect(spLoading, AnimRect);
+		bgTexture = GetTexture("menuBg");
+		loadingTexture = GetTexture("loading2");
+		angle = 0.f;
+		//sfSprite_setTexture(spLoading, GetTexture("loading"), sfTrue);
+		//sfSprite_setTexture(spLoading, GetTexture("loading2"), sfTrue);
+		//sfIntRect AnimRect = { 0, 0, 128, 128 };
+		//sfSprite_setOrigin(spLoading, vector2f(64.0f, 64.0f));
+		sfSprite_setOrigin(spLoading, vector2f(98.0f, 77.0f));
+		sfSprite_setPosition(spLoading, vector2f(mainView->PosView.x, mainView->PosView.y + 300.f));
+		//sfSprite_setTextureRect(spLoading, AnimRect);
 
 		SFXVolume = 0.0f; // change to 50.f
 		musicVolume = 0.0f; // change to 50.f
@@ -139,21 +147,22 @@ void stateUpdate(Window* _window)
 	}
 	else if (!w.state)
 	{
-		static sfIntRect AnimRect = { 0, 0, 128, 128 };
-		static int frame = 0;
+		//static sfIntRect AnimRect = { 0, 0, 128, 128 };
+		//static int frame = 0;
 		static float timer = 0.0f;
 		timer += getDeltaTime();
 
 		sfMutex_lock(w.mutex);
-		sfSprite_setOrigin(spLoading, vector2f(64.0f, 64.0f));
-		sfSprite_setPosition(spLoading, vector2f(mainView->PosView.x, mainView->PosView.y));
-		sfSprite_setTextureRect(spLoading, AnimRect);
-		if (timer > 0.1f)
+		//sfSprite_setOrigin(spLoading, vector2f(64.0f, 64.0f));
+		//sfSprite_setPosition(spLoading, vector2f(mainView->PosView.x, mainView->PosView.y));
+		//sfSprite_setTextureRect(spLoading, AnimRect);
+		if (timer > 0.01f)
 		{
-			frame++;
-			if (frame > 8)
-				frame = 0;
-			AnimRect.left = frame * 128;
+			angle += 1.f;
+			//frame++;
+			//if (frame > 8)
+			//	frame = 0;
+			//AnimRect.left = frame * 128;
 			
 			timer = 0.0f;
 		}
@@ -206,9 +215,19 @@ void stateDisplay(Window* _window)
 	else if (!w.state)
 	{
 		sfMutex_lock(w.mutex);
-			
+		
+		sfSprite_setTexture(spLoading, bgTexture, sfTrue);
+		sfSprite_setOrigin(spLoading, VECTOR2F_NULL);
+		sfSprite_setPosition(spLoading, VECTOR2F_NULL);
+		sfSprite_setRotation(spLoading, 0.f);
 		sfRenderTexture_drawSprite(_window->renderTexture, spLoading, NULL);
 		
+		sfSprite_setTexture(spLoading, loadingTexture, sfTrue);
+		sfSprite_setOrigin(spLoading, vector2f(98.f, 77.f));
+		sfSprite_setPosition(spLoading, vector2f(960.f, 840.f));
+		sfSprite_setRotation(spLoading, angle);
+		sfRenderTexture_drawSprite(_window->renderTexture, spLoading, NULL);
+
 		sfMutex_unlock(w.mutex);
 	}
 }
@@ -231,6 +250,7 @@ void stateDeinit(Window* _window)
 	{
 		deinitGame();
 		deinitOptions();
+		
 	}
 	if (state == END)
 	{

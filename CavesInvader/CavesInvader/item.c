@@ -11,7 +11,6 @@ stdList* itemList;
 sfSprite* itemSprite;
 
 sfTexture* itemTexture;
-
 sfTexture* deadItemTexture;
 
 
@@ -44,7 +43,7 @@ void initItem(Window* _window)
 
 void createItem(ItemType _type, sfVector2f _pos)
 {
-	if (_type == RANDOM_ITEM) { // mb TODO : like no shield if there's alredy one
+	if (_type == RANDOM_ITEM) {
 		int random = iRand(0, 99);
 		if (random < 3) _type = BULLET_ITEM;
 		else if (random < 10) _type = SHIELD_ITEM;

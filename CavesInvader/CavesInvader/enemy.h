@@ -58,6 +58,7 @@ typedef struct tamerParameters {
 	float wantedSpeed;
 
 	sfBool isSpecial;
+	int nbSpecial;
 	float specialAnimTimer;
 	float specialTimer;
 	float specialMoment;
@@ -90,6 +91,7 @@ typedef struct Enemies {
 	sfColor color;
 
 	sfBool isLasered;
+	sfBool isFlamethrowered;
 
 	union parameters
 	{
@@ -108,6 +110,8 @@ void initEnemy(Window* _window);
 void createEnemy(enemyType _type);
 
 void updateEnemy(Window* _window);
+
+int getTotalEnemies();
 
 sfBool canDamageEnemy(enemyType _type);
 

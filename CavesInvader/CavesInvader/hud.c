@@ -26,6 +26,9 @@ typedef struct Hud {
 
 	sfVector2f shieldPos;
 	sfIntRect shielRect;
+
+	sfVector2f damagePos;
+	sfIntRect damageRect;
 }Hud;
 Hud hud[MAX_PLAYER];
 
@@ -125,6 +128,9 @@ void initHud(Window* _window)
 
 			hud[i].shieldPos = vector2f(520.f, 1031.f);
 			hud[i].shielRect = IntRect(0, 4991, 173, 35);
+
+			hud[i].damagePos = vector2f(135.f, 915.f);
+			hud[i].damageRect = IntRect(0, 3538, 81, 85);
 			break;
 		case 1:
 			hud[i].mainPos = vector2f(1172.f, 899.f);
@@ -150,6 +156,9 @@ void initHud(Window* _window)
 
 			hud[i].shieldPos = vector2f(1231.f, 1031.f);
 			hud[i].shielRect = IntRect(0, 4991, 173, 35);
+
+			hud[i].damagePos = vector2f(1750.f, 915.f);
+			hud[i].damageRect = IntRect(0, 3538, 81, 85);
 			break;
 		default:
 			break;
@@ -309,6 +318,17 @@ void displayHud(Window* _window)
 			sfSprite_setPosition(hudSprite, hud[i].shieldPos);
 			sfSprite_setTextureRect(hudSprite, hud[i].shielRect);
 			sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
+		}
+
+		// damage
+		if (player[i].damageFactor > 1) {
+			sfSprite_setScale(hudSprite, vector2f(0.5f, 0.5f));
+
+			sfSprite_setPosition(hudSprite, hud[i].damagePos);
+			sfSprite_setTextureRect(hudSprite, hud[i].damageRect);
+			sfRenderTexture_drawSprite(_window->renderTexture, hudSprite, NULL);
+
+			sfSprite_setScale(hudSprite, vector2f(1.f, 1.f));
 		}
 	}
 

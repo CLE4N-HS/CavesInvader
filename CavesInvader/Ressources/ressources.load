@@ -1,5 +1,6 @@
 [all]
 animation loadingAnim ../Ressources/Textures/loading.anim
+single loading2 ../Ressources/Textures/loading2.png
 music test ../Ressources/Musics/Evergreen.ogg
 single menuBg ../Ressources/Textures/Menu/menuBg.png
 single quit ../Ressources/Textures/Menu/QUIT/quit.png
@@ -28,6 +29,7 @@ single enemies ../Ressources/Textures/Game/ENEMIES/enemies.png
 single deadEnemies ../Ressources/Textures/Game/ENEMIES/deadEnemies.png
 single bullets ../Ressources/Textures/Game/BULLETS/bullets.png
 single enemyBullets ../Ressources/Textures/Game/BULLETS/enemyBullets.png
+single laser ../Ressources/Textures/Game/BULLETS/laser.png
 single particles ../Ressources/Textures/Game/PARTICLES/particles.png
 single pause ../Ressources/Textures/Game/PAUSE/pause.png
 single fullscreenBox ../Ressources/Textures/Game/PAUSE/fullscreenBox.png
