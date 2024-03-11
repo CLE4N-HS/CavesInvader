@@ -1,5 +1,6 @@
 [all]
 animation loadingAnim ../Ressources/Textures/loading.anim
+single loading2 ../Ressources/Textures/loading2.png
 music test ../Ressources/Musics/Evergreen.ogg
 single menuBg ../Ressources/Textures/Menu/menuBg.png
 single quit ../Ressources/Textures/Menu/QUIT/quit.png

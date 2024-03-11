@@ -16,6 +16,8 @@ sfTexture* deadEnemyTexture;
 sfBool resetBossPos;
 float invulnerabilityTimer;
 
+int totalEnemies;
+
 void initEnemy(Window* _window)
 {
 	enemiesList = STD_LIST_CREATE(Enemies, 0);
@@ -29,6 +31,7 @@ void initEnemy(Window* _window)
 
 	resetBossPos = sfFalse;
 	invulnerabilityTimer = 0.f;
+	totalEnemies = 0;
 }
 
 void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRect _rect, sfVector2f _origin, sfVector2f _originToCenter, float _radius, float _animTimer, float _timeBetweenFrames, sfVector2f _pos, sfVector2f _velocity, sfVector2f _forward, float _speed, int _life, int _damage, int _scoreValue, float _startFocusingPos, float _startAttackingMoment, float _startAttackingTimer, float _focusingTimer, sfBool _upMovement)
@@ -81,6 +84,7 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 		tmp.tamer.specialTimer = 0.f;
 		tmp.tamer.specialMoment = 0.f;
 		tmp.tamer.shouldResetPos = sfFalse;
+		tmp.tamer.nbSpecial = 0;
 	}
 
 
@@ -89,6 +93,7 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 	tmp.lastDamageSource = -1;
 	tmp.color = color(255, 255, 255, 255);
 	tmp.isLasered = sfFalse;
+	tmp.isFlamethrowered = sfFalse;
 
 	STD_LIST_PUSHBACK(enemiesList, tmp);
 }
@@ -409,6 +414,8 @@ void updateEnemy(Window* _window)
 {
 	float dt = getDeltaTime();
 
+	totalEnemies = 0;
+
 	// to remove
 	static float timer = 0.f;
 	timer += dt;
@@ -438,6 +445,8 @@ void updateEnemy(Window* _window)
 
 	for (int i = 0; i < enemiesList->size(enemiesList); i++)
 	{
+		totalEnemies += 1;
+
 		Enemies tmp;
 
 		tmp.type = GETDATA_ENEMIES->type;
@@ -446,7 +455,8 @@ void updateEnemy(Window* _window)
 		sfVector2f tmpVelocity = VECTOR2F_NULL;
 		sfBool honorableKill = sfTrue;
 
-		if (GETDATA_ENEMIES->pos.x < (-GETDATA_ENEMIES->rect.width + GETDATA_ENEMIES->origin.y)) {
+		// out of screen
+		if (GETDATA_ENEMIES->pos.x < (-GETDATA_ENEMIES->rect.width + GETDATA_ENEMIES->origin.y) || (GETDATA_ENEMIES->pos.y > 1080.f + GETDATA_ENEMIES->origin.y && tmp.type != TAMER) || (GETDATA_ENEMIES->pos.y < (-GETDATA_ENEMIES->rect.height + GETDATA_ENEMIES->origin.y) && tmp.type != TAMER)) {
 			enemiesList->erase(&enemiesList, i);
 			continue;
 		}
@@ -514,6 +524,12 @@ void updateEnemy(Window* _window)
 
 		if (tmp.type == VENGELFY || tmp.type == ENRAGED_VENGEFLY)
 		{
+			if (GETDATA_ENEMIES->isLasered || GETDATA_ENEMIES->isFlamethrowered) {
+				GETDATA_ENEMIES->color = color(255, 127, 127, 255);
+			}
+			else
+				GETDATA_ENEMIES->color = color(255, 255, 255, 255);
+
 			switch (tmp.state)
 			{
 			case FLYING:
@@ -571,6 +587,12 @@ void updateEnemy(Window* _window)
 			}
 		}
 		else if (tmp.type == HOPPER || tmp.type == ENRAGED_HOPPER) {
+
+			if (GETDATA_ENEMIES->isLasered || GETDATA_ENEMIES->isFlamethrowered) {
+				GETDATA_ENEMIES->color = color(255, 127, 127, 255);
+			}
+			else
+				GETDATA_ENEMIES->color = color(255, 255, 255, 255);
 
 			switch (tmp.state)
 			{
@@ -657,21 +679,18 @@ void updateEnemy(Window* _window)
 					GETDATA_ENEMIES->color.b = 255;
 				}
 
-				float fColor = fabs(cosf(invulnerabilityTimer));
+				//float fColor = fabs(cosf(invulnerabilityTimer));
 				//float fColor = fabs(cosf(invulnerabilityTimer)) * 0.5f + 0.5f;
 				//fColor -= 0.5f;
 				//fColor *= 2.f;
-				sfUint8 color = fColor * 255;
-				GETDATA_ENEMIES->color.a = color;
+				//sfUint8 color = fColor * 255;
+				//GETDATA_ENEMIES->color.a = color;
 				invulnerabilityTimer -= dt;
 
 			}
-			else {
-				GETDATA_ENEMIES->color = color(255, 255, 255, 255);
-			}
 
 			// lasered
-			if (GETDATA_ENEMIES->isLasered) {
+			else if (GETDATA_ENEMIES->isLasered || GETDATA_ENEMIES->isFlamethrowered) {
 				GETDATA_ENEMIES->color = color(255, 127, 127, 255);
 			}
 			else
@@ -694,6 +713,8 @@ void updateEnemy(Window* _window)
 
 				if (GETDATA_ENEMIES->tamer.isSpecial) {
 
+					invulnerabilityTimer = 0.1f;
+
 					if (GETDATA_ENEMIES->pos.y > -3000.f) {
 						tmpVelocity = MultiplyVector(vector2f(0.f, -1.f), dt * 1000.f);
 						GETDATA_ENEMIES->pos = AddVectors(GETDATA_ENEMIES->pos, tmpVelocity);
@@ -704,20 +725,27 @@ void updateEnemy(Window* _window)
 							GETDATA_ENEMIES->tamer.canLaunchBullet = sfFalse;
 						}
 						if (resetBossPos) {
-							GETDATA_ENEMIES->tamer.isSpecial = sfFalse;
-							GETDATA_ENEMIES->tamer.specialTimer = 0.f;
-							GETDATA_ENEMIES->tamer.specialMoment = rand_float(12.f, 18.f);
-							GETDATA_ENEMIES->tamer.nbBullets = 0;
-							GETDATA_ENEMIES->tamer.focusingTimer = 0.f;
-							int randomMovement = iRand(0, 1);
-							if (randomMovement)
-								GETDATA_ENEMIES->tamer.upMovement = sfFalse;
-							else
-								GETDATA_ENEMIES->tamer.upMovement = sfTrue;
+							if (GETDATA_ENEMIES->tamer.nbSpecial > 1) {
+								GETDATA_ENEMIES->tamer.canLaunchBullet = sfTrue;
+								GETDATA_ENEMIES->tamer.nbSpecial -= 1;
+								resetBossPos = sfFalse;
+							}
+							else {
+								GETDATA_ENEMIES->tamer.isSpecial = sfFalse;
+								GETDATA_ENEMIES->tamer.specialTimer = 0.f;
+								GETDATA_ENEMIES->tamer.specialMoment = rand_float(12.f, 18.f);
+								GETDATA_ENEMIES->tamer.nbBullets = 0;
+								GETDATA_ENEMIES->tamer.focusingTimer = 0.f;
+								int randomMovement = iRand(0, 1);
+								if (randomMovement)
+									GETDATA_ENEMIES->tamer.upMovement = sfFalse;
+								else
+									GETDATA_ENEMIES->tamer.upMovement = sfTrue;
 
-							GETDATA_ENEMIES->pos = vector2f(2040.f, 410.f);
-							GETDATA_ENEMIES->state = FLYING;
-							resetBossPos = sfFalse;
+								GETDATA_ENEMIES->pos = vector2f(2040.f, 410.f);
+								GETDATA_ENEMIES->state = FLYING;
+								resetBossPos = sfFalse;
+							}
 						}
 					}
 
@@ -761,6 +789,8 @@ void updateEnemy(Window* _window)
 					if (GETDATA_ENEMIES->tamer.specialTimer > GETDATA_ENEMIES->tamer.specialMoment && GETDATA_ENEMIES->tamer.phase >= PHASE3) {
 						GETDATA_ENEMIES->tamer.isSpecial = sfTrue;
 						GETDATA_ENEMIES->tamer.canLaunchBullet = sfTrue;
+						int randomSpecial = iRand(2, 5);
+						GETDATA_ENEMIES->tamer.nbSpecial = randomSpecial;
 					}
 
 				}
@@ -773,8 +803,12 @@ void updateEnemy(Window* _window)
 
 
 
-
 	}
+}
+
+int getTotalEnemies()
+{
+	return totalEnemies;
 }
 
 sfBool canDamageEnemy(enemyType _type)

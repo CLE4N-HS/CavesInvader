@@ -29,19 +29,27 @@ Backgrounds bg[NB_BG];
 
 
 float timer;
-int nbreJoueur;
-int waveCount;
+//int nbreJoueur;
+//int waveCount;
+//
+//float waveTimer;
+//float soloTimer;
+//float defaultwaveTimer;
+//float defaultsoloTimer;
+//float bossTimer;
+//
+//sfBool phaseWave;
+//sfBool phaseBoss;
+//sfBool phaseBossCompleted;
+//sfBool gameover;
 
-float waveTimer;
-float soloTimer;
-float defaultwaveTimer;
-float defaultsoloTimer;
-float bossTimer;
+int nbWave;
+sfBool nextWave;
+sfBool allowedToCreateEnemies;
+int totalWaveEnemies;
+int nbWaveEnemies;
+float createEnemyTimer;
 
-sfBool phaseWave;
-sfBool phaseBoss;
-sfBool phaseBossCompleted;
-sfBool gameover;
 
 void initGame(Window* _window)
 {
@@ -51,6 +59,12 @@ void initGame(Window* _window)
 
 	gameSprite = sfSprite_create();
 	timer = 0.f;
+	nbWave = 0;
+	nextWave = sfTrue;
+	allowedToCreateEnemies = sfFalse;
+	totalWaveEnemies = 0;
+	nbWaveEnemies = 0;
+	createEnemyTimer = 0.f;
 
 	for (int i = 0; i < NB_BG; i++)
 	{
@@ -135,7 +149,7 @@ void updateGame(Window* _window)
 	}
 
 
-
+	// bg
 	for (int i = 0; i < NB_BG; i++)
 	{
 		bg[i].pos.x -= bg[i].speed * dt;
@@ -151,6 +165,69 @@ void updateGame(Window* _window)
 			//}
 		}
 	}
+
+	static float checkTimer = 0.f;
+	checkTimer += dt;
+
+	if (checkTimer > 1.f && createEnemyTimer > 5.f && nbWaveEnemies >= totalWaveEnemies && getTotalEnemies() == 0) {
+		nextWave = sfTrue;
+		checkTimer = 0.f;
+	}
+
+	if (nextWave) {
+		nbWave += 1;
+		nextWave = sfFalse;
+
+		if ((nbWave % 10) == 0) {
+			createEnemy(TAMER);
+			allowedToCreateEnemies = sfFalse;
+			totalWaveEnemies = 0;
+		}
+		else {
+			allowedToCreateEnemies = sfTrue;
+			totalWaveEnemies = nbWave;
+
+			int copyTotalEnemies = totalWaveEnemies;
+			int tmpTotalWaveEnemies = totalWaveEnemies;
+
+			while (copyTotalEnemies > 10)
+			{
+				totalWaveEnemies += tmpTotalWaveEnemies;
+				copyTotalEnemies -= 10;
+			}
+
+		}
+
+
+
+		createEnemyTimer = 0.f;
+		nbWaveEnemies = 0;
+	}
+
+
+	createEnemyTimer += dt * (1.f + (float)totalWaveEnemies);
+
+	if (allowedToCreateEnemies && createEnemyTimer > 5.f) {
+		int randomEnemy = iRand(0, 4);
+		if (randomEnemy == 0)
+			createEnemy(VENGELFY);
+		else if (randomEnemy == 1)
+			createEnemy(ENRAGED_VENGEFLY);
+		else if (randomEnemy == 2)
+			createEnemy(HOPPER);
+		else if (randomEnemy == 3)
+			createEnemy(ENRAGED_HOPPER);
+
+		nbWaveEnemies += 1;
+		if (nbWaveEnemies >= totalWaveEnemies) {
+			allowedToCreateEnemies = sfFalse;
+		}
+
+		createEnemyTimer = 0.f;
+	}
+
+
+
 
 	updateBullets(_window);
 	updatePlayer(_window);

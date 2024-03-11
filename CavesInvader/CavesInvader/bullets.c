@@ -349,6 +349,11 @@ void updateBullets(Window* _window)
 
 			// erase it because there shouldn't be any flames at this point
 			if (!player[GETDATA_BULLETS->ownerId].isFlamethrowering) {
+				for (int j = 0; j < enemiesList->size(enemiesList); j++)
+				{
+					GD_ENEMIES->isFlamethrowered = sfFalse;
+				}
+
 				bulletsList->erase(&bulletsList, i);
 				continue;
 			}
@@ -422,6 +427,7 @@ void updateBullets(Window* _window)
 				enemyType tmpType = GD_ENEMIES->type;
 
 				GD_ENEMIES->isLasered = sfFalse;
+				GD_ENEMIES->isFlamethrowered = sfFalse;
 
 				if (tmp.type == PLAYER_BASIC_BULLET || tmp.type == PLAYER_CHARGED_BULLET)
 				{
@@ -530,6 +536,7 @@ void updateBullets(Window* _window)
 							damageFactor = 2.f;
 						}
 						GD_ENEMIES->ftimeInAOE += dt * GETDATA_BULLETS->fDamagePerSecond * damageFactor;
+						GD_ENEMIES->isFlamethrowered = sfTrue;
 
 						if (GD_ENEMIES->ftimeInAOE > 1.f) {
 							GD_ENEMIES->ftimeInAOE = 0.f;

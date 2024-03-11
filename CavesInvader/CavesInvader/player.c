@@ -53,7 +53,7 @@ void initPlayer(Window* _window)
 		player[i].flame.scale = vector2f(1.f, 1.f);
 		player[i].bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 
-		player[i].nbGas = 0;
+		player[i].nbGas = 50;
 		player[i].fGasTimer = 0.f;
 		player[i].nbLightning = LIGTHNING_SECONDS_REQUIRED;
 		player[i].fLightningTimer = 0.f;
