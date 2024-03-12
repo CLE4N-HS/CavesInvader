@@ -2,6 +2,12 @@
 #include "tools.h"
 #include "windowManager.h"
 
+typedef struct Config{
+	sfBool isFullscreen;
+	float sfxVolume;
+	float musicVolume;
+}Config;
+Config config;
 
 /// <summary>
 /// Initializes everything needed for the Pause
@@ -27,4 +33,8 @@ void displayPause(Window* _window);
 /// Removes from the memory everything that was needed for the Pause
 /// </summary>
 void deinitPause();
+
+void saveOptions(Window* _window);
+
+void loadOptions(Window* _window);
 

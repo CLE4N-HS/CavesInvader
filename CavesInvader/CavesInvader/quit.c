@@ -68,7 +68,9 @@ void updateQuit(Window* _window)
 		else if (isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
 			
 			if (getState() == MENU) {
-				if (choiceQuit == YES_QUIT) _window->isDone = sfTrue;
+				if (choiceQuit == YES_QUIT) {
+					_window->isDone = sfTrue;
+				}
 				else {
 					toggleQuit();
 					resetQuit();
@@ -80,6 +82,7 @@ void updateQuit(Window* _window)
 					toggleQuit();
 					resetQuit();
 					resetMenu();
+					changeMenuState(MENU_MAIN);
 					changeState(_window, MENU);
 				}
 				else {

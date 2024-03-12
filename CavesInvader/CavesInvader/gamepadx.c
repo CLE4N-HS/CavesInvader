@@ -182,7 +182,73 @@ float getStickPos(t_joyNum _id, sfBool _leftStick, sfBool _XAxis)
     return value;
 }
 
-sfBool isAControllerButtonPressedOrKeyboard(t_joyNum _id, sfKeyCode _key, gamepadXBox _button)
+float getDominantStickPos(sfBool _leftStick, sfBool _XAxis)
+{
+    float realValue = 0.f;
+    float value = 0.f;
+    float value2 = 0.f;
+
+    for (int i = 0; i < nbPlayer; i++)
+    {
+        XINPUT_STATE state;
+        ZeroMemory(&state, sizeof(XINPUT_STATE));
+
+        XInputGetState(i, &state);
+
+        // Verifie la "DEAD ZONE"
+        // Stick Gauche
+        if ((state.Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+            state.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
+            (state.Gamepad.sThumbLY < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+                state.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)) {
+
+            state.Gamepad.sThumbLX = 0;
+            state.Gamepad.sThumbLY = 0;
+
+        }
+
+        // Stick Droit
+        if ((state.Gamepad.sThumbRX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+            state.Gamepad.sThumbRX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE) &&
+            (state.Gamepad.sThumbRY < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+                state.Gamepad.sThumbRY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)) {
+
+            state.Gamepad.sThumbRX = 0;
+            state.Gamepad.sThumbRY = 0;
+
+        }
+
+        // Converti les valeurs dans le style SFML (-100..100)
+        if (_leftStick) {
+            if (_XAxis) value = (float)(state.Gamepad.sThumbLX / 327);
+            else value = (float)(state.Gamepad.sThumbLY / 327);
+        }
+        else {
+            if (_XAxis) value = (float)(state.Gamepad.sThumbRX / 327);
+            else value = (float)(state.Gamepad.sThumbRY / 327);
+        }
+
+        if (value >= 0.f) {
+            if (value >= value2)
+                realValue = value;
+            else
+                realValue = value2;
+        }
+        else {
+            if (value <= value2)
+                realValue = value;
+            else
+                realValue = value2;
+        }
+
+        value2 = value;
+    }
+  
+
+    return realValue;
+}
+
+sfBool isAControllerButtonPressedOrKeyboard(t_joyNum _id, sfKeyCode _key, t_buttonNum _button)
 {
     if (sfKeyboard_isKeyPressed(_key))
         return sfTrue;
@@ -191,6 +257,42 @@ sfBool isAControllerButtonPressedOrKeyboard(t_joyNum _id, sfKeyCode _key, gamepa
         return sfTrue;
 
     return sfFalse;
+}
+
+sfBool isSomethingPressed(sfKeyCode _key, t_buttonNum _button)
+{
+    if (sfKeyboard_isKeyPressed(_key))
+        return sfTrue;
+
+    for (int i = 0; i < nbPlayer; i++)
+    {
+        if (isButtonPressed(i, _button))
+            return sfTrue;
+    }
+
+    return sfFalse;
+}
+
+float isSomethingMoved(sfKeyCode _key, sfBool _XAxis, float _deadZone)
+{
+    if (sfKeyboard_isKeyPressed(_key)) {
+        if (_deadZone < 0.f)
+            return -100.f;
+        else
+            return 100.f;
+    }
+
+    float stickPos = 0.f;
+    for (int i = 0; i < nbPlayer; i++)
+    {
+        stickPos = getStickPos(i, sfTrue, _XAxis);
+        if (stickPos < _deadZone && _deadZone < 0.f)
+            return stickPos;
+        else if (stickPos > _deadZone && _deadZone >= 0.f)
+            return stickPos;
+    }
+
+    return 0.f;
 }
 
 // Cette méthode configure les vibrations de 0.0 à 1.0

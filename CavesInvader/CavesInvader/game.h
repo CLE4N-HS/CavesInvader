@@ -2,6 +2,8 @@
 #include "tools.h"
 #include "windowManager.h"
 
+sfBool isGameOver;
+
 /// <summary>
 /// Initializes everything needed for the Game
 /// </summary>
@@ -15,6 +17,8 @@ void initGame(Window* _window);
 void updateGame(Window* _window);
 
 int getNbWave();
+
+int getNb10Waves();
 
 /// <summary>
 /// Displays everything needed for the Game

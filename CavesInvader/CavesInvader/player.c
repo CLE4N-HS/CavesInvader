@@ -3,6 +3,7 @@
 #include "gamepadx.h"
 #include "bullets.h"
 #include "particlesSystemManager.h"
+#include "game.h"
 
 
 sfSprite* playerSprite;
@@ -34,7 +35,7 @@ void initPlayer(Window* _window)
 		default:
 			break;
 		}
-		player[i].life = 3;
+		player[i].life = 3; // CHANGE to 3
 		player[i].speed = PLAYER_SPEED;
 		player[i].velocity = VECTOR2F_NULL;
 		player[i].forward = VECTOR2F_NULL;
@@ -63,7 +64,7 @@ void initPlayer(Window* _window)
 		player[i].damageTimer = 0.f;
 		player[i].damageFactor = 1;
 		player[i].nbMine = 0;
-		player[i].nbRespawn = 3;
+		player[i].nbRespawn = 3; // CHANGE to 3
 		player[i].hasShield = sfFalse;
 		player[i].invulnerabilityTimer = 0.f;
 		player[i].color = color(255, 255, 255, 255);
@@ -73,7 +74,6 @@ void initPlayer(Window* _window)
 		for (int j = 0; j < NB_SHADOWS; j++)
 		{
 			player[i].shadow[j].pos = player[i].pos;
-			player[i].shadow[j].opacity = 255 * (j + 1) / NB_SHADOWS;
 
 		}
 		player[i].shadowsTimer = 0.f;
@@ -94,8 +94,21 @@ void updatePlayer(Window* _window)
 {
 	float dt = getDeltaTime();
 
+	int nbPlayerAlive = nbPlayer;
+
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		// death
+		if (player[i].nbRespawn <= 0) {
+			nbPlayerAlive -= 1;
+			if (nbPlayerAlive <= 0) {
+				isGameOver = sfTrue;
+				continue;
+			}
+		}
+
+
+		// shadows
 		player[i].shadowsTimer += dt;
 
 		if (player[i].shadowsTimer > 0.02f) {
@@ -108,11 +121,6 @@ void updatePlayer(Window* _window)
 				else {
 					player[i].shadow[j].pos = player[i].pos;
 				}
-
-
-
-
-				player[i].shadow[j].opacity -= 1;
 			}
 
 			player[i].shadowsTimer = 0.f;
@@ -346,7 +354,7 @@ void updatePlayer(Window* _window)
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 2.f, 2.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 2000.f /*+ (player[i].velocity.x * 7000.f)*/, 20.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 1.f, 1.f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 25.f), 25.f + (player[i].velocity.y / 25.f), direction, 10.f, 4000.f + (player[i].velocity.x * 5.f), 4000.f + (player[i].velocity.x * 5.f), 30.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.1f);
-			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 5000.f, 5000.f, 30.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.1f);
+			CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f, 25.f, direction, 10.f, 5000.f, 5000.f, 30.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 2, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.1f);
 			//CreateParticles(AddVectors(player[i].pos, vector2f(50.f, 23.f)), vector2f(1.f, 1.f), vector2f(0.f, 0.f), vector2f(10.f, 12.f), -25.f + (player[i].velocity.y / 15.f), 25.f + (player[i].velocity.y / 15.f), direction, 10.f, 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 3000.f + (player[i].velocity.x * 2.f) + (fabs(player[i].velocity.y) * 2.f), 25.f, color(0, 0, 0, 0), color(0, 0, 0, 0), 0.5f, 0.5f, 1, "particles", IntRect(0, 68 + 17 * random, 19, 17), NULL, 0.f, 0.f, 0.5f);
 			if (!player[i].isFlamethrowering) {
 				player[i].isFlamethrowering = sfTrue;
@@ -414,6 +422,7 @@ void damagePlayer(int _playerId, int _damage)
 			player[_playerId].life = 3;
 			player[_playerId].nbRespawn -= 1;
 			player[_playerId].pos = vector2f(300.f, 450.f);
+			player[_playerId].timeMoving = 0.f;
 		}
 	}
 }
@@ -432,40 +441,39 @@ void increasePlayerKillCount(int _playerId)
 
 void displayPlayer(Window* _window)
 {
-	for (int i = 0; i < nbPlayer; i++)
-	{
-		sfSprite_setOrigin(playerSprite, player[i].origin);
-
-		for (int j = 0; j < NB_SHADOWS; j++)
+	if (!isGameOver) {
+		for (int i = 0; i < nbPlayer; i++)
 		{
+			sfSprite_setOrigin(playerSprite, player[i].origin);
 			sfSprite_setTexture(playerSprite, playerShapeTexture, sfTrue);
-			sfSprite_setPosition(playerSprite, player[i].shadow[j].pos);
-			sfSprite_setColor(playerSprite, color(255, 255, 255, j * 255 / NB_SHADOWS / NB_SHADOWS * 2));
+
+			for (int j = 0; j < NB_SHADOWS; j++)
+			{
+				sfSprite_setPosition(playerSprite, player[i].shadow[j].pos);
+				sfSprite_setColor(playerSprite, color(255, 255, 255, j * 255 / NB_SHADOWS / NB_SHADOWS * 2));
+				sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
+			}
+
+			sfSprite_setColor(playerSprite, player[i].color);
+
+			sfSprite_setTexture(playerSprite, player[i].flame.texture, sfTrue);
+			sfSprite_setPosition(playerSprite, player[i].flame.pos);
+			sfSprite_setOrigin(playerSprite, player[i].flame.origin);
+			sfSprite_setScale(playerSprite, player[i].flame.scale);
 			sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
-		}
 
-		//sfSprite_setColor(playerSprite, color(255, 255, 255, 255));
-
-		sfSprite_setColor(playerSprite, player[i].color);
-
-		sfSprite_setTexture(playerSprite, player[i].flame.texture, sfTrue);
-		sfSprite_setPosition(playerSprite, player[i].flame.pos);
-		sfSprite_setOrigin(playerSprite, player[i].flame.origin);
-		sfSprite_setScale(playerSprite, player[i].flame.scale);
-		sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
-
-		//if (player[i].invulnerabilityTimer > 2.9f)
-		//	sfSprite_setTexture(playerSprite, playerHitTexture, sfTrue);
-		//else
+			//if (player[i].invulnerabilityTimer > 2.9f)
+			//	sfSprite_setTexture(playerSprite, playerHitTexture, sfTrue);
+			//else
 			sfSprite_setTexture(playerSprite, player[i].texture, sfTrue);
 
-		sfSprite_setPosition(playerSprite, player[i].pos);
-		sfSprite_setOrigin(playerSprite, player[i].origin);
-		sfSprite_setScale(playerSprite, vector2f(1.f, 1.f));
-		sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
+			sfSprite_setPosition(playerSprite, player[i].pos);
+			sfSprite_setOrigin(playerSprite, player[i].origin);
+			sfSprite_setScale(playerSprite, vector2f(1.f, 1.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
 
-		player[i].bounds = sfSprite_getGlobalBounds(playerSprite);
-
+			player[i].bounds = sfSprite_getGlobalBounds(playerSprite);
+		}
 	}
 }
 

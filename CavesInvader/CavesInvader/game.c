@@ -12,7 +12,9 @@
 #include "particlesSystemManager.h"
 #include "hud.h"
 #include "item.h"
+#include "gameOver.h"
 #include <Windows.h>
+#include "gamepadx.h"
 
 #define NB_BG 8
 
@@ -25,8 +27,6 @@ typedef struct Backgrounds {
 	float speed;
 }Backgrounds;
 Backgrounds bg[NB_BG];
-
-
 
 float timer;
 //int nbreJoueur;
@@ -131,7 +131,9 @@ void initGame(Window* _window)
 	initPause(_window);
 	initHud(_window);
 	initItem(_window);
-		
+	initGameOver(_window);
+	
+	isGameOver = sfFalse;
 
 	w.state = sfTrue;
 
@@ -141,13 +143,6 @@ void updateGame(Window* _window)
 {
 	float dt = getDeltaTime();
 	timer += dt;
-
-
-	if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) && timer > 0.4f) {
-		timer = 0.f;
-		togglePause();
-	}
-
 
 	// bg
 	for (int i = 0; i < NB_BG; i++)
@@ -188,14 +183,14 @@ void updateGame(Window* _window)
 			allowedToCreateEnemies = sfTrue;
 			totalWaveEnemies = nbWave;
 
-			int copyTotalEnemies = totalWaveEnemies;
-			int tmpTotalWaveEnemies = totalWaveEnemies;
-
-			while (copyTotalEnemies > 10)
-			{
-				totalWaveEnemies += tmpTotalWaveEnemies;
-				copyTotalEnemies -= 10;
-			}
+			//int copyTotalEnemies = totalWaveEnemies;
+			//int tmpTotalWaveEnemies = totalWaveEnemies;
+			//
+			//while (copyTotalEnemies > 10)
+			//{
+			//	totalWaveEnemies += tmpTotalWaveEnemies;
+			//	copyTotalEnemies -= 10;
+			//}
 
 		}
 
@@ -236,11 +231,35 @@ void updateGame(Window* _window)
 	updateParticlesSystem(_window);
 	updateHud(_window);
 	updateItem(_window);
+
+	if (isGameOver)
+		updateGameOver(_window);
+
+	if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) && timer > 0.4f) {
+		timer = 0.f;
+		togglePause();
+		for (int i = 0; i < nbPlayer; i++)
+		{
+			setVibration(i, 0.f, 0.f);
+		}
+	}
 }
 
 int getNbWave()
 {
 	return nbWave;
+}
+
+int getNb10Waves()
+{
+	int nb10Wave = 1;
+	int tmpWave = nbWave;
+	while (tmpWave > 10)
+	{
+		tmpWave -= 10;
+		nb10Wave += 1;
+	}
+	return nb10Wave;
 }
 
 void displayGame(Window* _window)
@@ -258,8 +277,11 @@ void displayGame(Window* _window)
 	displayBullets(_window);
 	displayEnemy(_window);
 	displayPlayer(_window);
-	displayHud(_window);
 
+	if (isGameOver)
+		displayGameOver(_window);
+	else
+		displayHud(_window);
 }
 
 void deinitGame()
@@ -270,6 +292,7 @@ void deinitGame()
 	deinitBullets();
 	deinitHud();
 	deinitItem();
+	deinitGameOver();
 
 	sfSprite_destroy(gameSprite);
 	//RemoveAllTextureButALL();

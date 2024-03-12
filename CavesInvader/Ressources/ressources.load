@@ -1,15 +1,25 @@
 [all]
 animation loadingAnim ../Ressources/Textures/loading.anim
 single loading2 ../Ressources/Textures/loading2.png
+font nasalization-rg ../Ressources/Fonts/nasalization-rg.otf
 music test ../Ressources/Musics/Evergreen.ogg
 single menuBg ../Ressources/Textures/Menu/menuBg.png
 single quit ../Ressources/Textures/Menu/QUIT/quit.png
 single quitBox ../Ressources/Textures/Menu/QUIT/quitBox.png
+single allMenus ../Ressources/Textures/Menu/allMenus.png
+single allStates ../Ressources/Textures/Menu/allStates.png
 [end]
 [menu]
 single menuMain ../Ressources/Textures/Menu/MAIN/menuMain.png
 single menuBox ../Ressources/Textures/Menu/MAIN/menuBox.png
 single menuHoverBox ../Ressources/Textures/Menu/MAIN/menuHoverBox.png
+single options ../Ressources/Textures/Menu/OPTIONS/options.png
+single fullscreenBoxOpt ../Ressources/Textures/Menu/OPTIONS/fullscreenBoxOptions.png
+single quitOptBox ../Ressources/Textures/Menu/OPTIONS/quitOptionsBox.png
+single sliderOpt ../Ressources/Textures/Menu/OPTIONS/sliderOptions.png
+single sliderBoxOpt ../Ressources/Textures/Menu/OPTIONS/sliderBoxOptions.png
+single commands ../Ressources/Textures/Menu/COMMANDES/commands.png
+single commandsBox ../Ressources/Textures/Menu/COMMANDES/commandsBox.png
 [end]
 [game]
 single gameBg1 ../Ressources/Textures/Game/ENVIRO/gameBg1.png
@@ -39,5 +49,4 @@ single sliderBox ../Ressources/Textures/Game/PAUSE/sliderBox.png
 single hud ../Ressources/Textures/Game/HUD/hud.png
 single items ../Ressources/Textures/Game/ITEMS/items.png
 single deadItems ../Ressources/Textures/Game/ITEMS/deadItems.png
-font nasalization-rg ../Ressources/Fonts/nasalization-rg.otf
 [end]

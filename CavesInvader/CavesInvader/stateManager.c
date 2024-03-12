@@ -25,6 +25,7 @@ void stateInit(Window* _window)
 		OnLoad("../Ressources/ressources.load");
 		Texture_Onload(ALL);
 		Sound_Onload(ALL);
+		Font_Onload(ALL);
 		spLoading = sfSprite_create();
 		bgTexture = GetTexture("menuBg");
 		loadingTexture = GetTexture("loading2");
@@ -39,15 +40,19 @@ void stateInit(Window* _window)
 
 		SFXVolume = 0.0f; // change to 50.f
 		musicVolume = 0.0f; // change to 50.f
+
+
 		timeScale = 1.f;
-		w.state = sfTrue;
 
 		PlayASound("test", sfTrue);
 		nbPlayer = NbConnectedControllers();
 		initQuit(_window);
-
+		loadOptions(_window);
+		
 
 		firstload = sfTrue;
+
+		w.state = sfTrue;
 	}
 
 	if (!onePass)
@@ -244,12 +249,12 @@ void stateDeinit(Window* _window)
 	if (state == MENU)
 	{
 		deinitMenu();
-		deinitOptions();
+		//deinitOptions();
 	}
 	if (state == GAME)
 	{
 		deinitGame();
-		deinitOptions();
+		//deinitOptions();
 		
 	}
 	if (state == END)
@@ -270,6 +275,18 @@ void changeState(Window* _window, State _state)
 State getState()
 {
 	return state;
+}
+
+void changeMenuState(MenuState _menuState)
+{
+	menuState = _menuState;
+	if (menuState == MENU_MAIN)
+		resetMenu();
+}
+
+MenuState getMenuState()
+{
+	return menuState;
 }
 
 void togglePause()

@@ -4,9 +4,6 @@
 #include "player.h"
 #include "item.h"
 
-#define TEXTORIGIN vector2f(tmpRect.width / 2.f, tmpRect.height) // center the size
-//#define TEXTORIGIN vector2f(tmpRect.width / 2.f, 0.f) // center the string
-
 typedef struct Hud {
 	sfVector2f mainPos;
 	sfIntRect mainRect;
