@@ -273,6 +273,28 @@ sfBool isSomethingPressed(sfKeyCode _key, t_buttonNum _button)
     return sfFalse;
 }
 
+float isSomethingMoved(sfKeyCode _key, sfBool _XAxis, float _deadZone)
+{
+    if (sfKeyboard_isKeyPressed(_key)) {
+        if (_deadZone < 0.f)
+            return -100.f;
+        else
+            return 100.f;
+    }
+
+    float stickPos = 0.f;
+    for (int i = 0; i < nbPlayer; i++)
+    {
+        stickPos = getStickPos(i, sfTrue, _XAxis);
+        if (stickPos < _deadZone && _deadZone < 0.f)
+            return stickPos;
+        else if (stickPos > _deadZone && _deadZone >= 0.f)
+            return stickPos;
+    }
+
+    return 0.f;
+}
+
 // Cette méthode configure les vibrations de 0.0 à 1.0
 // 0 arrête les vibrations, 1 vibration au plus fort
 void setVibration(t_joyNum joyNum, float leftMotor, float rightMotor)

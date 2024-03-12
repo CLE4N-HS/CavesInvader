@@ -83,6 +83,8 @@ sfBool isAControllerButtonPressedOrKeyboard(t_joyNum _id, sfKeyCode _key, t_butt
 
 sfBool isSomethingPressed(sfKeyCode _key, t_buttonNum _button);
 
+float isSomethingMoved(sfKeyCode _key, sfBool _XAxis, float _deadZone);
+
 /// <summary>
 /// Sets the vibration of a controller (between 0.f and 1.f) (doesn't go back to 0 automatically)
 /// </summary>

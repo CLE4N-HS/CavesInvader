@@ -7,6 +7,7 @@ single menuBg ../Ressources/Textures/Menu/menuBg.png
 single quit ../Ressources/Textures/Menu/QUIT/quit.png
 single quitBox ../Ressources/Textures/Menu/QUIT/quitBox.png
 single allMenus ../Ressources/Textures/Menu/allMenus.png
+single allStates ../Ressources/Textures/Menu/allStates.png
 [end]
 [menu]
 single menuMain ../Ressources/Textures/Menu/MAIN/menuMain.png

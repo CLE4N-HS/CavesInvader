@@ -2,6 +2,8 @@
 #include "tools.h"
 #include "windowManager.h"
 
+sfBool isGameOver;
+
 /// <summary>
 /// Initializes everything needed for the Game
 /// </summary>

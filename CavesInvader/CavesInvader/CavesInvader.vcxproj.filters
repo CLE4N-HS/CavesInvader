@@ -108,8 +108,11 @@
     <ClCompile Include="nameChoice.c">
       <Filter>Fichiers sources\MENUS</Filter>
     </ClCompile>
+    <ClCompile Include="gameOver.c">
+      <Filter>Fichiers sources\GAME</Filter>
+    </ClCompile>
     <ClCompile Include="leaderboard.c">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\MENUS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="leaderboard.h">
       <Filter>Fichiers d%27en-tête\MENUS</Filter>
+    </ClInclude>
+    <ClInclude Include="gameOver.h">
+      <Filter>Fichiers d%27en-tête\GAME</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,3 +7,5 @@ void initLeaderboard(Window* _window);
 void updateLeaderboard(Window* _window);
 
 void displayLeaderboard(Window* _window);
+
+void deinitLeaderboard();

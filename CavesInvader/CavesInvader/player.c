@@ -3,6 +3,7 @@
 #include "gamepadx.h"
 #include "bullets.h"
 #include "particlesSystemManager.h"
+#include "game.h"
 
 
 sfSprite* playerSprite;
@@ -34,7 +35,7 @@ void initPlayer(Window* _window)
 		default:
 			break;
 		}
-		player[i].life = 3;
+		player[i].life = 1; // CHANGE to 3
 		player[i].speed = PLAYER_SPEED;
 		player[i].velocity = VECTOR2F_NULL;
 		player[i].forward = VECTOR2F_NULL;
@@ -63,7 +64,7 @@ void initPlayer(Window* _window)
 		player[i].damageTimer = 0.f;
 		player[i].damageFactor = 1;
 		player[i].nbMine = 0;
-		player[i].nbRespawn = 3;
+		player[i].nbRespawn = 1; // CHANGE to 3
 		player[i].hasShield = sfFalse;
 		player[i].invulnerabilityTimer = 0.f;
 		player[i].color = color(255, 255, 255, 255);
@@ -95,6 +96,14 @@ void updatePlayer(Window* _window)
 
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		// death
+		if (player[i].nbRespawn <= 0) {
+			isGameOver = sfTrue;
+			continue;
+		}
+
+
+		// shadows
 		player[i].shadowsTimer += dt;
 
 		if (player[i].shadowsTimer > 0.02f) {
@@ -426,40 +435,39 @@ void increasePlayerKillCount(int _playerId)
 
 void displayPlayer(Window* _window)
 {
-	for (int i = 0; i < nbPlayer; i++)
-	{
-		sfSprite_setOrigin(playerSprite, player[i].origin);
-
-		for (int j = 0; j < NB_SHADOWS; j++)
+	if (!isGameOver) {
+		for (int i = 0; i < nbPlayer; i++)
 		{
+			sfSprite_setOrigin(playerSprite, player[i].origin);
 			sfSprite_setTexture(playerSprite, playerShapeTexture, sfTrue);
-			sfSprite_setPosition(playerSprite, player[i].shadow[j].pos);
-			sfSprite_setColor(playerSprite, color(255, 255, 255, j * 255 / NB_SHADOWS / NB_SHADOWS * 2));
+
+			for (int j = 0; j < NB_SHADOWS; j++)
+			{
+				sfSprite_setPosition(playerSprite, player[i].shadow[j].pos);
+				sfSprite_setColor(playerSprite, color(255, 255, 255, j * 255 / NB_SHADOWS / NB_SHADOWS * 2));
+				sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
+			}
+
+			sfSprite_setColor(playerSprite, player[i].color);
+
+			sfSprite_setTexture(playerSprite, player[i].flame.texture, sfTrue);
+			sfSprite_setPosition(playerSprite, player[i].flame.pos);
+			sfSprite_setOrigin(playerSprite, player[i].flame.origin);
+			sfSprite_setScale(playerSprite, player[i].flame.scale);
 			sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
-		}
 
-		//sfSprite_setColor(playerSprite, color(255, 255, 255, 255));
-
-		sfSprite_setColor(playerSprite, player[i].color);
-
-		sfSprite_setTexture(playerSprite, player[i].flame.texture, sfTrue);
-		sfSprite_setPosition(playerSprite, player[i].flame.pos);
-		sfSprite_setOrigin(playerSprite, player[i].flame.origin);
-		sfSprite_setScale(playerSprite, player[i].flame.scale);
-		sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
-
-		//if (player[i].invulnerabilityTimer > 2.9f)
-		//	sfSprite_setTexture(playerSprite, playerHitTexture, sfTrue);
-		//else
+			//if (player[i].invulnerabilityTimer > 2.9f)
+			//	sfSprite_setTexture(playerSprite, playerHitTexture, sfTrue);
+			//else
 			sfSprite_setTexture(playerSprite, player[i].texture, sfTrue);
 
-		sfSprite_setPosition(playerSprite, player[i].pos);
-		sfSprite_setOrigin(playerSprite, player[i].origin);
-		sfSprite_setScale(playerSprite, vector2f(1.f, 1.f));
-		sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
+			sfSprite_setPosition(playerSprite, player[i].pos);
+			sfSprite_setOrigin(playerSprite, player[i].origin);
+			sfSprite_setScale(playerSprite, vector2f(1.f, 1.f));
+			sfRenderTexture_drawSprite(_window->renderTexture, playerSprite, NULL);
 
-		player[i].bounds = sfSprite_getGlobalBounds(playerSprite);
-
+			player[i].bounds = sfSprite_getGlobalBounds(playerSprite);
+		}
 	}
 }
 

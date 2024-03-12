@@ -12,6 +12,7 @@
 #include "particlesSystemManager.h"
 #include "hud.h"
 #include "item.h"
+#include "gameOver.h"
 #include <Windows.h>
 
 #define NB_BG 8
@@ -25,8 +26,6 @@ typedef struct Backgrounds {
 	float speed;
 }Backgrounds;
 Backgrounds bg[NB_BG];
-
-
 
 float timer;
 //int nbreJoueur;
@@ -131,7 +130,9 @@ void initGame(Window* _window)
 	initPause(_window);
 	initHud(_window);
 	initItem(_window);
-		
+	initGameOver(_window);
+	
+	isGameOver = sfFalse;
 
 	w.state = sfTrue;
 
@@ -236,6 +237,9 @@ void updateGame(Window* _window)
 	updateParticlesSystem(_window);
 	updateHud(_window);
 	updateItem(_window);
+
+	if (isGameOver)
+		updateGameOver(_window);
 }
 
 int getNbWave()
@@ -258,8 +262,11 @@ void displayGame(Window* _window)
 	displayBullets(_window);
 	displayEnemy(_window);
 	displayPlayer(_window);
-	displayHud(_window);
 
+	if (isGameOver)
+		displayGameOver(_window);
+	else
+		displayHud(_window);
 }
 
 void deinitGame()
@@ -270,6 +277,7 @@ void deinitGame()
 	deinitBullets();
 	deinitHud();
 	deinitItem();
+	deinitGameOver();
 
 	sfSprite_destroy(gameSprite);
 	//RemoveAllTextureButALL();

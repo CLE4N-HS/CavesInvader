@@ -139,6 +139,7 @@
     <ClCompile Include="enemy.c" />
     <ClCompile Include="fontManager.c" />
     <ClCompile Include="game.c" />
+    <ClCompile Include="gameOver.c" />
     <ClCompile Include="gamepad.c" />
     <ClCompile Include="gamepadx.c" />
     <ClCompile Include="hud.c" />
@@ -168,6 +169,7 @@
     <ClInclude Include="enemy.h" />
     <ClInclude Include="fontManager.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameOver.h" />
     <ClInclude Include="gamepad.h" />
     <ClInclude Include="gamepadx.h" />
     <ClInclude Include="hud.h" />

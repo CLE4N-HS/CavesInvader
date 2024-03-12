@@ -374,6 +374,9 @@ void resetMenu()
 
 void deinitMenu()
 {
+	deinitNameChoice();
+	deinitLeaderboard();
+
 	sfSprite_destroy(menuSprite);
 
 }
