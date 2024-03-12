@@ -4,6 +4,7 @@
 #include "item.h"
 #include "bullets.h"
 #include "particlesSystemManager.h"
+#include "game.h"
 
 #define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
 
@@ -115,6 +116,7 @@ void createEnemy(enemyType _type)
 	float animTimer = 0.f;
 	float timeBetweenFrames = 0.f;
 	int life = 0;
+	int lifeFactor = getNb10Waves();
 	int damage = 0;
 	int scoreValue = 0;
 
@@ -139,7 +141,7 @@ void createEnemy(enemyType _type)
 		//forward = Normalize(CreateVector(pos, getClosestPlayerPos(pos)));
 		//speed = 100.f;
 		//timeBetweenFrames = 0.1f;
-		life = 2;
+		life = 2 * lifeFactor;
 		damage = 1;
 		scoreValue = 10;
 		startFocusingPos = rand_float(1400.f, 1780.f);
@@ -154,7 +156,7 @@ void createEnemy(enemyType _type)
 		//forward = Normalize(CreateVector(pos, getClosestPlayerPos(pos)));
 		//speed = 100.f;
 		//timeBetweenFrames = 0.1f;
-		life = 2;
+		life = 2 * lifeFactor;
 		damage = 2;
 		scoreValue = 25;
 		startFocusingPos = rand_float(1400.f, 1780.f);
@@ -165,7 +167,7 @@ void createEnemy(enemyType _type)
 		originToCenter = vector2f(68.f, -18.f);
 		radius = 88.f;
 		pos = vector2f(1958.f, rand_float(105.f, 928.f));
-		life = 10;
+		life = 10 * lifeFactor;
 		damage = 1;
 		scoreValue = 20;
 		rect = IntRect(0, 1283, 190, 257);
@@ -187,7 +189,7 @@ void createEnemy(enemyType _type)
 		originToCenter = vector2f(96.f, -14.f);
 		radius = 123.f;
 		pos = vector2f(1976.f, rand_float(152.f, 761.f));
-		life = 20;
+		life = 20 * lifeFactor;
 		damage = 1;
 		scoreValue = 50;
 		rect = IntRect(0, 1540, 281, 371);
@@ -209,7 +211,7 @@ void createEnemy(enemyType _type)
 		originToCenter = vector2f(92.f, 3.f);
 		radius = 225.f;
 		pos = vector2f(2040.f, 410.f);
-		life = BOSS_HEALTH;
+		life = BOSS_HEALTH * lifeFactor;
 		damage = 1;
 		scoreValue = 500;
 		//rect = IntRect(0, 1911, 566, 656);
@@ -423,26 +425,26 @@ void updateEnemy(Window* _window)
 	timer += dt;
 
 	
-	if (isKeyboardOrControllerButtonPressed(sfKeyA, A_XBOX) && timer > 0.2f) {
-		createEnemy(VENGELFY);
-		timer = 0.f;
-	}
-	if (isKeyboardOrControllerButtonPressed(sfKeyE, B_XBOX) && timer > 0.2f) {
-		createEnemy(ENRAGED_VENGEFLY);
-		timer = 0.f;
-	}
-	if (isKeyboardOrControllerButtonPressed(sfKeyR, X_XBOX) && timer > 0.2f) {
-		createEnemy(HOPPER);
-		timer = 0.f;
-	}
-	if (isKeyboardOrControllerButtonPressed(sfKeyT, Y_XBOX) && timer > 0.2f) {
-		createEnemy(ENRAGED_HOPPER);
-		timer = 0.f;
-	}
-	if (isKeyboardOrControllerButtonPressed(sfKeyY, SELECT_XBOX) && timer > 0.2f) {
-		createEnemy(TAMER);
-		timer = 0.f;
-	}
+	//if (isKeyboardOrControllerButtonPressed(sfKeyA, A_XBOX) && timer > 0.2f) {
+	//	createEnemy(VENGELFY);
+	//	timer = 0.f;
+	//}
+	//if (isKeyboardOrControllerButtonPressed(sfKeyE, B_XBOX) && timer > 0.2f) {
+	//	createEnemy(ENRAGED_VENGEFLY);
+	//	timer = 0.f;
+	//}
+	//if (isKeyboardOrControllerButtonPressed(sfKeyR, X_XBOX) && timer > 0.2f) {
+	//	createEnemy(HOPPER);
+	//	timer = 0.f;
+	//}
+	//if (isKeyboardOrControllerButtonPressed(sfKeyT, Y_XBOX) && timer > 0.2f) {
+	//	createEnemy(ENRAGED_HOPPER);
+	//	timer = 0.f;
+	//}
+	//if (isKeyboardOrControllerButtonPressed(sfKeyY, SELECT_XBOX) && timer > 0.2f) {
+	//	createEnemy(TAMER);
+	//	timer = 0.f;
+	//}
 
 
 	for (int i = 0; i < enemiesList->size(enemiesList); i++)
@@ -669,14 +671,15 @@ void updateEnemy(Window* _window)
 		else if (tmp.type == TAMER) {
 		
 			int tmpLife = GETDATA_ENEMIES->life;
+			int tmpLifeFactor = getNb10Waves();
 		
-			if (tmpLife <= BOSS_HEALTH / 4) {
+			if (tmpLife <= BOSS_HEALTH / 4 * tmpLifeFactor) {
 				GETDATA_ENEMIES->tamer.phase = PHASE4;
 			}
-			else if (tmpLife <= BOSS_HEALTH / 2) {
+			else if (tmpLife <= BOSS_HEALTH / 2 * tmpLifeFactor) {
 				GETDATA_ENEMIES->tamer.phase = PHASE3;
 			}
-			else if (tmpLife <= (BOSS_HEALTH / 2) + (BOSS_HEALTH / 4)) {
+			else if (tmpLife <= (BOSS_HEALTH / 2 * tmpLifeFactor) + (BOSS_HEALTH / 4 * tmpLifeFactor)) {
 				GETDATA_ENEMIES->tamer.phase = PHASE2;
 			}
 

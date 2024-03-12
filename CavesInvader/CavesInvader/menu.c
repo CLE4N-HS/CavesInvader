@@ -6,7 +6,8 @@
 #include "particlesSystemManager.h"
 #include "nameChoice.h"
 #include "leaderboard.h"
-
+#include "options.h"
+#include "commands.h"
 
 typedef enum MenuChoice {
 	NOCHOICE_MENU = -1,
@@ -106,6 +107,8 @@ void initMenu(Window* _window)
 
 	initNameChoice(_window);
 	initLeaderboard(_window);
+	initOptions(_window);
+	initCommands(_window);
 
 	resetMenu();
 }
@@ -119,6 +122,12 @@ void updateMenu(Window* _window)
 	}
 	else if (tmpMenuState == MENU_LEADERBOARD) {
 		updateLeaderboard(_window);
+	}
+	else if (tmpMenuState == MENU_COMMANDS) {
+		updateCommands(_window);
+	}
+	else if (tmpMenuState == MENU_OPTIONS) {
+		updateOptions(_window);
 	}
 	else {
 		timer += getUnscaledDeltaTime();
@@ -169,6 +178,14 @@ void updateMenu(Window* _window)
 			case LEADERBOARD_MENU:
 				choiceTimer = 0.f;
 				changeMenuState(MENU_LEADERBOARD);
+				break;
+			case COMMANDS_MENU:
+				choiceTimer = 0.f;
+				changeMenuState(MENU_COMMANDS);
+				break;
+			case OPTIONS_MENU:
+				choiceTimer = 0.f;
+				changeMenuState(MENU_OPTIONS);
 				break;
 			case QUIT_MENU:
 				choiceTimer = 0.f;
@@ -290,6 +307,12 @@ void displayMenu(Window* _window)
 	else if (tmpMenuState == MENU_LEADERBOARD) {
 		displayLeaderboard(_window);
 	}
+	else if (tmpMenuState == MENU_COMMANDS) {
+		displayCommands(_window);
+	}
+	else if (tmpMenuState == MENU_OPTIONS) {
+		displayOptions(_window);
+	}
 	else {
 		// Boxes
 		for (int i = 0; i < 6; i++)
@@ -376,6 +399,7 @@ void deinitMenu()
 {
 	deinitNameChoice();
 	deinitLeaderboard();
+	deinitOptions();
 
 	sfSprite_destroy(menuSprite);
 

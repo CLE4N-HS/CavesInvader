@@ -52,11 +52,11 @@ void updateLeaderboard(Window* _window)
 	float udt = getUnscaledDeltaTime();
 	timer += udt;
 
-	if (isSomethingPressed(sfKeyEscape, B) && timer > 0.2f) {
+	if (isSomethingPressed(sfKeyEscape, B) && timer > 0.4f) {
 		changeMenuState(MENU_MAIN);
 		timer = 0.f;
 	}
-	else if (isSomethingPressed(sfKeyEnter, A) && timer > 0.2f) {
+	else if (isSomethingPressed(sfKeyEnter, A) && timer > 0.4f) {
 		changeMenuState(MENU_MAIN);
 		timer = 0.f;
 	}

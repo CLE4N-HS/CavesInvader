@@ -82,6 +82,7 @@ void updateQuit(Window* _window)
 					toggleQuit();
 					resetQuit();
 					resetMenu();
+					changeMenuState(MENU_MAIN);
 					changeState(_window, MENU);
 				}
 				else {

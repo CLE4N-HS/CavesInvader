@@ -249,12 +249,12 @@ void stateDeinit(Window* _window)
 	if (state == MENU)
 	{
 		deinitMenu();
-		deinitOptions();
+		//deinitOptions();
 	}
 	if (state == GAME)
 	{
 		deinitGame();
-		deinitOptions();
+		//deinitOptions();
 		
 	}
 	if (state == END)

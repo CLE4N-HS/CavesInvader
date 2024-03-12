@@ -18,6 +18,8 @@ void updateGame(Window* _window);
 
 int getNbWave();
 
+int getNb10Waves();
+
 /// <summary>
 /// Displays everything needed for the Game
 /// </summary>

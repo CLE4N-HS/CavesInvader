@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bullets.c" />
+    <ClCompile Include="commands.c" />
     <ClCompile Include="customMath.c" />
     <ClCompile Include="dialogBox.c" />
     <ClCompile Include="enemy.c" />
@@ -163,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bullets.h" />
+    <ClInclude Include="commands.h" />
     <ClInclude Include="customMath.h" />
     <ClInclude Include="dialogBox.h" />
     <ClInclude Include="dirent.h" />

@@ -13,6 +13,13 @@ single allStates ../Ressources/Textures/Menu/allStates.png
 single menuMain ../Ressources/Textures/Menu/MAIN/menuMain.png
 single menuBox ../Ressources/Textures/Menu/MAIN/menuBox.png
 single menuHoverBox ../Ressources/Textures/Menu/MAIN/menuHoverBox.png
+single options ../Ressources/Textures/Menu/OPTIONS/options.png
+single fullscreenBoxOpt ../Ressources/Textures/Menu/OPTIONS/fullscreenBoxOptions.png
+single quitOptBox ../Ressources/Textures/Menu/OPTIONS/quitOptionsBox.png
+single sliderOpt ../Ressources/Textures/Menu/OPTIONS/sliderOptions.png
+single sliderBoxOpt ../Ressources/Textures/Menu/OPTIONS/sliderBoxOptions.png
+single commands ../Ressources/Textures/Menu/COMMANDES/commands.png
+single commandsBox ../Ressources/Textures/Menu/COMMANDES/commandsBox.png
 [end]
 [game]
 single gameBg1 ../Ressources/Textures/Game/ENVIRO/gameBg1.png
