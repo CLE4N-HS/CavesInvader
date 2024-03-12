@@ -77,7 +77,11 @@ void getSticksPosition(t_joyNum joyNum, sfVector2f* left, sfVector2f* right);
 
 float getStickPos(t_joyNum _id, sfBool _leftStick, sfBool _XAxis);
 
+float getDominantStickPos(sfBool _leftStick, sfBool _XAxis);
+
 sfBool isAControllerButtonPressedOrKeyboard(t_joyNum _id, sfKeyCode _key, t_buttonNum _button);
+
+sfBool isSomethingPressed(sfKeyCode _key, t_buttonNum _button);
 
 /// <summary>
 /// Sets the vibration of a controller (between 0.f and 1.f) (doesn't go back to 0 automatically)

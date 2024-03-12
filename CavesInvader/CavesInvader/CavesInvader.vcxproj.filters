@@ -105,6 +105,12 @@
     <ClCompile Include="item.c">
       <Filter>Fichiers sources\GAME</Filter>
     </ClCompile>
+    <ClCompile Include="nameChoice.c">
+      <Filter>Fichiers sources\MENUS</Filter>
+    </ClCompile>
+    <ClCompile Include="leaderboard.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dirent.h">
@@ -178,6 +184,12 @@
     </ClInclude>
     <ClInclude Include="player.h">
       <Filter>Fichiers d%27en-tête\GAME</Filter>
+    </ClInclude>
+    <ClInclude Include="nameChoice.h">
+      <Filter>Fichiers d%27en-tête\MENUS</Filter>
+    </ClInclude>
+    <ClInclude Include="leaderboard.h">
+      <Filter>Fichiers d%27en-tête\MENUS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

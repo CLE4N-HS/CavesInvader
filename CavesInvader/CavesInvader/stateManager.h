@@ -14,6 +14,15 @@ typedef enum
 	END
 }State;
 
+typedef enum {
+	MENU_MAIN,
+	MENU_CHOICENAME,
+	MENU_LEADERBOARD,
+	MENU_COMMANDS,
+	MENU_CREDITS,
+	MENU_OPTIONS,
+	MENU_QUIT
+}MenuState;
 
 typedef struct 
 {
@@ -23,7 +32,8 @@ typedef struct
 
 watcher w;
 
-static State state = GAME;
+static State state = MENU;
+static MenuState menuState = MENU_MAIN;
 
 static sfBool onePass = sfFalse;
 static sfBool isPaused = sfFalse;
@@ -72,6 +82,10 @@ void stateDeinit(Window* _window);
 void changeState(Window* _window, State _state);
 
 State getState();
+
+void changeMenuState(MenuState _menuState);
+
+MenuState getMenuState();
 
 /// <summary>
 /// Pauses the game, or restarts the game if it was already paused

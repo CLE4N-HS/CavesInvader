@@ -20,7 +20,6 @@ typedef struct Flames {
 
 typedef struct Shadows {
 	sfVector2f pos;
-	float opacity;
 }Shadows;
 
 typedef struct Players {

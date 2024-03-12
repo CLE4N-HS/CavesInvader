@@ -73,7 +73,6 @@ void initPlayer(Window* _window)
 		for (int j = 0; j < NB_SHADOWS; j++)
 		{
 			player[i].shadow[j].pos = player[i].pos;
-			player[i].shadow[j].opacity = 255 * (j + 1) / NB_SHADOWS;
 
 		}
 		player[i].shadowsTimer = 0.f;
@@ -108,11 +107,6 @@ void updatePlayer(Window* _window)
 				else {
 					player[i].shadow[j].pos = player[i].pos;
 				}
-
-
-
-
-				player[i].shadow[j].opacity -= 1;
 			}
 
 			player[i].shadowsTimer = 0.f;

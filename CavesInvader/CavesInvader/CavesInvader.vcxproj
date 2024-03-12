@@ -143,8 +143,10 @@
     <ClCompile Include="gamepadx.c" />
     <ClCompile Include="hud.c" />
     <ClCompile Include="item.c" />
+    <ClCompile Include="leaderboard.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="menu.c" />
+    <ClCompile Include="nameChoice.c" />
     <ClCompile Include="options.c" />
     <ClCompile Include="particlesSystemManager.c" />
     <ClCompile Include="pause.c" />
@@ -170,7 +172,9 @@
     <ClInclude Include="gamepadx.h" />
     <ClInclude Include="hud.h" />
     <ClInclude Include="item.h" />
+    <ClInclude Include="leaderboard.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="nameChoice.h" />
     <ClInclude Include="options.h" />
     <ClInclude Include="particlesSystemManager.h" />
     <ClInclude Include="pause.h" />

@@ -13,10 +13,14 @@
 #define FONT_PATH "..\\Ressources\\Fonts\\"
 #define MAP_PATH "..\\Ressources\\Maps\\"
 #define TILESET_PATH "..\\Ressources\\Tilesets\\"
+#define FILE_PATH "..\\Ressources\\Files\\"
 
 #define VECTOR2F_NULL vector2f(0.f, 0.f)
 #define MAX(a,b) a >= b ? a : b
 #define MIN(a,b) a <= b ? a : b
+
+#define TEXTORIGIN vector2f(tmpRect.width / 2.f, tmpRect.height) // center the size
+#define TEXTSTRINGORIGIN vector2f(tmpRect.width / 2.f, 0.f) // center the string
 
 typedef struct vector4f vector4f;
 struct vector4f
