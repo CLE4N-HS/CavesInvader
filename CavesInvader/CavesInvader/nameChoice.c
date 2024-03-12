@@ -53,6 +53,7 @@ void updateNameChoice(Window* _window)
 		timer = 0.f;
 		if (choiceName > 3)
 			choiceName = 2;
+
 	}
 	else if ((LStickValueX < -50.f || sfKeyboard_isKeyPressed(sfKeyLeft)) && timer > 0.2f) {
 		choiceName -= 1;
@@ -69,11 +70,15 @@ void updateNameChoice(Window* _window)
 		if (letters[choiceName] > 90)
 			letters[choiceName] = 65;
 	}
-	else if ((LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp)) && timer > 0.2f && choiceName < 3) {
-		letters[choiceName] -= 1;
+	else if ((LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp)) && timer > 0.2f) {
+		if (choiceName == 3)
+			choiceName = 1;
+		else {
+			letters[choiceName] -= 1;
+			if (letters[choiceName] < 65)
+				letters[choiceName] = 90;
+		}
 		timer = 0.f;
-		if (letters[choiceName] < 65)
-			letters[choiceName] = 90;
 	}
 
 
@@ -84,6 +89,7 @@ void updateNameChoice(Window* _window)
 	
 	if (isSomethingPressed(sfKeyEscape, B)) {
 		changeMenuState(MENU_MAIN);
+		choiceName = 0;
 	}
 
 }

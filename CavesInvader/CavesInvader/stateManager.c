@@ -40,15 +40,19 @@ void stateInit(Window* _window)
 
 		SFXVolume = 0.0f; // change to 50.f
 		musicVolume = 0.0f; // change to 50.f
+
+
 		timeScale = 1.f;
-		w.state = sfTrue;
 
 		PlayASound("test", sfTrue);
 		nbPlayer = NbConnectedControllers();
 		initQuit(_window);
-
+		loadOptions(_window);
+		
 
 		firstload = sfTrue;
+
+		w.state = sfTrue;
 	}
 
 	if (!onePass)

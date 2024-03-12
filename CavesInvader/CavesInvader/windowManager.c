@@ -2,6 +2,7 @@
 #include "gamepad.h"
 #include "viewManager.h"
 #include "stateManager.h"
+#include "pause.h"
 
 
 sfTexture* allTextures;
@@ -45,8 +46,8 @@ Window* windowSetup(const char* _Title, sfVector2i _defaultVideoMode)
 
 	strcpy(This->windowTitle, _Title);
 	
-	fullscreenTimer = 0.f;
-	This->isFullscreen = sfTrue;
+	fullscreenTimer = 1.f;
+	This->isFullscreen = sfFalse;
 	This->isDone = sfFalse;
 	This->videoMode = sfVideoMode_getDesktopMode();
 	This->defaultVideoMode = _defaultVideoMode;
@@ -135,6 +136,10 @@ void windowUpdate(Window* This)
 	sfView_setCenter(mainView->view, mainView->PosView);
 	
 	stateUpdate(This);
+
+	if (IsDone(This)) {
+		saveOptions(This);
+	}
 }
 
 void windowDraw(Window* This)
