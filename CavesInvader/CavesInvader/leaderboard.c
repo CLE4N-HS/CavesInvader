@@ -64,19 +64,21 @@ void displayLeaderboard(Window* _window)
 
 	for (int i = 0; i < 3; i++)
 	{
-		sprintf(leaderboardChar, "%d", ld[i].score);
-		sfText_setString(leaderboardText, leaderboardChar);
-		sfText_setPosition(leaderboardText, vector2f(1014.f, 415.f + i * 135.f));
-		sfFloatRect tmpRect = sfText_getLocalBounds(leaderboardText);
-		sfText_setOrigin(leaderboardText, TEXTSTRINGORIGIN);
-		sfRenderTexture_drawText(_window->renderTexture, leaderboardText, NULL);
+		if (ld[i].score >= 0) {
+			sprintf(leaderboardChar, "%d", ld[i].score);
+			sfText_setString(leaderboardText, leaderboardChar);
+			sfText_setPosition(leaderboardText, vector2f(1014.f, 415.f + i * 135.f));
+			sfFloatRect tmpRect = sfText_getLocalBounds(leaderboardText);
+			sfText_setOrigin(leaderboardText, TEXTSTRINGORIGIN);
+			sfRenderTexture_drawText(_window->renderTexture, leaderboardText, NULL);
 
-		sprintf(leaderboardChar, "%s", ld[i].name);
-		sfText_setString(leaderboardText, leaderboardChar);
-		sfText_setPosition(leaderboardText, vector2f(1278.f, 415.f + i * 135.f));
-		tmpRect = sfText_getLocalBounds(leaderboardText);
-		sfText_setOrigin(leaderboardText, TEXTSTRINGORIGIN);
-		sfRenderTexture_drawText(_window->renderTexture, leaderboardText, NULL);
+			sprintf(leaderboardChar, "%s", ld[i].name);
+			sfText_setString(leaderboardText, leaderboardChar);
+			sfText_setPosition(leaderboardText, vector2f(1278.f, 415.f + i * 135.f));
+			tmpRect = sfText_getLocalBounds(leaderboardText);
+			sfText_setOrigin(leaderboardText, TEXTSTRINGORIGIN);
+			sfRenderTexture_drawText(_window->renderTexture, leaderboardText, NULL);
+		}
 	}
 
 }
@@ -153,7 +155,7 @@ void loadLeaderboard()
 		
 		for (int i = 0; i < 3; i++)
 		{
-			ld[i].score = 0;
+			ld[i].score = -1;
 			strcpy(ld[i].name, "???");
 		}
 
