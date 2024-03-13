@@ -8,6 +8,7 @@
 #include "leaderboard.h"
 #include "options.h"
 #include "commands.h"
+#include "credits.h"
 
 typedef enum MenuChoice {
 	NOCHOICE_MENU = -1,
@@ -109,6 +110,7 @@ void initMenu(Window* _window)
 	initLeaderboard(_window);
 	initOptions(_window);
 	initCommands(_window);
+	initCredits(_window);
 
 	resetMenu();
 }
@@ -125,6 +127,9 @@ void updateMenu(Window* _window)
 	}
 	else if (tmpMenuState == MENU_COMMANDS) {
 		updateCommands(_window);
+	}
+	else if (tmpMenuState == MENU_CREDITS) {
+		updateCredits(_window);
 	}
 	else if (tmpMenuState == MENU_OPTIONS) {
 		updateOptions(_window);
@@ -182,6 +187,10 @@ void updateMenu(Window* _window)
 			case COMMANDS_MENU:
 				choiceTimer = 0.f;
 				changeMenuState(MENU_COMMANDS);
+				break;
+			case CREDITS_MENU:
+				choiceTimer = 0.f;
+				changeMenuState(MENU_CREDITS);
 				break;
 			case OPTIONS_MENU:
 				choiceTimer = 0.f;
@@ -310,6 +319,9 @@ void displayMenu(Window* _window)
 	else if (tmpMenuState == MENU_COMMANDS) {
 		displayCommands(_window);
 	}
+	else if (tmpMenuState == MENU_CREDITS) {
+		displayCredits(_window);
+	}
 	else if (tmpMenuState == MENU_OPTIONS) {
 		displayOptions(_window);
 	}
@@ -400,6 +412,8 @@ void deinitMenu()
 	deinitNameChoice();
 	deinitLeaderboard();
 	deinitOptions();
+	deinitCommands();
+	deinitCredits();
 
 	sfSprite_destroy(menuSprite);
 

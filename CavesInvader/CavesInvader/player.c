@@ -64,7 +64,7 @@ void initPlayer(Window* _window)
 		player[i].damageTimer = 0.f;
 		player[i].damageFactor = 1;
 		player[i].nbMine = 0;
-		player[i].nbRespawn = 1; // CHANGE to 3
+		player[i].nbRespawn = 0; // CHANGE to 2
 		player[i].hasShield = sfFalse;
 		player[i].invulnerabilityTimer = 0.f;
 		player[i].color = color(255, 255, 255, 255);
@@ -99,7 +99,7 @@ void updatePlayer(Window* _window)
 	for (int i = 0; i < nbPlayer; i++)
 	{
 		// death
-		if (player[i].nbRespawn <= 0) {
+		if (player[i].nbRespawn < 0) {
 			nbPlayerAlive -= 1;
 			if (nbPlayerAlive <= 0) {
 				isGameOver = sfTrue;

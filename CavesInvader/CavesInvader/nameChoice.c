@@ -10,7 +10,6 @@ sfTexture* nameChoiceTexture;
 
 sfText* nameChoiceText;
 char nameChoiceChar[3];
-char playerName[3];
 
 sfFont* nameChoiceFont;
 
@@ -70,7 +69,7 @@ void updateNameChoice(Window* _window)
 		if (letters[choiceName] > 90)
 			letters[choiceName] = 65;
 	}
-	else if ((LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp)) && timer > 0.2f && choiceName < 4) {
+	else if ((LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp)) && timer > 0.2f) {
 		if (choiceName == 3)
 			choiceName = 1;
 		else {

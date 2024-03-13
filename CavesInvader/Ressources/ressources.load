@@ -20,6 +20,8 @@ single sliderOpt ../Ressources/Textures/Menu/OPTIONS/sliderOptions.png
 single sliderBoxOpt ../Ressources/Textures/Menu/OPTIONS/sliderBoxOptions.png
 single commands ../Ressources/Textures/Menu/COMMANDES/commands.png
 single commandsBox ../Ressources/Textures/Menu/COMMANDES/commandsBox.png
+single credits ../Ressources/Textures/Menu/CREDITS/credits.png
+single creditsBox ../Ressources/Textures/Menu/CREDITS/creditsBox.png
 [end]
 [game]
 single gameBg1 ../Ressources/Textures/Game/ENVIRO/gameBg1.png

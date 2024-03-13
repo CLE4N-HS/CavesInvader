@@ -117,6 +117,9 @@
     <ClCompile Include="commands.c">
       <Filter>Fichiers sources\MENUS</Filter>
     </ClCompile>
+    <ClCompile Include="credits.c">
+      <Filter>Fichiers sources\MENUS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dirent.h">
@@ -201,6 +204,9 @@
       <Filter>Fichiers d%27en-tête\GAME</Filter>
     </ClInclude>
     <ClInclude Include="commands.h">
+      <Filter>Fichiers d%27en-tête\MENUS</Filter>
+    </ClInclude>
+    <ClInclude Include="credits.h">
       <Filter>Fichiers d%27en-tête\MENUS</Filter>
     </ClInclude>
   </ItemGroup>
