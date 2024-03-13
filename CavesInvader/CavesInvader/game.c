@@ -13,6 +13,7 @@
 #include "hud.h"
 #include "item.h"
 #include "gameOver.h"
+#include "options.h"
 #include <Windows.h>
 #include "gamepadx.h"
 
@@ -124,6 +125,7 @@ void initGame(Window* _window)
 
 	//Sleep(2000); // to remove A enlever juste pour le test Thread
 
+	initOptions(_window);
 	initParticlesSystem();
 	initPlayer(_window);
 	initEnemy(_window);
@@ -132,7 +134,7 @@ void initGame(Window* _window)
 	initHud(_window);
 	initItem(_window);
 	initGameOver(_window);
-	
+
 	isGameOver = sfFalse;
 
 	w.state = sfTrue;

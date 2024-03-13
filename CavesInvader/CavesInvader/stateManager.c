@@ -13,6 +13,7 @@
 #include "particlesSystemManager.h"
 #include "quit.h"
 #include "leaderboard.h"
+#include "intro.h"
 
 sfTexture* bgTexture;
 sfTexture* loadingTexture;
@@ -46,7 +47,8 @@ void stateInit(Window* _window)
 		timeScale = 1.f;
 
 		PlayASound("test", sfTrue);
-		nbPlayer = NbConnectedControllers();
+		//nbPlayer = NbConnectedControllers();
+		GamepadDetection();
 		initQuit(_window);
 		loadOptions(_window);
 		loadLeaderboard();
@@ -64,7 +66,7 @@ void stateInit(Window* _window)
 		onePass = sfTrue;
 		if (state == INTRO)
 		{
-			
+			initIntro(_window);
 		}
 		if (state == MENU)
 		{
@@ -80,7 +82,6 @@ void stateInit(Window* _window)
 			loadingThread = sfThread_create(&initGame, _window);
 			sfThread_launch(loadingThread);
 			//initPause(_window);
-			initOptions(_window);
 		}
 		if (state == END)
 		{
@@ -121,7 +122,7 @@ void stateUpdate(Window* _window)
 		{
 			if (state == INTRO)
 			{
-
+				updateIntro(_window);
 			}
 			else if (state == MENU)
 			{
@@ -184,7 +185,7 @@ void stateDisplay(Window* _window)
 	{
 		if (state == INTRO)
 		{
-
+			displayIntro(_window);
 		}
 		if (state == MENU)
 		{

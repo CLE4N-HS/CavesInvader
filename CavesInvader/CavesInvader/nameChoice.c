@@ -47,14 +47,14 @@ void updateNameChoice(Window* _window)
 	static float timer = 0.f;
 	timer += dt;
 
-	if ((LStickValueX > 50.f || sfKeyboard_isKeyPressed(sfKeyRight)) && timer > 0.2f) {
+	if (/*(LStickValueX > 50.f || sfKeyboard_isKeyPressed(sfKeyRight))*/ isSomethingMoved(sfKeyRight, sfTrue, 50.f) > 50.f && timer > 0.2f) {
 		choiceName += 1;
 		timer = 0.f;
 		if (choiceName > 3)
 			choiceName = 2;
 
 	}
-	else if ((LStickValueX < -50.f || sfKeyboard_isKeyPressed(sfKeyLeft)) && timer > 0.2f) {
+	else if (/*(LStickValueX < -50.f || sfKeyboard_isKeyPressed(sfKeyLeft))*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < -50.f && timer > 0.2f) {
 		choiceName -= 1;
 		timer = 0.f;
 		if (choiceName == 3)
@@ -63,13 +63,13 @@ void updateNameChoice(Window* _window)
 			choiceName = 2;
 	}
 
-	if ((LStickValueY < -50.f || sfKeyboard_isKeyPressed(sfKeyDown)) && timer > 0.2f && choiceName < 3) {
+	if (/*(LStickValueY < -50.f || sfKeyboard_isKeyPressed(sfKeyDown))*/ isSomethingMoved(sfKeyDown, sfFalse, -50.f) < -50.f && timer > 0.2f && choiceName < 3) {
 		letters[choiceName] += 1;
 		timer = 0.f;
 		if (letters[choiceName] > 90)
 			letters[choiceName] = 65;
 	}
-	else if ((LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp)) && timer > 0.2f) {
+	else if (/*(LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp))*/ isSomethingMoved(sfKeyUp, sfFalse, 50.f) > 50.f && timer > 0.2f) {
 		if (choiceName == 3)
 			choiceName = 1;
 		else {
@@ -80,15 +80,28 @@ void updateNameChoice(Window* _window)
 		timer = 0.f;
 	}
 
-
-	if (choiceName == 3 && isSomethingPressed(sfKeyEnter, A)) {
-		sprintf(common.name, "%c%c%c", letters[0], letters[1], letters[2]);
-		changeState(_window, GAME);
+	if (isSomethingPressed(sfKeyEnter, A)) {
+		if (choiceName == 3 && timer > 0.2f) {
+			timer = 0.f;
+			sprintf(common.name, "%c%c%c", letters[0], letters[1], letters[2]);
+			changeState(_window, GAME);
+		}
+		else if (timer > 0.2f) {
+			choiceName = 3;
+			timer = -0.3f;
+		}
 	}
+
+
+	//if (choiceName == 3 && isSomethingPressed(sfKeyEnter, A)) {
+	//	sprintf(common.name, "%c%c%c", letters[0], letters[1], letters[2]);
+	//	changeState(_window, GAME);
+	//}
 	
 	if (isSomethingPressed(sfKeyEscape, B)) {
-		changeMenuState(MENU_MAIN);
 		choiceName = 0;
+		timer = 0.f;
+		changeMenuState(MENU_MAIN);
 	}
 
 }

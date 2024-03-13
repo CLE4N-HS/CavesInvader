@@ -120,6 +120,9 @@
     <ClCompile Include="credits.c">
       <Filter>Fichiers sources\MENUS</Filter>
     </ClCompile>
+    <ClCompile Include="intro.c">
+      <Filter>Fichiers sources\MENUS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dirent.h">
@@ -207,6 +210,9 @@
       <Filter>Fichiers d%27en-tête\MENUS</Filter>
     </ClInclude>
     <ClInclude Include="credits.h">
+      <Filter>Fichiers d%27en-tête\MENUS</Filter>
+    </ClInclude>
+    <ClInclude Include="intro.h">
       <Filter>Fichiers d%27en-tête\MENUS</Filter>
     </ClInclude>
   </ItemGroup>
