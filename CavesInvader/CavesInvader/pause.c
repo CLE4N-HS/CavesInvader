@@ -39,7 +39,7 @@ float escapePauseTimer;
 float choicePauseTimer;
 float sliderTimer;
 
-sfBool firstLaunch = sfTrue;
+//sfBool firstLaunch = sfTrue;
 
 PauseChoice changePauseChoice(sfKeyCode _key)
 {
@@ -289,48 +289,48 @@ void deinitPause()
 	sfRectangleShape_destroy(opaqueRectangle);
 }
 
-void saveOptions(Window* _window)
-{
-	config.isFullscreen = IsFullscreen(_window);
-	//SFXVolume = config.sfxVolume;
-	//musicVolume = config.musicVolume;
-
-	config.sfxVolume = SFXVolume;
-	config.musicVolume = musicVolume;
-
-	FILE* file;
-	file = fopen(FILE_PATH"config.cfg", "wb");
-	fwrite(&config, sizeof(struct Config), 1, file);
-	fclose(file);
-}
-
-void loadOptions(Window* _window)
-{
-	FILE* file;
-	file = fopen(FILE_PATH"config.cfg", "rb");
-	if (file == NULL) {
-		config.isFullscreen = sfFalse;
-		config.sfxVolume = 50.f;
-		config.musicVolume = 50.f;
-
-		SFXVolume = config.sfxVolume;
-		musicVolume = config.musicVolume;
-
-		file = fopen(FILE_PATH"config.cfg", "ab");
-		file = fclose(file);
-		return;
-	}
-	fread(&config, sizeof(struct Config), 1, file);
-	fclose(file);
-
-	SFXVolume = config.sfxVolume;
-	musicVolume = config.musicVolume;
-
-	if (config.isFullscreen && firstLaunch) {
-		firstLaunch = sfFalse;
-		ToggleFullscreen(_window);
-	}
-
-	ChangeVolume(SOUNDFX, SFXVolume);
-	ChangeVolume(MUSIC, musicVolume);
-}
+//void saveOptions(Window* _window)
+//{
+//	config.isFullscreen = IsFullscreen(_window);
+//	//SFXVolume = config.sfxVolume;
+//	//musicVolume = config.musicVolume;
+//
+//	config.sfxVolume = SFXVolume;
+//	config.musicVolume = musicVolume;
+//
+//	FILE* file;
+//	file = fopen(FILE_PATH"config.cfg", "wb");
+//	fwrite(&config, sizeof(struct Config), 1, file);
+//	fclose(file);
+//}
+//
+//void loadOptions(Window* _window)
+//{
+//	FILE* file;
+//	file = fopen(FILE_PATH"config.cfg", "rb");
+//	if (file == NULL) {
+//		config.isFullscreen = sfFalse;
+//		config.sfxVolume = 50.f;
+//		config.musicVolume = 50.f;
+//
+//		SFXVolume = config.sfxVolume;
+//		musicVolume = config.musicVolume;
+//
+//		file = fopen(FILE_PATH"config.cfg", "ab");
+//		file = fclose(file);
+//		return;
+//	}
+//	fread(&config, sizeof(struct Config), 1, file);
+//	fclose(file);
+//
+//	SFXVolume = config.sfxVolume;
+//	musicVolume = config.musicVolume;
+//
+//	if (config.isFullscreen && firstLaunch) {
+//		firstLaunch = sfFalse;
+//		ToggleFullscreen(_window);
+//	}
+//
+//	ChangeVolume(SOUNDFX, SFXVolume);
+//	ChangeVolume(MUSIC, musicVolume);
+//}

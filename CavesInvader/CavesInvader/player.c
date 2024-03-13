@@ -35,7 +35,7 @@ void initPlayer(Window* _window)
 		default:
 			break;
 		}
-		player[i].life = 3; // CHANGE to 3
+		player[i].life = 1; // CHANGE to 3
 		player[i].speed = PLAYER_SPEED;
 		player[i].velocity = VECTOR2F_NULL;
 		player[i].forward = VECTOR2F_NULL;
@@ -64,7 +64,7 @@ void initPlayer(Window* _window)
 		player[i].damageTimer = 0.f;
 		player[i].damageFactor = 1;
 		player[i].nbMine = 0;
-		player[i].nbRespawn = 3; // CHANGE to 3
+		player[i].nbRespawn = 1; // CHANGE to 3
 		player[i].hasShield = sfFalse;
 		player[i].invulnerabilityTimer = 0.f;
 		player[i].color = color(255, 255, 255, 255);

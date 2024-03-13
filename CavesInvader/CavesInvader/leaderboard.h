@@ -9,3 +9,9 @@ void updateLeaderboard(Window* _window);
 void displayLeaderboard(Window* _window);
 
 void deinitLeaderboard();
+
+void saveLeaderboard();
+
+void loadLeaderboard();
+
+void sortLeaderboard();

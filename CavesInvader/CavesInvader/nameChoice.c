@@ -2,7 +2,7 @@
 #include "textureManager.h"
 #include "fontManager.h"
 #include "gamepadx.h"
-
+#include "player.h"
 
 sfSprite* nameChoiceSprite;
 
@@ -70,7 +70,7 @@ void updateNameChoice(Window* _window)
 		if (letters[choiceName] > 90)
 			letters[choiceName] = 65;
 	}
-	else if ((LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp)) && timer > 0.2f) {
+	else if ((LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp)) && timer > 0.2f && choiceName < 4) {
 		if (choiceName == 3)
 			choiceName = 1;
 		else {
@@ -83,7 +83,7 @@ void updateNameChoice(Window* _window)
 
 
 	if (choiceName == 3 && isSomethingPressed(sfKeyEnter, A)) {
-		sprintf(playerName, "%c%c%c", letters[0], letters[1], letters[2]);
+		sprintf(common.name, "%c%c%c", letters[0], letters[1], letters[2]);
 		changeState(_window, GAME);
 	}
 	

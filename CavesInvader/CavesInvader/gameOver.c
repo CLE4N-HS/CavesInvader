@@ -124,10 +124,6 @@ void displayGameOver(Window* _window)
 	sfSprite_setPosition(gameOverSprite, VECTOR2F_NULL);
 	sfRenderTexture_drawSprite(_window->renderTexture, gameOverSprite, NULL);
 
-	if (sfKeyboard_isKeyPressed(sfKeyP))
-		common.score = 9475430;
-	else
-		common.score = 10145;
 	sprintf(gameOverChar, "%d", common.score);
 
 	if (common.score >= 1000000)

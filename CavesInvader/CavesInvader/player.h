@@ -74,6 +74,7 @@ typedef struct Common {
 	int score;
 	int countdown;
 	float fcountdownTimer;
+	char name[10];
 }Common;
 Common common;
 
