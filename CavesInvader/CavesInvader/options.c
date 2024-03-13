@@ -9,8 +9,6 @@
 #include "CustomMath.h"
 #include "soundManager.h"
 
-sfRectangleShape* opaqueRectangle;
-
 sfSprite* optionSprite;
 
 sfTexture* optionTexture;
@@ -91,12 +89,6 @@ void resetOptions()
 
 void initOptions(Window* _window)
 {
-	opaqueRectangle = sfRectangleShape_create();
-	sfRectangleShape_setPosition(opaqueRectangle, VECTOR2F_NULL);
-	sfRectangleShape_setOrigin(opaqueRectangle, VECTOR2F_NULL);
-	sfRectangleShape_setFillColor(opaqueRectangle, color(0, 0, 0, 127));
-	sfRectangleShape_setSize(opaqueRectangle, vector2f(1920.f, 1080.f));
-
 	optionSprite = sfSprite_create();
 
 	optionTexture = GetTexture("options");
@@ -215,9 +207,6 @@ void updateOptions(Window* _window)
 
 void displayOptions(Window* _window)
 {
-	// opacity
-	sfRenderTexture_drawRectangleShape(_window->renderTexture, opaqueRectangle, NULL);
-
 	// main
 	sfSprite_setTexture(optionSprite, optionTexture, sfTrue);
 	sfSprite_setPosition(optionSprite, vector2f(481.f, 90.f));
@@ -272,7 +261,6 @@ void displayOptions(Window* _window)
 void deinitOptions()
 {
 	sfSprite_destroy(optionSprite);
-	sfRectangleShape_destroy(opaqueRectangle);
 }
 
 void saveOptions(Window* _window)

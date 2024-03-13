@@ -78,6 +78,16 @@ void windowCreate(Window* This)
 	This->renderWindow = sfRenderWindow_create(This->videoMode, This->windowTitle, style, NULL);
 	sfRenderWindow_setFramerateLimit(This->renderWindow, 120);
 
+	sfImage* image;
+	image = sfImage_createFromFile("../Ressources/icon32x32.png");
+	if (image != NULL)
+	{
+		sfVector2u size = sfImage_getSize(image);
+		sfRenderWindow_setIcon(This->renderWindow, size.x, size.y, sfImage_getPixelsPtr(image));
+	}
+	sfImage_destroy(image);
+
+
 }
 
 void ToggleFullscreen(Window* This)

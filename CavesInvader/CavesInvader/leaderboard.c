@@ -64,19 +64,21 @@ void displayLeaderboard(Window* _window)
 
 	for (int i = 0; i < 3; i++)
 	{
-		sprintf(leaderboardChar, "%d", ld[i].score);
-		sfText_setString(leaderboardText, leaderboardChar);
-		sfText_setPosition(leaderboardText, vector2f(1014.f, 415.f + i * 135.f));
-		sfFloatRect tmpRect = sfText_getLocalBounds(leaderboardText);
-		sfText_setOrigin(leaderboardText, TEXTSTRINGORIGIN);
-		sfRenderTexture_drawText(_window->renderTexture, leaderboardText, NULL);
+		if (ld[i].score >= 0) {
+			sprintf(leaderboardChar, "%d", ld[i].score);
+			sfText_setString(leaderboardText, leaderboardChar);
+			sfText_setPosition(leaderboardText, vector2f(1014.f, 415.f + i * 135.f));
+			sfFloatRect tmpRect = sfText_getLocalBounds(leaderboardText);
+			sfText_setOrigin(leaderboardText, TEXTSTRINGORIGIN);
+			sfRenderTexture_drawText(_window->renderTexture, leaderboardText, NULL);
 
-		sprintf(leaderboardChar, "%s", ld[i].name);
-		sfText_setString(leaderboardText, leaderboardChar);
-		sfText_setPosition(leaderboardText, vector2f(1278.f, 415.f + i * 135.f));
-		tmpRect = sfText_getLocalBounds(leaderboardText);
-		sfText_setOrigin(leaderboardText, TEXTSTRINGORIGIN);
-		sfRenderTexture_drawText(_window->renderTexture, leaderboardText, NULL);
+			sprintf(leaderboardChar, "%s", ld[i].name);
+			sfText_setString(leaderboardText, leaderboardChar);
+			sfText_setPosition(leaderboardText, vector2f(1278.f, 415.f + i * 135.f));
+			tmpRect = sfText_getLocalBounds(leaderboardText);
+			sfText_setOrigin(leaderboardText, TEXTSTRINGORIGIN);
+			sfRenderTexture_drawText(_window->renderTexture, leaderboardText, NULL);
+		}
 	}
 
 }
@@ -101,12 +103,6 @@ void sortLeaderboard()
 		strcpy(tmpLd[i].name, ld[i].name);
 	}
 
-	sfBool firstPass = sfTrue;
-	sfBool secondPass = sfTrue;
-	sfBool thirdPass = sfTrue;
-
-	int ii = 0;
-
 	// sort the copy
 	if (tmpCurrentScore >= tmpLd[2].score) {
 		tmpLd[2].score = tmpCurrentScore;
@@ -130,47 +126,6 @@ void sortLeaderboard()
 		strcpy(tmpLd[0].name, tmpCurrentName);
 		strcpy(tmpLd[1].name, tmpName0);
 	}
-
-
-
-	//while (tmpLd[2].score > tmpLd[1].score || tmpLd[1].score > tmpLd[0].score || tmpLd[2].score < tmpCurrentScore)
-	//{
-	//	if (tmpCurrentScore >= tmpLd[2].score && firstPass) {
-	//		tmpLd[2].score = tmpCurrentScore;
-	//		strcpy(tmpLd[2].name, tmpCurrentName);
-	//		//printf("1st condition\n");
-	//		firstPass = sfFalse;
-	//	}
-	//	if (tmpCurrentScore > tmpLd[1].score && secondPass) {
-	//		int tmpScore1 = tmpLd[1].score;
-	//		char tmpName1[10];
-	//		strcpy(tmpName1, tmpLd[1].name);
-	//		tmpLd[1].score = tmpCurrentScore;
-	//		tmpLd[2].score = tmpScore1;
-	//		strcpy(tmpLd[1].name, tmpCurrentName);
-	//		strcpy(tmpLd[2].name, tmpName1);
-	//		//printf("2nd condition\n");
-	//		secondPass = sfFalse;
-	//	}
-	//	if (tmpCurrentScore > tmpLd[0].score && thirdPass) {
-	//		int tmpScore0 = tmpLd[0].score;
-	//		char tmpName0[10];
-	//		strcpy(tmpName0, tmpLd[0].name);
-	//		tmpLd[0].score = tmpCurrentScore;
-	//		tmpLd[1].score = tmpScore0;
-	//		strcpy(tmpLd[0].name, tmpCurrentName);
-	//		strcpy(tmpLd[1].name, tmpName0);
-	//		//printf("3rd condition\n");
-	//		thirdPass = sfFalse;
-	//	}
-
-	//	if (!firstPass && !secondPass && !thirdPass)
-	//		break;
-
-	//	ii++;
-	//	if (ii < 10)
-	//		break;
-	//}
 
 	// transfer the copy into the real Leaderboard
 	for (int i = 0; i < 3; i++)
@@ -200,14 +155,15 @@ void loadLeaderboard()
 		
 		for (int i = 0; i < 3; i++)
 		{
-			ld[i].score = 0;
+			ld[i].score = -1;
 			strcpy(ld[i].name, "???");
 		}
 
-		file = fopen(FILE_PATH"leaderboard.ld", "ab");
+		file = fopen(FILE_PATH"leaderboard.ld", "wb");
+		fwrite(&ld, sizeof(struct Leaderboard), 3, file);
 		file = fclose(file);
-		
-		file = fopen(FILE_PATH"leaderboard.ld", "rb");
+
+		return;
 	}
 	fread(&ld, sizeof(struct Leaderboard), 3, file);
 	fclose(file);
