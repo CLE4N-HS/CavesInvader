@@ -141,27 +141,34 @@ void updateMenu(Window* _window)
 		// buttons movement
 		if (timer > 0.3f)
 		{
-			if (isKeyboardOrControllerButtonMoved(sfKeyUp, STICKLY_XBOX, sfTrue, 30.f)) {
+			if (/*isKeyboardOrControllerButtonMoved(sfKeyUp, STICKLY_XBOX, sfTrue, 30.f)*/ isSomethingMoved(sfKeyUp, sfFalse, 30.f) > 30.f) {
 				choiceMenu = changeChoiceMenu(sfKeyUp);
 				timer = 0.f;
 			}
-			else if (isKeyboardOrControllerButtonMoved(sfKeyDown, STICKLY_XBOX, sfFalse, 30.f)) {
+			else if (/*isKeyboardOrControllerButtonMoved(sfKeyDown, STICKLY_XBOX, sfFalse, 30.f)*/ isSomethingMoved(sfKeyDown, sfFalse, -30.f) < -30.f) {
 				choiceMenu = changeChoiceMenu(sfKeyDown);
 				timer = 0.f;
 			}
-			else if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 30.f)) {
+			else if (/*isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 30.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -30.f) < -30.f) {
 				choiceMenu = changeChoiceMenu(sfKeyLeft);
 				timer = 0.f;
 			}
-			else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 30.f)) {
+			else if (/*sKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 30.f)*/ isSomethingMoved(sfKeyRight, sfTrue, 30.f) > 30.f) {
 				choiceMenu = changeChoiceMenu(sfKeyRight);
 				timer = 0.f;
 			}
-			else if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)) {
+			else if (/*isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)*/ isSomethingPressed(sfKeyBackspace, START)) {
 				timer = 0.f;
 				forceReleasedButton(START_XBOX);
-				forceReleasedButton(B_XBOX);
+				//forceReleasedButton(B_XBOX);
 				toggleQuit();
+			}
+			else if (/*isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)*/ isSomethingPressed(sfKeyEscape, B)) {
+				timer = 0.f;
+				//forceReleasedButton(START_XBOX);
+				forceReleasedButton(B_XBOX);
+				//toggleQuit();
+				changeMenuState(OPTIONS_MENU);
 			}
 
 		}
@@ -178,7 +185,6 @@ void updateMenu(Window* _window)
 			case PLAY_MENU:
 				choiceTimer = 0.f;
 				changeMenuState(MENU_CHOICENAME);
-				//changeState(_window, GAME);
 				break;
 			case LEADERBOARD_MENU:
 				choiceTimer = 0.f;
@@ -205,99 +211,6 @@ void updateMenu(Window* _window)
 			}
 		}
 	}
-
-	
-
-
-	//for (int i = 0; i < /*8*/nbPlayer; i++)
-	//{
-	//	if (Gamepad_isButtonPressed(i, CROIX) && timer > 0.2f)
-	//	{
-	//		switch (menuSelection)
-	//		{
-	//		case 0:
-	//			changeState(_window, GAME);
-	//			break;
-	//		case 1:
-	//			changeState(_window, EDITOR);
-	//			break;
-	//		case 2:
-	//			toggleOptions();
-	//			break;
-	//		case 3:
-	//			_window->isDone = sfTrue;
-	//			break;
-	//		default:
-	//			break;
-	//		}
-	//		timer = 0.0f;
-	//	}
-	//	if (Gamepad_isJoystickMoved(i, CROSSY) > 0 && timer > 0.2f)
-	//	{
-	//		menuSelection--;
-	//		if (menuSelection < 0)
-	//			menuSelection = 3;
-	//		timer = 0.0f;
-	//	}
-	//	if (Gamepad_isJoystickMoved(i, CROSSY) < 0 && timer > 0.2f)
-	//	{
-	//		menuSelection++;
-	//		if (menuSelection > 3)
-	//			menuSelection = 0;
-	//		timer = 0.0f;
-	//	}
-	//	if (Gamepad_isJoystickMoved(i, STICKLY) < 0 && timer > 0.5f)
-	//	{
-	//		menuSelection--;
-	//		if (menuSelection < 0)
-	//			menuSelection = 3;
-	//		timer = 0.0f;
-	//	}
-	//	if (Gamepad_isJoystickMoved(i, STICKLY) > 0 && timer > 0.5f)
-	//	{
-	//		menuSelection++;
-	//		if (menuSelection > 3)
-	//			menuSelection = 0;
-	//		timer = 0.0f;
-	//	}
-	//}
-	//
-	//if (sfKeyboard_isKeyPressed(sfKeyUp) && timer > 0.2f)
-	//{
-	//	menuSelection--;
-	//	if (menuSelection < 0)
-	//		menuSelection = 3;
-	//	timer = 0.0f;
-	//}
-	//if (sfKeyboard_isKeyPressed(sfKeyDown) && timer > 0.2f)
-	//{
-	//	menuSelection++;
-	//	if (menuSelection > 3)
-	//		menuSelection = 0;
-	//	timer = 0.0f;
-	//}
-	//if (sfKeyboard_isKeyPressed(sfKeyEnter) && timer > 0.2f)
-	//{
-	//	switch (menuSelection)
-	//	{
-	//	case 0:
-	//		changeState(_window, GAME);
-	//		break;
-	//	case 1:
-	//		//changeState(_window, EDITOR);
-	//		break;
-	//	case 2:
-	//		toggleOptions();
-	//		break;
-	//	case 3:
-	//		//_window->isDone = sfTrue;
-	//		CreateDialogBox(ALERT, "Do you really want to quit ?", QUIT_TO_DESKTOP_DB);
-	//		break;
-	//	default:
-	//		break;
-	//	}
-	//	timer = 0.0f;	
-	//}
 
 }
 

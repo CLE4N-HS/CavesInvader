@@ -124,7 +124,7 @@ sfVector2f getfWorldMousePos(sfRenderWindow* _window)
 	sfVector2f fWorldMousePos;
 	fWorldMousePos.x = (float)iMousePos.x;
 	fWorldMousePos.y = (float)iMousePos.y;
-	fWorldMousePos = sfRenderWindow_mapPixelToCoords(_window, iMousePos, getView());
+	//fWorldMousePos = sfRenderWindow_mapPixelToCoords(_window, iMousePos, getView()); // needGetView
 	return fWorldMousePos;
 }
 

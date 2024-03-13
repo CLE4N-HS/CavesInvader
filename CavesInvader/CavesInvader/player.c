@@ -35,7 +35,7 @@ void initPlayer(Window* _window)
 		default:
 			break;
 		}
-		player[i].life = 1; // CHANGE to 3
+		player[i].life = 2; // CHANGE to 3
 		player[i].speed = PLAYER_SPEED;
 		player[i].velocity = VECTOR2F_NULL;
 		player[i].forward = VECTOR2F_NULL;
@@ -64,7 +64,7 @@ void initPlayer(Window* _window)
 		player[i].damageTimer = 0.f;
 		player[i].damageFactor = 1;
 		player[i].nbMine = 0;
-		player[i].nbRespawn = 0; // CHANGE to 2
+		player[i].nbRespawn = 2; // CHANGE to 2
 		player[i].hasShield = sfFalse;
 		player[i].invulnerabilityTimer = 0.f;
 		player[i].color = color(255, 255, 255, 255);
@@ -302,7 +302,7 @@ void updatePlayer(Window* _window)
 		}
 
 		// TODO : priority order between shots
-		if (isAControllerButtonPressedOrKeyboard(i, sfKeySpace, LB) && player[i].bulletTimer > 0.2f) {
+		if (isAControllerButtonPressedOrKeyboard(i, sfKeySpace, LB) && player[i].bulletTimer > 0.2f && !player[i].isLightning && !player[i].isFlamethrowering) {
 			if (player[i].bulletTimer > 2.f) {
 				if (player[i].nbBullet == 1) {
 					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 0.f);

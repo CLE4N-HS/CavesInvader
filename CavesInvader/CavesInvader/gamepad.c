@@ -10,10 +10,10 @@ void GamepadDetection()
 	int playernber = 0;
 	for (unsigned int i = 0; i < /*8*/MAX_PLAYER; i++)
 	{
-		if (playernber >= MAX_PLAYER) break;
+		//if (playernber >= MAX_PLAYER) break;
 		if (sfJoystick_isConnected(i))
 		{
-			sfJoystickIdentification joyid = sfJoystick_getIdentification(i);
+			//sfJoystickIdentification joyid = sfJoystick_getIdentification(i);
 			//if (joyid.productId == 654 || joyid.productId == 767 && joyid.vendorId == 1118) // || joyid.productId == 767 for XBOX ONE
 			//{
 				//player[playernber].idGamepad = i;
@@ -27,6 +27,7 @@ void GamepadDetection()
 	}
 	nbPlayer = playernber;
 	nbPlayer = MAX(nbPlayer, 1);
+
 }
 
 void GamepadManager(int _joystickId, sfEvent event)
