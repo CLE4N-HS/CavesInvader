@@ -2,12 +2,12 @@
 #include "tools.h"
 #include "windowManager.h"
 
-typedef struct Config{
-	sfBool isFullscreen;
-	float sfxVolume;
-	float musicVolume;
-}Config;
-Config config;
+//typedef struct Config{
+//	sfBool isFullscreen;
+//	float sfxVolume;
+//	float musicVolume;
+//}Config;
+//Config config;
 
 /// <summary>
 /// Initializes everything needed for the Pause

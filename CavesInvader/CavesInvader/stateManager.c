@@ -12,6 +12,7 @@
 #include "viewManager.h"
 #include "particlesSystemManager.h"
 #include "quit.h"
+#include "leaderboard.h"
 
 sfTexture* bgTexture;
 sfTexture* loadingTexture;
@@ -48,6 +49,8 @@ void stateInit(Window* _window)
 		nbPlayer = NbConnectedControllers();
 		initQuit(_window);
 		loadOptions(_window);
+		loadLeaderboard();
+		//sortLeaderboard();
 		
 
 		firstload = sfTrue;
@@ -255,6 +258,8 @@ void stateDeinit(Window* _window)
 	{
 		deinitGame();
 		//deinitOptions();
+		saveLeaderboard();
+		loadLeaderboard();
 		
 	}
 	if (state == END)

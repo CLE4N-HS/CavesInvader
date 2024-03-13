@@ -2,6 +2,7 @@
 #include "textureManager.h"
 #include "fontManager.h"
 #include "gamepadx.h"
+#include "player.h"
 
 sfSprite* leaderboardSprite;
 
@@ -12,7 +13,7 @@ char leaderboardChar[20];
 
 sfFont* leaderboardFont;
 
-typedef struct {
+typedef struct Leaderboard{
 	int score;
 	char name[10];
 }Leaderboard;
@@ -20,10 +21,6 @@ Leaderboard ld[3];
 
 void initLeaderboard(Window* _window)
 {
-	FILE* file;
-
-	file = fopen(FILE_PATH"playerName.txt", "a");
-	fclose(file);
 
 	leaderboardSprite = sfSprite_create();
 
@@ -36,13 +33,6 @@ void initLeaderboard(Window* _window)
 	sfText_setFont(leaderboardText, leaderboardFont);
 	sfText_setCharacterSize(leaderboardText, 55.f);
 	sfText_setColor(leaderboardText, sfBlack);
-
-	// to remove
-	for (int i = 0; i < 3; i++)
-	{
-		ld[i].score = 8000008 + i * 1000;
-		strcpy(ld[i].name, "wow");
-	}
 	
 }
 
@@ -95,4 +85,130 @@ void deinitLeaderboard()
 {
 	sfSprite_destroy(leaderboardSprite);
 	sfText_destroy(leaderboardText);
+}
+
+void sortLeaderboard()
+{
+	// create a copy of the leaderboard
+	int tmpCurrentScore = common.score;
+	char tmpCurrentName[10];
+	strcpy(tmpCurrentName, common.name);
+	Leaderboard tmpLd[3];
+
+	for (int i = 0; i < 3; i++)
+	{
+		tmpLd[i].score = ld[i].score;
+		strcpy(tmpLd[i].name, ld[i].name);
+	}
+
+	sfBool firstPass = sfTrue;
+	sfBool secondPass = sfTrue;
+	sfBool thirdPass = sfTrue;
+
+	int ii = 0;
+
+	// sort the copy
+	if (tmpCurrentScore >= tmpLd[2].score) {
+		tmpLd[2].score = tmpCurrentScore;
+		strcpy(tmpLd[2].name, tmpCurrentName);
+	}
+	if (tmpCurrentScore >= tmpLd[1].score) {
+		int tmpScore1 = tmpLd[1].score;
+		char tmpName1[10];
+		strcpy(tmpName1, tmpLd[1].name);
+		tmpLd[1].score = tmpCurrentScore;
+		tmpLd[2].score = tmpScore1;
+		strcpy(tmpLd[1].name, tmpCurrentName);
+		strcpy(tmpLd[2].name, tmpName1);
+	}
+	if (tmpCurrentScore >= tmpLd[0].score) {
+		int tmpScore0 = tmpLd[0].score;
+		char tmpName0[10];
+		strcpy(tmpName0, tmpLd[0].name);
+		tmpLd[0].score = tmpCurrentScore;
+		tmpLd[1].score = tmpScore0;
+		strcpy(tmpLd[0].name, tmpCurrentName);
+		strcpy(tmpLd[1].name, tmpName0);
+	}
+
+
+
+	//while (tmpLd[2].score > tmpLd[1].score || tmpLd[1].score > tmpLd[0].score || tmpLd[2].score < tmpCurrentScore)
+	//{
+	//	if (tmpCurrentScore >= tmpLd[2].score && firstPass) {
+	//		tmpLd[2].score = tmpCurrentScore;
+	//		strcpy(tmpLd[2].name, tmpCurrentName);
+	//		//printf("1st condition\n");
+	//		firstPass = sfFalse;
+	//	}
+	//	if (tmpCurrentScore > tmpLd[1].score && secondPass) {
+	//		int tmpScore1 = tmpLd[1].score;
+	//		char tmpName1[10];
+	//		strcpy(tmpName1, tmpLd[1].name);
+	//		tmpLd[1].score = tmpCurrentScore;
+	//		tmpLd[2].score = tmpScore1;
+	//		strcpy(tmpLd[1].name, tmpCurrentName);
+	//		strcpy(tmpLd[2].name, tmpName1);
+	//		//printf("2nd condition\n");
+	//		secondPass = sfFalse;
+	//	}
+	//	if (tmpCurrentScore > tmpLd[0].score && thirdPass) {
+	//		int tmpScore0 = tmpLd[0].score;
+	//		char tmpName0[10];
+	//		strcpy(tmpName0, tmpLd[0].name);
+	//		tmpLd[0].score = tmpCurrentScore;
+	//		tmpLd[1].score = tmpScore0;
+	//		strcpy(tmpLd[0].name, tmpCurrentName);
+	//		strcpy(tmpLd[1].name, tmpName0);
+	//		//printf("3rd condition\n");
+	//		thirdPass = sfFalse;
+	//	}
+
+	//	if (!firstPass && !secondPass && !thirdPass)
+	//		break;
+
+	//	ii++;
+	//	if (ii < 10)
+	//		break;
+	//}
+
+	// transfer the copy into the real Leaderboard
+	for (int i = 0; i < 3; i++)
+	{
+		ld[i].score = tmpLd[i].score;
+		strcpy(ld[i].name, tmpLd[i].name);
+
+	}
+}
+
+void saveLeaderboard()
+{
+	sortLeaderboard();
+	
+	// store it in a file
+	FILE* file;
+	file = fopen(FILE_PATH"leaderboard.ld", "wb");
+	fwrite(&ld, sizeof(struct Leaderboard), 3, file);
+	fclose(file);
+}
+
+void loadLeaderboard()
+{
+	FILE* file;
+	file = fopen(FILE_PATH"leaderboard.ld", "rb");
+	if (file == NULL) {
+		
+		for (int i = 0; i < 3; i++)
+		{
+			ld[i].score = 0;
+			strcpy(ld[i].name, "???");
+		}
+
+		file = fopen(FILE_PATH"leaderboard.ld", "ab");
+		file = fclose(file);
+		
+		file = fopen(FILE_PATH"leaderboard.ld", "rb");
+	}
+	fread(&ld, sizeof(struct Leaderboard), 3, file);
+	fclose(file);
 }
