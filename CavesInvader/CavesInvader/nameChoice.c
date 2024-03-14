@@ -3,6 +3,7 @@
 #include "fontManager.h"
 #include "gamepadx.h"
 #include "player.h"
+#include "soundManager.h"
 
 sfSprite* nameChoiceSprite;
 
@@ -48,6 +49,7 @@ void updateNameChoice(Window* _window)
 	timer += dt;
 
 	if (/*(LStickValueX > 50.f || sfKeyboard_isKeyPressed(sfKeyRight))*/ isSomethingMoved(sfKeyRight, sfTrue, 50.f) > 50.f && timer > 0.2f) {
+		PlayASound("button1", sfFalse);
 		choiceName += 1;
 		timer = 0.f;
 		if (choiceName > 3)
@@ -55,6 +57,7 @@ void updateNameChoice(Window* _window)
 
 	}
 	else if (/*(LStickValueX < -50.f || sfKeyboard_isKeyPressed(sfKeyLeft))*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < -50.f && timer > 0.2f) {
+		PlayASound("button1", sfFalse);
 		choiceName -= 1;
 		timer = 0.f;
 		if (choiceName == 3)
@@ -64,12 +67,14 @@ void updateNameChoice(Window* _window)
 	}
 
 	if (/*(LStickValueY < -50.f || sfKeyboard_isKeyPressed(sfKeyDown))*/ isSomethingMoved(sfKeyDown, sfFalse, -50.f) < -50.f && timer > 0.2f && choiceName < 3) {
+		PlayASound("button1", sfFalse);
 		letters[choiceName] += 1;
 		timer = 0.f;
 		if (letters[choiceName] > 90)
 			letters[choiceName] = 65;
 	}
 	else if (/*(LStickValueY > 50.f || sfKeyboard_isKeyPressed(sfKeyUp))*/ isSomethingMoved(sfKeyUp, sfFalse, 50.f) > 50.f && timer > 0.2f) {
+		PlayASound("button1", sfFalse);
 		if (choiceName == 3)
 			choiceName = 1;
 		else {
@@ -82,6 +87,7 @@ void updateNameChoice(Window* _window)
 
 	if (isSomethingPressed(sfKeyEnter, A)) {
 		if (choiceName == 3 && timer > 0.2f) {
+			PlayASound("button2", sfFalse);
 			timer = 0.f;
 			sprintf(common.name, "%c%c%c", letters[0], letters[1], letters[2]);
 			changeState(_window, GAME);
@@ -100,6 +106,7 @@ void updateNameChoice(Window* _window)
 	
 	if (isSomethingPressed(sfKeyEscape, B)) {
 		choiceName = 0;
+		PlayASound("button2", sfFalse);
 		timer = 0.f;
 		changeMenuState(MENU_MAIN);
 	}

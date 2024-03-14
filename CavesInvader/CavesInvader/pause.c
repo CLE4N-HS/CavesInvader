@@ -120,35 +120,38 @@ void initPause(Window* _window)
 
 void updatePause(Window* _window)
 {
-	float dt = getDeltaTime();
-	escapePauseTimer += dt;
-	choicePauseTimer += dt;
-	sliderTimer += dt;
+	float udt = getUnscaledDeltaTime();
+	escapePauseTimer += udt;
+	choicePauseTimer += udt;
+	sliderTimer += udt;
 
 	// escape
-	if (escapePauseTimer > 0.2f && (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX))) {
+	if (escapePauseTimer > 0.2f && (/*isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX)*/ isSomethingPressed(sfKeyEscape, START) || /*isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)*/ isSomethingPressed(sfKeyEnter, B))) {
+		PlayASound("button2", sfFalse);
 		togglePause();
 		resetPause();
 	}
+
+	PauseChoice tmpChoicePause = choicePause;
 	
 	// movement
 	if (choicePauseTimer > 0.3f)
 	{
-		if (isKeyboardOrControllerButtonMoved(sfKeyUp, STICKLY_XBOX, sfTrue, 50.f)) {
+		if (/*isKeyboardOrControllerButtonMoved(sfKeyUp, STICKLY_XBOX, sfTrue, 50.f)*/ isSomethingMoved(sfKeyUp, sfFalse, 50.f) > 50.f) {
 			choicePauseTimer = 0.f;
 			allowedToSlide = sfFalse;
 			choicePause = changePauseChoice(sfKeyUp);
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyDown, STICKLY_XBOX, sfFalse, 50.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyDown, STICKLY_XBOX, sfFalse, 50.f)*/ isSomethingMoved(sfKeyDown, sfFalse, -50.f) < -50.f) {
 			choicePauseTimer = 0.f;
 			allowedToSlide = sfFalse;
 			choicePause = changePauseChoice(sfKeyDown);
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < -50.f) {
 			choicePauseTimer = 0.f;
 			choicePause = changePauseChoice(sfKeyLeft);
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)*/ isSomethingMoved(sfKeyRight, sfTrue, 50.f) > 50.f) {
 			choicePauseTimer = 0.f;
 			choicePause = changePauseChoice(sfKeyRight);
 		}
@@ -158,57 +161,57 @@ void updatePause(Window* _window)
 	switch (choicePause)
 	{
 	case RESUME_PAUSE:
-		if (escapePauseTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+		if (escapePauseTimer > 0.2f && /*isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)*/ isSomethingPressed(sfKeyEnter, A)) {
 			togglePause();
 			resetPause();
 			choicePause = RESUME_PAUSE;
 		}
 		break;
 	case SLIDERSFX_PAUSE:
-		if (!allowedToSlide && !isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)) {
+		if (!allowedToSlide && /*!isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) > -50.f) {
 			allowedToSlide = sfTrue;
 		}
 		if (!allowedToSlide)
 			break;
 
-		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
-			sliderSFXPosX -= dt * 100.f;
+		if (/*isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < -50.f) {
+			sliderSFXPosX -= udt * 100.f;
 			sliderSFXPosX = MAX(sliderSFXPosX, 782.f);
 			ChangeVolume(SOUNDFX, getSliderValue(sliderSFXPosX, 782.f, 1049.f));
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
-			sliderSFXPosX += dt * 100.f;
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)*/ isSomethingMoved(sfKeyRight, sfTrue, 50.f) > 50.f) {
+			sliderSFXPosX += udt * 100.f;
 			sliderSFXPosX = MIN(sliderSFXPosX, 1049.f);
 			ChangeVolume(SOUNDFX, getSliderValue(sliderSFXPosX, 782.f, 1049.f));
 		}
 		break;
 	case FULLSCREEN_PAUSE:
-		if (escapePauseTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+		if (escapePauseTimer > 0.2f && /*isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)*/ isSomethingPressed(sfKeyEnter, A)) {
 			escapePauseTimer = 0.f;
 			forceReleasedButton(A_XBOX);
 			ToggleFullscreen(_window);
 		}
 		break;
 	case SLIDERMUSIC_PAUSE:
-		if (!allowedToSlide && !isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)) {
+		if (!allowedToSlide && /*!isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < 50.f) {
 			allowedToSlide = sfTrue;
 		}
 		if (!allowedToSlide)
 			break;
 
-		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
-			sliderMusicPosX -= dt * 100.f;
+		if (/*isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < -50.f) {
+			sliderMusicPosX -= udt * 100.f;
 			sliderMusicPosX = MAX(sliderMusicPosX, 788.f);
 			ChangeVolume(MUSIC, getSliderValue(sliderMusicPosX, 788.f, 1055.f));
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
-			sliderMusicPosX += dt * 100.f;
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, 50.f) > 50.f) {
+			sliderMusicPosX += udt * 100.f;
 			sliderMusicPosX = MIN(sliderMusicPosX, 1055.f);
 			ChangeVolume(MUSIC, getSliderValue(sliderMusicPosX, 788.f, 1055.f));
 		}
 		break;
 	case QUIT_PAUSE:
-		if (escapePauseTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+		if (escapePauseTimer > 0.2f && /*isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)*/ isSomethingPressed(sfKeyEnter, A)) {
 			togglePause();
 			resetPause();
 			
@@ -219,6 +222,10 @@ void updatePause(Window* _window)
 		break;
 	default:
 		break;
+	}
+
+	if (tmpChoicePause != choicePause) {
+		PlayASound("button1", sfFalse);
 	}
 
 }

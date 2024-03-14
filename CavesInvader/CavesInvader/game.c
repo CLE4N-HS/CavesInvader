@@ -137,6 +137,8 @@ void initGame(Window* _window)
 
 	isGameOver = sfFalse;
 
+	PlayASound("madness", sfTrue);
+
 	w.state = sfTrue;
 
 }
@@ -237,9 +239,13 @@ void updateGame(Window* _window)
 	if (isGameOver)
 		updateGameOver(_window);
 
-	if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) && timer > 0.4f) {
+	else if (/*isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX)*/ isSomethingPressed(sfKeyEscape, START) && timer > 0.4f) {
 		timer = 0.f;
 		togglePause();
+		StopASound("blaster");
+		StopASound("laserSfx");
+		StopASound("explosionSfx");
+		StopASound("flameThrowerSfx");
 		for (int i = 0; i < nbPlayer; i++)
 		{
 			setVibration(i, 0.f, 0.f);

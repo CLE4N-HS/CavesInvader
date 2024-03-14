@@ -5,6 +5,7 @@
 #include "particlesSystemManager.h"
 #include "gamepad.h"
 #include "player.h"
+#include "soundManager.h"
 
 #define GETDATA_BULLETS STD_LIST_GETDATA(bulletsList, Bullets, i)
 #define GD_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, j)
@@ -65,9 +66,11 @@ void addBullets(bulletType _type, bulletId _id, int _ownerId, sfVector2f _pos, s
 	}
 	else if (_type == PLAYER_MINES) {
 		tmp.mine.radius = 35.f;
+		tmp.mine.playSound = sfTrue;
 	}
 	else if (_type == PLAYER_FLAMETHROWER) {
 		tmp.flamethrower.bounds = FlRect(0.f, 0.f, 0.f, 0.f);
+		tmp.flamethrower.playSound = sfTrue;
 	}
 	else if (_type == PLAYER_LASER) {
 		tmp.laser.timer = 0.f;
@@ -257,6 +260,7 @@ void updateBullets(Window* _window)
 			if (GETDATA_BULLETS->laser.timeLasering > 4.f) {
 				player[GETDATA_BULLETS->ownerId].isLightning = sfFalse;
 				player[GETDATA_BULLETS->ownerId].nbLightning = 15;
+				StopASound("laserSfx");
 
 				for (int j = 0; j < enemiesList->size(enemiesList); j++)
 				{
@@ -304,6 +308,11 @@ void updateBullets(Window* _window)
 			else {
 				GETDATA_BULLETS->animTimer += dt;
 
+				if (GETDATA_BULLETS->mine.playSound) {
+					PlayASound("explosionSfx", sfFalse);
+					GETDATA_BULLETS->mine.playSound = sfFalse;
+				}
+
 				if (GETDATA_BULLETS->animTimer > 0.1f) {
 
 					GETDATA_BULLETS->animTimer = 0.f;
@@ -339,6 +348,11 @@ void updateBullets(Window* _window)
 		}
 		else if (tmp.type == PLAYER_FLAMETHROWER)
 		{
+			if (GETDATA_BULLETS->flamethrower.playSound) {
+				PlayASound("flameThrowerSfx", sfFalse);
+				GETDATA_BULLETS->flamethrower.playSound = sfFalse;
+			}
+
 			// estimated rect for collisions
 			int tmpOwnerId = GETDATA_BULLETS->ownerId;
 			sfVector2f tmpPos = getPlayerPos(tmpOwnerId);
@@ -353,7 +367,7 @@ void updateBullets(Window* _window)
 				{
 					GD_ENEMIES->isFlamethrowered = sfFalse;
 				}
-
+				StopASound("flameThrowerSfx");
 				bulletsList->erase(&bulletsList, i);
 				continue;
 			}

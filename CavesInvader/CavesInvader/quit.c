@@ -2,6 +2,7 @@
 #include "gamepad.h"
 #include "menu.h"
 #include "pause.h"
+#include "soundManager.h"
 
 typedef enum QuitChoice {
 	NO_QUIT,
@@ -52,7 +53,7 @@ void updateQuit(Window* _window)
 	timerQuit += getUnscaledDeltaTime();
 
 	if (timerQuit > 0.4f) {
-		if (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)) {
+		if (/*isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX)*/ isSomethingPressed(sfKeyEscape, START) || /*isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)*/isSomethingPressed(sfKeyEscape, B)) {
 			timerQuit = 0.f;
 			toggleQuit();
 			resetQuit();
@@ -60,18 +61,20 @@ void updateQuit(Window* _window)
 				resetMenu();
 			}
 			else {
+				PlayASound("button2", sfFalse);
 				togglePause();
 				resetPause();
 			}
 			return;
 		}
-		else if (isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+		else if (/*isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)*/ isSomethingPressed(sfKeyEnter, A)) {
 			
 			if (getState() == MENU) {
 				if (choiceQuit == YES_QUIT) {
 					_window->isDone = sfTrue;
 				}
 				else {
+					PlayASound("button2", sfFalse);
 					toggleQuit();
 					resetQuit();
 					resetMenu();
@@ -79,6 +82,7 @@ void updateQuit(Window* _window)
 			}
 			else {
 				if (choiceQuit == YES_QUIT) {
+					PlayASound("button2", sfFalse);
 					toggleQuit();
 					resetQuit();
 					resetMenu();
@@ -86,6 +90,7 @@ void updateQuit(Window* _window)
 					changeState(_window, MENU);
 				}
 				else {
+					PlayASound("button2", sfFalse);
 					toggleQuit();
 					resetQuit();
 					togglePause();
@@ -97,15 +102,20 @@ void updateQuit(Window* _window)
 		}
 	}
 
+	QuitChoice tmpChoiceQuit = choiceQuit;
 
 	if (timer > 0.2f)
 	{
-		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 20.f)) {
+		if (/*isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 20.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -20.f) < -20.f) {
 			choiceQuit = YES_QUIT;
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 20.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 20.f)*/  isSomethingMoved(sfKeyLeft, sfTrue, 20.f) > 20.f) {
 			choiceQuit = NO_QUIT;
 		}
+	}
+
+	if (tmpChoiceQuit != choiceQuit) {
+		PlayASound("button1", sfFalse);
 	}
 }
 

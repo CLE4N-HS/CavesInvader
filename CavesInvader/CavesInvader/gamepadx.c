@@ -140,6 +140,19 @@ void getSticksPosition(t_joyNum joyNum, sfVector2f* left, sfVector2f* right)
 
 float getStickPos(t_joyNum _id, sfBool _leftStick, sfBool _XAxis)
 {
+    if (_XAxis) {
+        if (isButtonPressed(_id, DPAD_LEFT))
+            return -100.f;
+        if (isButtonPressed(_id, DPAD_RIGHT))
+            return 100.f;
+    }
+    else {
+        if (isButtonPressed(_id, DPAD_DOWN))
+            return -100.f;
+        if (isButtonPressed(_id, DPAD_UP))
+            return 100.f;
+    }
+
     XINPUT_STATE state;
     ZeroMemory(&state, sizeof(XINPUT_STATE));
 
@@ -285,6 +298,28 @@ float isSomethingMoved(sfKeyCode _key, sfBool _XAxis, float _deadZone)
     float stickPos = 0.f;
     for (int i = 0; i < nbPlayer; i++)
     {
+        if (_XAxis) {
+            if (_deadZone < 0.f) {
+                if (isButtonPressed(i, DPAD_LEFT))
+                    return -100.f;
+            }
+            else {
+                if (isButtonPressed(i, DPAD_RIGHT))
+                    return 100.f;
+            }
+        }
+        else {
+            if (_deadZone < 0.f) {
+                if (isButtonPressed(i, DPAD_DOWN))
+                    return -100.f;
+            }
+            else {
+                if (isButtonPressed(i, DPAD_UP))
+                    return 100.f;
+            }
+        }
+
+
         stickPos = getStickPos(i, sfTrue, _XAxis);
         if (stickPos < _deadZone && _deadZone < 0.f)
             return stickPos;

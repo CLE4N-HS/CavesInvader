@@ -441,10 +441,12 @@ void updateEnemy(Window* _window)
 	//	createEnemy(ENRAGED_HOPPER);
 	//	timer = 0.f;
 	//}
-	//if (isKeyboardOrControllerButtonPressed(sfKeyY, SELECT_XBOX) && timer > 0.2f) {
-	//	createEnemy(TAMER);
-	//	timer = 0.f;
-	//}
+	// debug
+	if (sfKeyboard_isKeyPressed(sfKeyB) && timer > 0.2f) {
+		createEnemy(TAMER);
+		timer = -2.f;
+	}
+
 
 
 	for (int i = 0; i < enemiesList->size(enemiesList); i++)

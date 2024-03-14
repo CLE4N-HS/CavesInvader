@@ -1,5 +1,6 @@
 #include "intro.h"
 #include "textureManager.h"
+#include "soundManager.h"
 #include "gamepadx.h"
 
 sfSprite* introSprite;
@@ -20,6 +21,8 @@ void initIntro(Window* _window)
 	introTimer = 0.f;
 	isCopyright = sfTrue;
 	introColor = color(255, 255, 255, 0);
+
+	PlayASound("ambiance", sfTrue);
 }
 
 void updateIntro(Window* _window)
@@ -41,11 +44,13 @@ void updateIntro(Window* _window)
 			introTimer = 0.f;
 			isCopyright = sfFalse;
 			introColor.a = 0;
+			PlayASound("button2", sfFalse);
 		}
 		
 	}
 	else {
 		if (introTimer > 0.7f && isSomethingPressed(sfKeyEnter, A)) {
+			PlayASound("button2", sfFalse);
 			changeState(_window, MENU);
 		}
 	}

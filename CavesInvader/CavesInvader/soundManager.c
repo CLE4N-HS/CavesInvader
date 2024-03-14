@@ -170,6 +170,25 @@ void PlayASound(char* _name, sfBool _loop)
 	printf("Unable to play the sound : %s , the name given might be wrong\n", _name);
 }
 
+void StopASound(char* _name)
+{
+	Sound* tmpSound = soundBegin;
+	while (tmpSound != NULL)
+	{
+		if (strcmp(_name, tmpSound->name) == 0) {
+			if (tmpSound->type == MUSIC) {
+				sfMusic_stop(tmpSound->music);
+			}
+			else if (tmpSound->type == SOUNDFX) {
+				sfSound_stop(tmpSound->sound);
+			}
+			return;
+		}
+		tmpSound = tmpSound->pNext;
+	}
+	printf("Unable to stop the sound : %s , the name given might be wrong\n", _name);
+}
+
 void ChangeVolume(ressourceType _type, float _volume)
 {
 	if (_type == MUSIC) musicVolume = _volume;

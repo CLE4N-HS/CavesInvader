@@ -9,6 +9,7 @@
 #include "options.h"
 #include "commands.h"
 #include "credits.h"
+#include "soundManager.h"
 
 typedef enum MenuChoice {
 	NOCHOICE_MENU = -1,
@@ -138,6 +139,8 @@ void updateMenu(Window* _window)
 		timer += getUnscaledDeltaTime();
 		choiceTimer += getUnscaledDeltaTime();
 
+		MenuChoice tmpChoiceMenu = choiceMenu;
+
 		// buttons movement
 		if (timer > 0.3f)
 		{
@@ -159,58 +162,74 @@ void updateMenu(Window* _window)
 			}
 			else if (/*isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)*/ isSomethingPressed(sfKeyBackspace, START)) {
 				timer = 0.f;
-				forceReleasedButton(START_XBOX);
+				//forceReleasedButton(START_XBOX);
 				//forceReleasedButton(B_XBOX);
-				toggleQuit();
+				PlayASound("button2", sfFalse);
+				//toggleQuit();
+				changeMenuState(MENU_OPTIONS);
 			}
 			else if (/*isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)*/ isSomethingPressed(sfKeyEscape, B)) {
 				timer = 0.f;
 				//forceReleasedButton(START_XBOX);
-				forceReleasedButton(B_XBOX);
-				//toggleQuit();
-				changeMenuState(OPTIONS_MENU);
+				//forceReleasedButton(B_XBOX);
+				toggleQuit();
+				PlayASound("button2", sfFalse);
+				//changeMenuState(MENU_QUIT);
 			}
 
 		}
 
 		// Menu Choice
-		if (isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX) && choiceTimer > 0.2f) {
+		if (/*isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX) && choiceTimer > 0.2f*/ isSomethingPressed(sfKeyEnter, A) && choiceTimer > 0.2f) {
 			switch (choiceMenu)
 			{
 			case NOCHOICE_MENU:
 				choiceTimer = 0.f;
 				choiceMenu = changeChoiceMenu(sfKeyEnter);
-				forceReleasedButton(A_XBOX);
+				PlayASound("button2", sfFalse);
+				//forceReleasedButton(A_XBOX);
 				break;
 			case PLAY_MENU:
 				choiceTimer = 0.f;
 				changeMenuState(MENU_CHOICENAME);
+				PlayASound("button2", sfFalse);
 				break;
 			case LEADERBOARD_MENU:
 				choiceTimer = 0.f;
 				changeMenuState(MENU_LEADERBOARD);
+				PlayASound("button2", sfFalse);
 				break;
 			case COMMANDS_MENU:
 				choiceTimer = 0.f;
 				changeMenuState(MENU_COMMANDS);
+				PlayASound("button2", sfFalse);
 				break;
 			case CREDITS_MENU:
 				choiceTimer = 0.f;
 				changeMenuState(MENU_CREDITS);
+				PlayASound("button2", sfFalse);
 				break;
 			case OPTIONS_MENU:
 				choiceTimer = 0.f;
 				changeMenuState(MENU_OPTIONS);
+				PlayASound("button2", sfFalse);
 				break;
 			case QUIT_MENU:
 				choiceTimer = 0.f;
 				toggleQuit();
+				PlayASound("button2", sfFalse);
 				break;
 			default:
 				break;
 			}
 		}
+
+		if (tmpChoiceMenu != choiceMenu) {
+			PlayASound("button1", sfFalse);
+		}
 	}
+
+
 
 }
 

@@ -220,6 +220,9 @@ void updateHud(Window* _window)
 
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		if (player[i].nbRespawn < 0) {
+			continue;
+		}
 		// dynamic life
 		if (player[i].life <= 0) {
 			hud[i].lifeRect.width = 0;
@@ -282,6 +285,9 @@ void displayHud(Window* _window)
 {
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		if (player[i].nbRespawn < 0) {
+			continue;
+		}
 		// main
 		sfSprite_setPosition(hudSprite, hud[i].mainPos);
 		sfSprite_setTextureRect(hudSprite, hud[i].mainRect);
@@ -352,6 +358,9 @@ void displayHud(Window* _window)
 
 	for (int i = 0; i < nbPlayer; i++)
 	{
+		if (player[i].nbRespawn < 0) {
+			continue;
+		}
 		// gas text
 		sprintf(hudChar, "%d %%", player[i].nbGas);
 		sfText_setString(hudText, hudChar);

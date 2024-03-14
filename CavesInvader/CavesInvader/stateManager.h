@@ -32,7 +32,7 @@ typedef struct
 
 watcher w;
 
-static State state = MENU;
+static State state = INTRO;
 static MenuState menuState = MENU_MAIN;
 
 static sfBool onePass = sfFalse;

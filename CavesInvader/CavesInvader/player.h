@@ -7,7 +7,7 @@
 
 #define PLAYER_SPEED 500.f
 #define LIGTHNING_SECONDS_REQUIRED 15
-#define KILL_COUNT_REQUIRED 15
+#define KILL_COUNT_REQUIRED 30
 
 #define NB_SHADOWS 15
 
@@ -63,6 +63,7 @@ typedef struct Players {
 	float anothertimer;
 	sfBool wasAlreadyMoving;
 
+	int cid;
 	//yeah better mb idk fr tbh
 	sfBool ISMOVING;
 }Players;
