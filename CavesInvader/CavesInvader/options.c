@@ -113,89 +113,97 @@ void updateOptions(Window* _window)
 	sliderTimer += dt;
 
 	// escape
-	if (escapeOptionsTimer > 0.2f && (isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX) || isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX))) {
+	if (escapeOptionsTimer > 0.2f && (/*isKeyboardOrControllerButtonPressed(sfKeyEscape, START_XBOX)*/ isSomethingPressed(sfKeyEscape, START) || /*isKeyboardOrControllerButtonPressed(sfKeyEscape, B_XBOX)*/ isSomethingPressed(sfKeyEscape, B))) {
 		//toggleOptions();
+		PlayASound("button2", sfFalse);
 		resetOptions();
 		changeMenuState(MENU_MAIN);
 	}
+
+	OptionsChoice tmpChoiceOptions = choiceOptions;
 	
 	// movement
 	if (choiceOptionsTimer > 0.3f)
 	{
-		if (isKeyboardOrControllerButtonMoved(sfKeyUp, STICKLY_XBOX, sfTrue, 50.f)) {
+		if (/*isKeyboardOrControllerButtonMoved(sfKeyUp, STICKLY_XBOX, sfTrue, 50.f)*/ isSomethingMoved(sfKeyUp, sfFalse, 50.f) > 50.f) {
 			choiceOptionsTimer = 0.f;
 			allowedToSlide = sfFalse;
 			choiceOptions = changeOptionsChoice(sfKeyUp);
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyDown, STICKLY_XBOX, sfFalse, 50.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyDown, STICKLY_XBOX, sfFalse, 50.f)*/ isSomethingMoved(sfKeyDown, sfFalse, -50.f) < -50.f) {
 			choiceOptionsTimer = 0.f;
 			allowedToSlide = sfFalse;
 			choiceOptions = changeOptionsChoice(sfKeyDown);
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < -50.f) {
 			choiceOptionsTimer = 0.f;
 			choiceOptions = changeOptionsChoice(sfKeyLeft);
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)*/ isSomethingMoved(sfKeyRight, sfTrue, 50.f) > 50.f) {
 			choiceOptionsTimer = 0.f;
 			choiceOptions = changeOptionsChoice(sfKeyRight);
 		}
+	}
+
+	if (tmpChoiceOptions != choiceOptions) {
+		PlayASound("button1", sfFalse);
 	}
 
 	// interactions
 	switch (choiceOptions)
 	{
 	case SLIDERSFX_OPTIONS:
-		if (!allowedToSlide && !isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)) {
+		if (!allowedToSlide && /*!isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < 50.f) {
 			allowedToSlide = sfTrue;
 		}
 		if (!allowedToSlide)
 			break;
 
-		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
+		if (/*isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < -50.f) {
 			sliderSFXPosX -= dt * 100.f;
 			sliderSFXPosX = MAX(sliderSFXPosX, 778.f);
 			ChangeVolume(SOUNDFX, getSliderValue(sliderSFXPosX, 778.f, 1049.f));
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)*/ isSomethingMoved(sfKeyRight, sfTrue, 50.f) > 50.f) {
 			sliderSFXPosX += dt * 100.f;
 			sliderSFXPosX = MIN(sliderSFXPosX, 1049.f);
 			ChangeVolume(SOUNDFX, getSliderValue(sliderSFXPosX, 778.f, 1049.f));
 		}
 		break;
 	case FULLSCREEN_OPTIONS:
-		if (escapeOptionsTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+		if (escapeOptionsTimer > 0.2f && /*isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)*/ isSomethingPressed(sfKeyEnter, A)) {
 			escapeOptionsTimer = 0.f;
 			forceReleasedButton(A_XBOX);
 			ToggleFullscreen(_window);
 		}
 		break;
 	case SLIDERMUSIC_OPTIONS:
-		if (!allowedToSlide && !isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)) {
+		if (!allowedToSlide && /*!isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 10.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < 50.f) {
 			allowedToSlide = sfTrue;
 		}
 		if (!allowedToSlide)
 			break;
 
-		if (isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)) {
+		if (/*isKeyboardOrControllerButtonMoved(sfKeyLeft, STICKLX_XBOX, sfTrue, 50.f)*/ isSomethingMoved(sfKeyLeft, sfTrue, -50.f) < -50.f) {
 			sliderMusicPosX -= dt * 100.f;
 			sliderMusicPosX = MAX(sliderMusicPosX, 784.f);
 			ChangeVolume(MUSIC, getSliderValue(sliderMusicPosX, 784.f, 1055.f));
 		}
-		else if (isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)) {
+		else if (/*isKeyboardOrControllerButtonMoved(sfKeyRight, STICKLX_XBOX, sfFalse, 50.f)*/ isSomethingMoved(sfKeyRight, sfTrue, 50.f) > 50.f) {
 			sliderMusicPosX += dt * 100.f;
 			sliderMusicPosX = MIN(sliderMusicPosX, 1055.f);
 			ChangeVolume(MUSIC, getSliderValue(sliderMusicPosX, 784.f, 1055.f));
 		}
 		break;
 	case QUIT_OPTIONS:
-		if (escapeOptionsTimer > 0.2f && isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)) {
+		if (escapeOptionsTimer > 0.2f && /*isKeyboardOrControllerButtonPressed(sfKeyEnter, A_XBOX)*/ isSomethingPressed(sfKeyEnter, A)) {
 			//toggleOptions();
 			resetOptions();
 			
 			forceReleasedButton(A_XBOX);
 			//toggleQuit();
 			//resetQuit();
+			PlayASound("button2", sfFalse);
 			changeMenuState(MENU_MAIN);
 		}
 		break;

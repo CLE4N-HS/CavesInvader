@@ -43,6 +43,14 @@ void updateGameOver(Window* _window)
 {
 	float udt = getUnscaledDeltaTime();
 	static float timer = 0.f;
+
+	if (timer <= 0.f) {
+		StopASound("blaster");
+		StopASound("laserSfx");
+		StopASound("explosionSfx");
+		StopASound("flameThrowerSfx");
+	}
+
 	timer += udt;
 	static float quitTimer = 0.f;
 	quitTimer += udt;

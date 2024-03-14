@@ -3,6 +3,7 @@
 #include "fontManager.h"
 #include "gamepadx.h"
 #include "player.h"
+#include "soundManager.h"
 
 sfSprite* leaderboardSprite;
 
@@ -43,12 +44,14 @@ void updateLeaderboard(Window* _window)
 	timer += udt;
 
 	if (isSomethingPressed(sfKeyEscape, B) && timer > 0.4f) {
-		changeMenuState(MENU_MAIN);
 		timer = 0.f;
+		PlayASound("button2", sfFalse);
+		changeMenuState(MENU_MAIN);
 	}
 	else if (isSomethingPressed(sfKeyEnter, A) && timer > 0.4f) {
-		changeMenuState(MENU_MAIN);
 		timer = 0.f;
+		PlayASound("button2", sfFalse);
+		changeMenuState(MENU_MAIN);
 	}
 }
 

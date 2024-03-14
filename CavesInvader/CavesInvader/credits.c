@@ -1,6 +1,7 @@
 #include "credits.h"
 #include "textureManager.h"
 #include "gamepadx.h"
+#include "soundManager.h"
 
 sfSprite* creditsSprite;
 
@@ -22,6 +23,7 @@ void updateCredits(Window* _window)
 	timer += udt;
 	if ((isSomethingPressed(sfKeyEnter, A) || isSomethingPressed(sfKeyEscape, B)) && timer > 0.4f) {
 		timer = 0.f;
+		PlayASound("button2", sfFalse);
 		changeMenuState(MENU_MAIN);
 	}
 }

@@ -4,7 +4,7 @@
 #include "bullets.h"
 #include "particlesSystemManager.h"
 #include "game.h"
-
+#include "soundManager.h"
 
 sfSprite* playerSprite;
 
@@ -35,7 +35,7 @@ void initPlayer(Window* _window)
 		default:
 			break;
 		}
-		player[i].life = 2; // CHANGE to 3
+		player[i].life = 3; // CHANGE to 3
 		player[i].speed = PLAYER_SPEED;
 		player[i].velocity = VECTOR2F_NULL;
 		player[i].forward = VECTOR2F_NULL;
@@ -70,6 +70,10 @@ void initPlayer(Window* _window)
 		player[i].color = color(255, 255, 255, 255);
 
 		player[i].ISMOVING = sfFalse;
+
+		//player[i].cid = 
+
+	
 		
 		for (int j = 0; j < NB_SHADOWS; j++)
 		{
@@ -101,10 +105,12 @@ void updatePlayer(Window* _window)
 		// death
 		if (player[i].nbRespawn < 0) {
 			nbPlayerAlive -= 1;
+			player[i].pos = vector2f(-1000.f, -1000.f);
+			player[i].bounds = FlRect(0.f, 0.f, 0.f, 0.f);
 			if (nbPlayerAlive <= 0) {
 				isGameOver = sfTrue;
-				continue;
 			}
+			continue;
 		}
 
 
@@ -225,13 +231,13 @@ void updatePlayer(Window* _window)
 		}
 		if (player[i].pos.y < 48.f) {
 			player[i].pos.y = 48.f;
-			player[i].timeMoving -= dt * 2.f;
-			player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
+			//player[i].timeMoving -= dt * 2.f;
+			//player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 		}
 		if (player[i].pos.y > 990.f) {
 			player[i].pos.y = 990.f;
-			player[i].timeMoving -= dt * 2.f;
-			player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
+			//player[i].timeMoving -= dt * 2.f;
+			//player[i].timeMoving = MAX(player[i].timeMoving, 0.f);
 		}
 
 
@@ -301,8 +307,8 @@ void updatePlayer(Window* _window)
 
 		}
 
-		// TODO : priority order between shots
 		if (isAControllerButtonPressedOrKeyboard(i, sfKeySpace, LB) && player[i].bulletTimer > 0.2f && !player[i].isLightning && !player[i].isFlamethrowering) {
+			PlayASound("blaster", sfFalse);
 			if (player[i].bulletTimer > 2.f) {
 				if (player[i].nbBullet == 1) {
 					createBullets(PLAYER_CHARGED_BULLET, i, player[i].pos, 0.f);
@@ -337,15 +343,16 @@ void updatePlayer(Window* _window)
 		}
 		// buttons to change
 		// TODO cheks if PC or controller for releasing a button or mb if both or released, yeah better, i agree, thanks man, am i alone or what
-		else if (getTriggerValue(i, sfTrue) > 0.1f && player[i].nbLightning <= 0 && !player[i].isLightning) { // no timer but 15 seconds condition
+		else if (getTriggerValue(i, sfTrue) > 0.1f && player[i].nbLightning <= 0 && !player[i].isLightning && !player[i].isFlamethrowering) { // no timer but 15 seconds condition
+			PlayASound("laserSfx", sfFalse);
 			createBullets(PLAYER_LASER, i, player[i].pos, 0.f);
 			player[i].isLightning = sfTrue;
 		}
-		else if (isAControllerButtonPressedOrKeyboard(i, sfKeyM, RB) && player[i].nbMine >= KILL_COUNT_REQUIRED) { // no timer but 15 kills condition
+		else if (isAControllerButtonPressedOrKeyboard(i, sfKeyM, RB) && player[i].nbMine >= KILL_COUNT_REQUIRED && !player[i].isLightning && !player[i].isFlamethrowering) { // no timer but 15 kills condition
 			createBullets(PLAYER_MINES, i, player[i].pos, 0.f);
 			player[i].nbMine = 0;
 		}
-		else if (getTriggerValue(i, sfFalse) > 0.1f && player[i].nbGas > 0 && player[i].fGasTimer > 0.02f) { // and the gauge is not empty
+		else if (getTriggerValue(i, sfFalse) > 0.1f && player[i].nbGas > 0 && player[i].fGasTimer > 0.02f && !player[i].isLightning) { // and the gauge is not empty
 			int random = iRand(0, 1);
 			int randomDirection = iRand(0, 1);
 			float direction = 300.f;
@@ -414,7 +421,6 @@ void damagePlayer(int _playerId, int _damage)
 	}
 	else {
 		player[_playerId].life -= _damage;
-		player[_playerId].nbMine = 0;
 		
 		player[_playerId].invulnerabilityTimer = 3.f;
 
@@ -444,6 +450,9 @@ void displayPlayer(Window* _window)
 	if (!isGameOver) {
 		for (int i = 0; i < nbPlayer; i++)
 		{
+			if (player[i].nbRespawn < 0) {
+				continue;
+			}
 			sfSprite_setOrigin(playerSprite, player[i].origin);
 			sfSprite_setTexture(playerSprite, playerShapeTexture, sfTrue);
 

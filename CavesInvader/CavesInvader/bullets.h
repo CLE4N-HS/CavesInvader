@@ -33,10 +33,12 @@ typedef struct laserParameters {
 typedef struct minesParameters {
 	float radius;
 	sfBool allowedToDealDamages; // need another trick for the boss
+	sfBool playSound;
 }minesParameters;
 
 typedef struct flamethrowerParameters {
 	sfFloatRect bounds;
+	sfBool playSound;
 }flamethrowerParameters;
 
 typedef struct enemyBulletParameters {

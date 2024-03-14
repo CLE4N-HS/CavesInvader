@@ -8,6 +8,10 @@ single quit ../Ressources/Textures/Menu/QUIT/quit.png
 single quitBox ../Ressources/Textures/Menu/QUIT/quitBox.png
 single allMenus ../Ressources/Textures/Menu/allMenus.png
 single allStates ../Ressources/Textures/Menu/allStates.png
+
+music ambiance ../Ressources/Musics/ambiance.ogg
+soundfx button1 ../Ressources/SoundsFX/button1.ogg
+soundfx button2 ../Ressources/SoundsFX/button1.ogg
 [end]
 [menu]
 single menuMain ../Ressources/Textures/Menu/MAIN/menuMain.png
@@ -51,4 +55,10 @@ single sliderBox ../Ressources/Textures/Game/PAUSE/sliderBox.png
 single hud ../Ressources/Textures/Game/HUD/hud.png
 single items ../Ressources/Textures/Game/ITEMS/items.png
 single deadItems ../Ressources/Textures/Game/ITEMS/deadItems.png
+
+music madness ../Ressources/Musics/Madness.ogg
+soundfx blaster ../Ressources/SoundsFX/blaster.ogg
+soundfx laserSfx ../Ressources/SoundsFX/laserSfx.ogg
+soundfx explosionSfx ../Ressources/SoundsFX/explosionSfx.ogg
+music flameThrowerSfx ../Ressources/Musics/flameThrowerSfx.ogg
 [end]

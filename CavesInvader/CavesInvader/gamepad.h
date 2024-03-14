@@ -5,6 +5,8 @@
 
 #define MAX_PLAYER 2
 
+int nbConnectedController;
+
 typedef enum gamepadPS4 gamepadPS4;
 enum gamepadPS4
 {

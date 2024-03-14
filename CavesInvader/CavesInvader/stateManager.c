@@ -46,7 +46,7 @@ void stateInit(Window* _window)
 
 		timeScale = 1.f;
 
-		PlayASound("test", sfTrue);
+		//PlayASound("test", sfTrue);
 		//nbPlayer = NbConnectedControllers();
 		GamepadDetection();
 		initQuit(_window);

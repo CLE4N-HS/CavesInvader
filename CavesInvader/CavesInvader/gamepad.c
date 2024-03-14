@@ -4,6 +4,8 @@
 
 #define IS_BUTTON (_stick == LB_XBOX || _stick == RB_XBOX) || _stick >= STICKLX_XBOX
 
+sfBool firstDetection = sfTrue;
+
 void GamepadDetection()
 {
 	sfJoystick_update();
@@ -25,8 +27,17 @@ void GamepadDetection()
 			//player[playernber].idGamepad = -1;
 		}
 	}
-	nbPlayer = playernber;
-	nbPlayer = MAX(nbPlayer, 1);
+	if (playernber >= 2) {
+		int a = 0;
+	}
+	if (firstDetection) {
+		nbConnectedController = playernber;
+		firstDetection = sfFalse;
+		nbPlayer = playernber;
+		nbPlayer = MAX(nbPlayer, 1);
+	}
+	//nbPlayer = playernber;
+	//nbPlayer = MAX(nbPlayer, 1);
 
 }
 
@@ -65,17 +76,23 @@ void GamepadManager(int _joystickId, sfEvent event)
 	{
 		printf("Gamepad is Connected id %d\n", event.joystickConnect.joystickId);
 		GamepadDetection();
+		nbConnectedController += 1;
+		nbPlayer = nbConnectedController;
+		nbPlayer = MIN(nbPlayer, 2);
 	}
 	if (event.type == sfEvtJoystickDisconnected)
 	{
 		printf("Gamepad is Disconnected id %d\n", event.joystickConnect.joystickId);
 		GamepadDetection();
 		// TODO : Mettre en pause pour indiquer qu'un (ou plusieurs) Gamepad est déconnecté
-		if (!isPaused && getState() == GAME) {
+		if (/*!isPaused &&*/ getState() == GAME) {
 			togglePause();
-			CreateDialogBox(INFO, "A controller was disconnected", 0);
+			//CreateDialogBox(INFO, "A controller was disconnected", 0);
 		}
-			
+		nbConnectedController -= 1;
+		nbPlayer = nbConnectedController;
+		nbPlayer = MAX(nbPlayer, 1);
+
 	}
 	if (event.joystickButton.joystickId == _joystickId)
 	{
