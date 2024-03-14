@@ -5,6 +5,7 @@
 #include "bullets.h"
 #include "particlesSystemManager.h"
 #include "game.h"
+#include "soundManager.h"
 
 #define GETDATA_ENEMIES STD_LIST_GETDATA(enemiesList, Enemies, i)
 
@@ -97,6 +98,7 @@ void addEnemy(enemyType _type, enemyState _state, enemyState _lastState, sfIntRe
 	tmp.color = color(255, 255, 255, 255);
 	tmp.isLasered = sfFalse;
 	tmp.isFlamethrowered = sfFalse;
+	tmp.playDeathSound = sfTrue;
 
 	STD_LIST_PUSHBACK(enemiesList, tmp);
 }
@@ -486,6 +488,7 @@ void updateEnemy(Window* _window)
 
 		if (GETDATA_ENEMIES->life <= 0 && GETDATA_ENEMIES->state != DEAD) {
 			GETDATA_ENEMIES->state = DEAD;
+			PlayASound("enemyDeath", sfFalse);
 
 			if (honorableKill) {
 				if (tmp.type == TAMER) {

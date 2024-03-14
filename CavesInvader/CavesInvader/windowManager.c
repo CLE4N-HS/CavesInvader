@@ -87,6 +87,13 @@ void windowCreate(Window* This)
 	}
 	sfImage_destroy(image);
 
+	if (This->isFullscreen) {
+		sfRenderWindow_setMouseCursorVisible(This->renderWindow, sfFalse);
+	}
+	else {
+		sfRenderWindow_setMouseCursorVisible(This->renderWindow, sfTrue);
+	}
+
 
 }
 

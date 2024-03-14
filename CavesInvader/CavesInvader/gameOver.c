@@ -3,6 +3,7 @@
 #include "fontManager.h"
 #include "gamepadx.h"
 #include "player.h"
+#include "soundManager.h"
 
 sfSprite* gameOverSprite;
 
@@ -49,6 +50,8 @@ void updateGameOver(Window* _window)
 		StopASound("laserSfx");
 		StopASound("explosionSfx");
 		StopASound("flameThrowerSfx");
+		StopASound("enemyDeath");
+		StopASound("collectItem");
 	}
 
 	timer += udt;

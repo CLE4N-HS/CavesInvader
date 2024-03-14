@@ -61,4 +61,7 @@ soundfx blaster ../Ressources/SoundsFX/blaster.ogg
 soundfx laserSfx ../Ressources/SoundsFX/laserSfx.ogg
 soundfx explosionSfx ../Ressources/SoundsFX/explosionSfx.ogg
 music flameThrowerSfx ../Ressources/Musics/flameThrowerSfx.ogg
+soundfx enemyDeath ../Ressources/SoundsFX/pixel-death-66829.ogg
+soundfx collectItem ../Ressources/SoundsFX/collect-points-190037.ogg
+soundfx gameOverSfx ../Ressources/SoundsFX/videogame-death-sound-43894.ogg
 [end]
