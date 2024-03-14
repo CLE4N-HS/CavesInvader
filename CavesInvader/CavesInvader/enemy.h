@@ -94,6 +94,7 @@ typedef struct Enemies {
 
 	sfBool isLasered;
 	sfBool isFlamethrowered;
+	sfBool playDeathSound;
 
 	union parameters
 	{

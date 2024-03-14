@@ -52,6 +52,10 @@ int nbWaveEnemies;
 float createEnemyTimer;
 
 
+sfBool playGameOverSound;
+
+float debugTimer;
+
 void initGame(Window* _window)
 {
 	Texture_Onload(GAME);
@@ -136,6 +140,8 @@ void initGame(Window* _window)
 	initGameOver(_window);
 
 	isGameOver = sfFalse;
+	playGameOverSound = sfTrue;
+	debugTimer = 0.f;
 
 	PlayASound("madness", sfTrue);
 
@@ -147,6 +153,18 @@ void updateGame(Window* _window)
 {
 	float dt = getDeltaTime();
 	timer += dt;
+	debugTimer += getUnscaledDeltaTime();
+
+	if (sfKeyboard_isKeyPressed(sfKeyO) && debugTimer > 1.f) {
+		createItem(BULLET_ITEM, vector2f(1500.f, 140.f));
+		createItem(LIFE_ITEM, vector2f(1500.f, 290.f));
+		createItem(SHIELD_ITEM, vector2f(1500.f, 440.f));
+		createItem(GAS_ITEM, vector2f(1500.f, 590.f));
+		createItem(DAMAGE_ITEM, vector2f(1500.f, 740.f));
+		createItem(TIMES3_ITEM, vector2f(1500.f, 890.f));
+
+		debugTimer = 0.f;
+	}
 
 	// bg
 	for (int i = 0; i < NB_BG; i++)
@@ -226,6 +244,10 @@ void updateGame(Window* _window)
 		createEnemyTimer = 0.f;
 	}
 
+	if (isGameOver && playGameOverSound) {
+		PlayASound("gameOverSfx", sfFalse);
+		playGameOverSound = sfFalse;
+	}
 
 
 
@@ -246,6 +268,8 @@ void updateGame(Window* _window)
 		StopASound("laserSfx");
 		StopASound("explosionSfx");
 		StopASound("flameThrowerSfx");
+		StopASound("enemyDeath");
+		StopASound("collectItem");
 		for (int i = 0; i < nbPlayer; i++)
 		{
 			setVibration(i, 0.f, 0.f);

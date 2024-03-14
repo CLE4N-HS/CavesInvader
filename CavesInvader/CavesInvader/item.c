@@ -3,6 +3,7 @@
 #include "List.h"
 #include "player.h"
 #include "CustomMath.h"
+#include "soundManager.h"
 
 #define GETDATA_ITEM STD_LIST_GETDATA(itemList, Items, i)
 
@@ -101,6 +102,7 @@ void collectItem(int i)
 	GETDATA_ITEM->isCollectible = sfFalse;
 	GETDATA_ITEM->rect = IntRect(0, 912, 153, 159);
 	GETDATA_ITEM->origin = vector2f(77.f, 80.f);
+	PlayASound("collectItem", sfFalse);
 }
 
 void updateItem(Window* _window)
