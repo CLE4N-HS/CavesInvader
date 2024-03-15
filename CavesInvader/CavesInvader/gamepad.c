@@ -34,7 +34,7 @@ void GamepadDetection()
 		nbConnectedController = playernber;
 		firstDetection = sfFalse;
 		nbPlayer = playernber;
-		nbPlayer = MAX(nbPlayer, 1);
+		//nbPlayer = MAX(nbPlayer, 1);
 	}
 	//nbPlayer = playernber;
 	//nbPlayer = MAX(nbPlayer, 1);
@@ -43,54 +43,39 @@ void GamepadDetection()
 
 void GamepadManager(int _joystickId, sfEvent event)
 {
-
-	//// to remove
-	//sfJoystick_update();
-	//
-	//
-	//setVibration(_joystickId, 0.f, 0.f);
-	//
-	//if (sfJoystick_isButtonPressed(_joystickId, 4)) {
-	//	setVibration(_joystickId, 1.f, 0.f);
-	//}
-	//if (sfJoystick_isButtonPressed(_joystickId, 5)) {
-	//	setVibration(_joystickId, 0.f, 1.f);
-	//}
-	//if (sfJoystick_isButtonPressed(_joystickId, 4) && sfJoystick_isButtonPressed(_joystickId, 5)) {
-	//	setVibration(_joystickId, 1.f, 1.f);
-	//}
-	//
-	//
-	//if (sfJoystick_isButtonPressed(0, 1)) {
-	//	printf("0");
-	//}
-	//if (sfJoystick_isButtonPressed(1, 1)) {
-	//	printf("1");
-	//}
-	//if (sfJoystick_isButtonPressed(2, 1)) {
-	//	printf("2");
-	//}
-	////
-
 	if (event.type == sfEvtJoystickConnected)
 	{
 		printf("Gamepad is Connected id %d\n", event.joystickConnect.joystickId);
 		GamepadDetection();
-		nbConnectedController += 1;
-		nbPlayer = nbConnectedController;
+		//nbConnectedController += 1;
+		//nbPlayer = nbConnectedController;
+		int nbController = 0;
+		for (int i = 0; i < MAX_PLAYER; i++)
+		{
+			if (isConnected(i))
+				nbController++;
+		}
+		nbPlayer = nbController;
 		nbPlayer = MIN(nbPlayer, 2);
 	}
 	if (event.type == sfEvtJoystickDisconnected)
 	{
 		printf("Gamepad is Disconnected id %d\n", event.joystickConnect.joystickId);
 		GamepadDetection();
-		if (/*!isPaused &&*/ getState() == GAME) {
+		if (!getIsPaused() && getState() == GAME) {
 			togglePause();
 			//CreateDialogBox(INFO, "A controller was disconnected", 0);
 		}
-		nbConnectedController -= 1;
-		nbPlayer = nbConnectedController;
-		nbPlayer = MAX(nbPlayer, 1);
+		//nbConnectedController -= 1;
+		//nbPlayer = nbConnectedController;
+		int nbController = 0;
+		for (int i = 0; i < MAX_PLAYER; i++)
+		{
+			if (isConnected(i))
+				nbController++;
+		}
+		nbPlayer = nbController;
+		//nbPlayer = MAX(nbPlayer, 1);
 
 	}
 	if (event.joystickButton.joystickId == _joystickId)

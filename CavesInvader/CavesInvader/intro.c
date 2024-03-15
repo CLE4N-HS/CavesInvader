@@ -76,3 +76,8 @@ void displayIntro(Window* _window)
 	}
 
 }
+
+void deinitIntro()
+{
+	sfSprite_destroy(introSprite);
+}
