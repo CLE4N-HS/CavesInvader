@@ -92,6 +92,8 @@ MenuState getMenuState();
 /// </summary>
 void togglePause();
 
+sfBool getIsPaused();
+
 /// <summary>
 /// Activates the options, or deactivates them if they were already present
 /// </summary>

@@ -118,6 +118,7 @@ void stateUpdate(Window* _window)
 {
 	if (w.state)
 	{
+		printf("%d, %d\n", nbPlayer, nbConnectedController);
 		if (!isDialogBox)
 		{
 			if (state == INTRO)
@@ -248,7 +249,7 @@ void stateDeinit(Window* _window)
 	RemoveAllFontsButALL();
 	if (state == INTRO)
 	{
-
+		deinitIntro();
 	}
 	if (state == MENU)
 	{
@@ -298,6 +299,11 @@ MenuState getMenuState()
 void togglePause()
 {
 	isPaused = !isPaused;
+}
+
+sfBool getIsPaused()
+{
+	return isPaused;
 }
 
 void toggleOptions()
